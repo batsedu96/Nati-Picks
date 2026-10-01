@@ -357,7 +357,33 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
 .outlook{font-size:14.5px}
 .foot a{color:var(--muted)}
 
+/* players */
+.iconbtn.sm{margin-left:0;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.plink{color:inherit;text-decoration:none} a.plink:hover{text-decoration:underline;text-decoration-color:var(--sun)}
+.psearch{position:relative}
+.psearch input{width:100%;font-size:16px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.presults{display:flex;flex-direction:column;margin-top:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.presults:empty{display:none}
+.pres{display:flex;align-items:center;gap:10px;padding:8px 12px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+.pres:last-child{border-bottom:0} .pres:hover{background:var(--panel2)}
+.pres-t{min-width:0;flex:1} .pres .note{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.posrow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none} .posrow::-webkit-scrollbar{display:none}
+.posrow .chip{flex:0 0 auto;padding:5px 11px}
+.pgame{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px;padding:10px 12px}
+.pcol{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pchs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px}
+.pchs .morebox{display:contents} .pchs .morebox[hidden]{display:none} .pchs .morefoot{grid-column:1/-1}
+.pch{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:9px;color:var(--ink);text-decoration:none;min-width:0}
+.pch:hover{background:var(--panel2)} .pch .av{width:32px;height:32px} .pch-t{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.2;font-size:13px}
+.pch-t b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrows .mr-wrap{border-bottom:1px solid var(--line)} .mrows .mr-wrap:last-child{border-bottom:0}
+.mr{display:grid;grid-template-columns:minmax(0,1.6fr) 70px 80px 80px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 12px;font-size:13.5px}
+.mr-o{display:flex;flex-direction:column;line-height:1.2;font-family:var(--f-mono)} .mr-o .note{font-family:var(--f-body);font-size:10.5px}
+.mr-wrap>.whybox{padding:10px 12px 12px;margin:0}
+.br-wrap.hl{box-shadow:inset 4px 0 0 var(--sun);background:rgba(255,212,59,.05)}
 @media (max-width:760px){
+  .mr{grid-template-columns:repeat(3,minmax(0,1fr)) auto;grid-template-areas:'m m m w' 'l o u w' 'b b b w';row-gap:4px}
+  .mr-m{grid-area:m} .mr-l{grid-area:l} .mr-o:nth-of-type(3){grid-area:o} .mr-o:nth-of-type(4){grid-area:u} .mr-b{grid-area:b} .mr-w{grid-area:w}
   .brand-t{display:none}
   .slogan-m{display:block;margin:0;padding:8px 16px 0;font:600 12px var(--f-body);color:var(--muted);text-align:center;letter-spacing:.02em}
   .mainnav{margin-left:0;gap:0}
@@ -383,17 +409,19 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
   .tiers{grid-template-columns:minmax(0,1fr)}
   .nums{grid-template-columns:repeat(2,1fr)}
 }
-@media (max-width:420px){ .mainnav a{font-size:15px;letter-spacing:.03em;padding:0 6px} .hdr-r1{gap:6px} }
+@media (max-width:480px){ .hide-s{display:none} }
+@media (max-width:420px){ .mainnav a{font-size:14px;letter-spacing:.02em;padding:0 5px} .hdr-r1{gap:5px} .np-logo{width:30px;height:30px} .iconbtn{width:34px;height:34px;font-size:17px} }
 </style>
 </head>
 <body>
 <header class="hdr" id="hdr"><div class="hdr-in">
   <div class="hdr-r1">
     <a class="brand" href="#" aria-label="Nati Picks home"><svg class="np-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#FFD43B"/><g fill="#14172E" transform="translate(3.5 0) skewX(-9)"><path d="M12 46V18h6.8l9.6 15.4V18h6v28h-6.6L18 30.4V46z"/><path fill-rule="evenodd" d="M38.5 46V18h10.2c6 0 9.6 3.6 9.6 8.8s-3.6 8.9-9.6 8.9h-4.2V46zM44.5 23.2v7.3h3.9c2.5 0 3.9-1.4 3.9-3.65s-1.4-3.65-3.9-3.65z"/></g></svg><span class="brand-t"><span class="bn">Nati <span class="p">Picks</span></span><span class="tagline">They got our account. We got their playbook.</span></span></a>
-    <nav class="mainnav" aria-label="Main"><a href="#" data-nav="today">Today</a><a href="#week" data-nav="week">This week&#8217;s parlays</a></nav>
+    <nav class="mainnav" aria-label="Main"><a href="#" data-nav="today">Today</a><a href="#week" data-nav="week"><span class="hide-s">This&nbsp;</span>week&#8217;s parlays</a><a href="#players" data-nav="players">Players</a></nav>
     <button class="iconbtn" id="openSettings" type="button" aria-label="Settings">⚙</button>
   </div>
   <div class="hdr-r2">
+    <button class="iconbtn sm" id="openSearch" type="button" aria-label="Search players"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/></svg></button>
     <div class="seg" id="sportSeg" role="group" aria-label="Sport"><button type="button" data-sport="all" aria-pressed="false">All</button><button type="button" data-sport="nfl" aria-pressed="false">NFL</button><button type="button" data-sport="nba" aria-pressed="false">NBA</button><button type="button" data-sport="mlb" aria-pressed="false">MLB</button><button type="button" data-sport="nhl" aria-pressed="false">NHL</button><button type="button" data-sport="soccer" aria-pressed="false">Soccer</button></div>
     <div class="seg" id="whenSeg" role="group" aria-label="Time"><button type="button" data-when="today" aria-pressed="false">Today</button><button type="button" data-when="live" aria-pressed="false">Live</button></div>
     <span class="upd" id="upd"></span>
@@ -2185,7 +2213,7 @@ const riskPill = r => `<span class="pill ${r==='Low'?'strong':r==='Medium'?'soli
 const ini = n => esc(String(n||'').split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join(''));
 const avatar = (p, cls='') => `<span class="av ${cls}"><span>${ini(p?.name)}</span>${p?.img?`<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.remove()">`:''}</span>`;
 const teamLogo = (t, cls='') => `<span class="logo ${cls}"><span>${esc(t?.abbr||'')}</span>${t?.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.remove()">`:''}</span>`;
-const pickIcon = (c, g) => c.player ? avatar(c.player) : c.team && g[c.team] ? teamLogo(g[c.team]) : (c.market==='spread'||c.market==='ml'||c.market==='dnb') && g[c.side] ? teamLogo(g[c.side]) : `<span class="av">${SPORT[g.sport].icon}</span>`;
+const pickIcon = (c, g) => c.player ? (c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}" aria-label="${esc(c.player.name)} player page">${avatar(c.player)}</a>` : avatar(c.player)) : c.team && g[c.team] ? teamLogo(g[c.team]) : (c.market==='spread'||c.market==='ml'||c.market==='dnb') && g[c.side] ? teamLogo(g[c.side]) : `<span class="av">${SPORT[g.sport].icon}</span>`;
 const ago = t => { if (!t) return 'never'; const s = Math.max(0, Math.round((Date.now()-t)/1000)); return s < 60 ? `${s}s ago` : s < 3600 ? `${Math.round(s/60)} min ago` : `${Math.round(s/3600)} h ago`; };
 const agoEl = t => `<span data-ago="${t||''}">${ago(t)}</span>`;
 const priceStr = c => c.priced ? decToAm(c.dec) : '-110*';
@@ -2236,7 +2264,7 @@ function whyBox(c, R){
     ${c.flags?.length ? `<div class="flag">${c.flags.map(esc).join('<br>')}</div>` : ''}
     <div><span class="lbl">How much to bet · from your ${money(bankroll())} budget</span>${sizesHtml(c.p, c.dec, 0.05)}</div>
     <div class="note">${c.priced ? `Best price ${decToAm(c.dec)} at ${esc(c.book)} (${c.books} book${c.books===1?'':'s'}) · updated ${agoEl(c.updated)}` : `Line from ${esc(c.book)}; price assumed at -110 · updated ${agoEl(c.updated)}`}</div>
-    <div class="actions">${c.player ? goBtn('Player card', `data-player="${c.playerId}" data-game="${g.id}"`) : ''}${goLink('Deep research', '#r-' + g.id)}</div>
+    <div class="actions">${c.playerId ? goLink('Player page', plHref(g.id, c.playerId)) : ''}${goLink('Deep research', '#r-' + g.id)}</div>
   </div>`;
 }
 
@@ -2244,7 +2272,7 @@ function whyBox(c, R){
 function betCard(c, R, ctx, opts = {}){
   const g = R.g, { who, what } = whoWhat(c, g), id = 'w' + hsh(ctx + g.id + c.id);
   return `<article class="bc${opts.top ? ' best' : ''}">
-    <div class="bc-h">${pickIcon(c, g)}<div class="bc-t">${opts.tag || opts.board ? `<div class="bc-ctx">${opts.tag ? `<span class="tag">${esc(opts.tag)}</span>` : ''}${opts.board ? esc(`${SPORT[g.sport].label} · ${matchup(g)} · ${whenTxt(g)}`) : ''}</div>` : ''}<div class="bc-who">${esc(who)}</div></div></div>
+    <div class="bc-h">${pickIcon(c, g)}<div class="bc-t">${opts.tag || opts.board ? `<div class="bc-ctx">${opts.tag ? `<span class="tag">${esc(opts.tag)}</span>` : ''}${opts.board ? esc(`${SPORT[g.sport].label} · ${matchup(g)} · ${whenTxt(g)}`) : ''}</div>` : ''}<div class="bc-who">${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(who)}</a>` : esc(who)}</div></div></div>
     <div class="bc-what">${esc(what)}</div>
     <div class="bc-odds"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span></div>
     <p class="bc-why">${esc(reason1(R, c))}</p>
@@ -2257,7 +2285,7 @@ function betRow(c, R, ctx, opts = {}){
   const g = R.g, { who, what } = whoWhat(c, g), id = 'w' + hsh(ctx + g.id + c.id), lock = started(g);
   return `<div class="br-wrap"><div class="br">
     <div class="br-i">${pickIcon(c, g)}</div>
-    <div class="br-t">${opts.game ? `<div class="br-g">${esc(SPORT[g.sport].icon)} ${esc(matchup(g))} · ${esc(whenTxt(g))}${lock ? ' <span class="pill warn">🔒 Started</span>' : ''}</div>` : ''}<div><b>${esc(who)}</b></div><div class="br-w">${esc(what)}</div></div>
+    <div class="br-t">${opts.game ? `<div class="br-g">${esc(SPORT[g.sport].icon)} ${esc(matchup(g))} · ${esc(whenTxt(g))}${lock ? ' <span class="pill warn">🔒 Started</span>' : ''}</div>` : ''}<div><b>${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(who)}</a>` : esc(who)}</b></div><div class="br-w">${esc(what)}</div></div>
     <div class="br-o"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span></div>
     <div class="br-b">${togBtn(id, 'Why?')}</div></div>
     <div class="whybox" id="${id}" hidden><p class="bc-why" style="margin:0 0 8px">${esc(reason1(R, c))}</p>${whyBox(c, R)}${opts.game ? `<div class="actions" style="margin-top:8px">${goLink('View match', '#g-' + g.id)}</div>` : ''}</div></div>`;
@@ -2312,11 +2340,11 @@ const tiersGrid = (lists, ctx, opts = {}) => `<div class="tiers${opts.stack ? ' 
 
 /* ---------- header ---------- */
 function headerSync(){
-  const h = location.hash, week = h === '#week';
-  document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', String((a.dataset.nav === 'week') === week && !/^#(g|r)-|^#health/.test(h))));
+  const h = location.hash, week = h === '#week', cur = week ? 'week' : (h === '#players' || h.startsWith('#p-')) ? 'players' : /^#(g|r)-|^#health/.test(h) ? '' : 'today';
+  document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', String(a.dataset.nav === cur)));
   document.querySelectorAll('#sportSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sport === state.sport)));
   document.querySelectorAll('#whenSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.when === state.when)));
-  $('#whenSeg').hidden = week || /^#(g|r)-|^#health/.test(h);
+  $('#whenSeg').hidden = cur !== 'today';
   const at = week ? state.week.loadedAt : Math.max(0, ...sportsInView().map(s => state.loadedAt[s] || 0)), live = state.allGames().some(g => g.state === 'in');
   const bad = Object.values(HEALTH).filter(x => healthStatus(x) === 'offline').length;
   $('#upd').innerHTML = `<span class="dot ${bad ? 'warn' : ''}"></span><span>${(week ? state.week.busy : state.busy) ? 'Updating…' : `Updated ${agoEl(at)}`}${live ? ' · live' : ''}</span>`;
@@ -2536,6 +2564,7 @@ async function renderResearch(id){
     ['injuries','Injuries', g.sport !== 'soccer' ? `<div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${injBy('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${injBy('home')}</div></div><div class="note">From ESPN's injury report.</div>` : `<div class="panel note">Soccer injury lists aren't in the free data. Confirmed lineups (about an hour before kickoff) are on the Matchup tab and are used instead.</div>`],
     ['moves','Line movement', moves.length ? `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Book</th><th>Market</th><th>Side</th><th class="num">Open</th><th class="num">Now</th><th class="num">High</th><th class="num">Low</th><th>Last change</th></tr></thead><tbody>${moves.map(h=>`<tr><td>${esc(h.book)}</td><td>${esc(statLabel(g.sport,h.market))} ${esc(String(h.entity||'').replace(/^\d+$/, x=>R.idx[x]?.player.name||x))}</td><td>${esc(h.side)}</td><td class="num">${h.open?.line ?? ''} ${h.open?.price!=null?decToAm(amToDec(h.open.price)):''}</td><td class="num">${h.cur?.line ?? ''} ${h.cur?.price!=null?decToAm(amToDec(h.cur.price)):''}</td><td class="num">${h.hi ?? ''}</td><td class="num">${h.lo ?? ''}</td><td class="note">${agoEl(h.hist[h.hist.length-1]?.t)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="panel note">No movement recorded yet. The site saves every price it sees, so movement builds up over time (plus the book openers ESPN provides).</div>'],
     ['odds','Odds comparison', `${oddsCompare(R)}<h3>Every market</h3>${market}`],
+    ...(g.sport === 'nfl' ? [['td','TD scorers', tdScorersHtml(R)]] : []),
     ['model','Model', `<div class="stack">${recs.map(c => `<div class="panel stack small"><div class="row" style="justify-content:space-between"><b>${esc(c.label)} ${priceStr(c)}</b>${strengthPill(c.quality)}</div>
       <div><b>Why it works.</b> ${esc(whyText(R, c))}</div><div><b>Why it could fail.</b> ${failCase(R,c).map(esc).join(' ')}</div>
       <div class="nums"><div><b>${c.model?.kind==='dist'?fmt1(c.model.proj):'—'}</b><span>Projection</span></div><div><b>${pct(c.p,0)}</b><span>Model prob.</span></div><div><b>${pct(c.implied,0)}</b><span>Implied</span></div><div><b>${c.ev>=0?'+':''}${fmt1(c.ev*100)}%</b><span>Edge · ${esc(c.risk)} risk</span></div></div></div>`).join('')}</div>
@@ -2550,7 +2579,8 @@ async function renderResearch(id){
   ];
   paint(`<a href="#g-${g.id}" class="back">← Back to picks</a>
     <div class="gh"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">Deep research · ${esc(matchup(g))}</div><div class="note">${esc(timeET(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div></div>
-    ${tabsHtml('research', tabs)}`);
+    ${tabsHtml('research', tabs.filter(t => t[0] !== 'td' && t[0] !== 'sources').concat(tabs.filter(t => t[0] === 'td' || t[0] === 'sources')))}`);
+  if (state.tdHl){ const el = document.getElementById('td-' + state.tdHl); if (el) el.scrollIntoView({ block:'center' }); state.tdHl = null; }
   headerSync();
 }
 
@@ -2651,12 +2681,165 @@ function openPlayer(gid, pid){
 }
 function closePlayer(){ $('#drawer').hidden = true; }
 
+/* ============================ PLAYERS (search · browse · player pages) — uses only data already collected ============================ */
+const plHref = (gid, pid) => `#p-${gid}-${pid}`;
+const POS_ORDER = { nfl:['QB','RB','WR','TE','K','FB'], nba:['PG','SG','SF','PF','C','G','F'], mlb:['SP','RP','P','C','1B','2B','3B','SS','LF','CF','RF','OF','DH'], nhl:['C','LW','RW','D','G'], soccer:['G','GK','D','M','F'] };
+function upcomingGames(){
+  const m = new Map();
+  for (const s of sportsInView()) for (const g of [...(state.slates[s] || []), ...(state.week.slates[s] || [])]) if (g.state !== 'post' && !m.has(g.id)) m.set(g.id, g);
+  let list = [...m.values()]; const sel = state.leagueSel; if (sel && sel.length) list = list.filter(g => g.sport !== 'soccer' || sel.includes(g.league));
+  return list.sort((a,b) => new Date(a.date) - new Date(b.date));
+}
+/* Every player we hold for a game: the researched roster (or soccer lineup) first, else the saved team roster. No network calls. */
+function gamePlayers(g){
+  const R = CACHE[g.id], out = [];
+  for (const side of ['away','home']){
+    let ps = [];
+    if (R) ps = Object.entries(R.idx).filter(([,x]) => x.side === side).map(([pid, x]) => ({ pid, p:x.player }));
+    if (!ps.length && g.sport !== 'soccer'){ const r = store.get(`np_roster_${g.sport}__${g[side].id}`, null); if (r?.players) ps = Object.entries(r.players).map(([pid, p]) => ({ pid, p })); }
+    const ord = POS_ORDER[g.sport] || [], rank = pos => { const i = ord.indexOf(pos); return i < 0 ? 99 : i; };
+    ps.sort((a,b) => rank(a.p.pos) - rank(b.p.pos) || String(a.p.name).localeCompare(String(b.p.name)));
+    for (const x of ps) out.push({ ...x, side, g, has: !!R && [...R.book.values()].some(G => G.scope === 'player' && G.playerId === x.pid) });
+  }
+  return out;
+}
+const plMeta = x => `${x.g[x.side].abbr} · ${x.p.pos || '—'}`;
+const plChip = x => `<a class="pch" href="${plHref(x.g.id, x.pid)}">${avatar(x.p)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(plMeta(x))}</span></span>${x.has ? '<span class="pill strong">Props</span>' : ''}</a>`;
+function renderPlayers(){
+  const games = upcomingGames(), all = games.map(g => ({ g, ps:gamePlayers(g) })), pos = state.ppos || '';
+  const present = new Set(all.flatMap(x => x.ps.map(p => p.p.pos)).filter(Boolean));
+  const order = [...new Set(sportsInView().flatMap(s => POS_ORDER[s] || []))].filter(p => present.has(p));
+  const total = all.reduce((t,x) => t + x.ps.length, 0), missing = all.filter(x => !x.ps.length).length;
+  const sections = all.map(({ g, ps }) => { const f = pos ? ps.filter(x => x.p.pos === pos) : ps;
+    const col = side => { const l = f.filter(x => x.side === side); return `<div class="pcol"><div class="lbl">${esc(g[side].name)}</div>${l.length ? `<div class="pchs">${moreList('pl' + hsh(g.id + side + pos), l.map(plChip), 16)}</div>` : `<div class="note">${ps.length ? 'No players at this position.' : g.sport === 'soccer' ? 'Lineups are posted about an hour before kickoff.' : 'Roster loads when this game is researched.'}</div>`}</div>`; };
+    return `<details class="grp"><summary><span>${esc(SPORT[g.sport].icon)} ${esc(matchup(g))}</span><span class="note">${esc(whenTxt(g))} · ${plural(f.length, 'player')}</span></summary><div class="pgame">${col('away')}${col('home')}</div></details>`; }).join('');
+  paint(`<div class="sechead"><h2>Players</h2><span class="note">${plural(total, 'player')} in ${plural(games.length, 'upcoming game')}${missing ? ` · ${missing} still loading` : ''}</span></div>
+    <div class="psearch"><input id="psearch" type="search" autocomplete="off" placeholder="Search any player or team" aria-label="Search players" value="${esc(state.pq || '')}"><div id="presults" class="presults" role="listbox"></div></div>
+    ${order.length > 1 ? `<div class="chips posrow" role="group" aria-label="Position"><button class="chip" data-pos="" aria-pressed="${!pos}">All</button>${order.map(p => `<button class="chip" data-pos="${esc(p)}" aria-pressed="${pos===p}">${esc(p)}</button>`).join('')}</div>` : ''}
+    <section class="sec"><div class="sechead"><h3>Browse by game</h3><span class="note">Tap a game to see everyone on both rosters</span></div>${sections || `<div class="panel note">${state.busy || state.week.busy ? '<span class="loading"><span class="spin"></span>Finding games…</span>' : 'No upcoming games for this filter.'}</div>`}</section>`);
+  const inp = $('#psearch'), flat = all.flatMap(x => x.ps);
+  const show = () => { const q = inp.value.trim().toLowerCase(); state.pq = inp.value; const box = $('#presults');
+    if (!q){ box.innerHTML = ''; return; }
+    const hits = flat.filter(x => (!pos || x.p.pos === pos) && (String(x.p.name).toLowerCase().includes(q) || x.g[x.side].name.toLowerCase().includes(q) || String(x.g[x.side].abbr).toLowerCase() === q))
+      .sort((a,b) => (String(b.p.name).toLowerCase().startsWith(q)) - (String(a.p.name).toLowerCase().startsWith(q)) || b.has - a.has).slice(0, 12);
+    box.innerHTML = hits.length ? hits.map(x => `<a class="pres" role="option" href="${plHref(x.g.id, x.pid)}">${avatar(x.p)}<div class="pres-t"><b>${esc(x.p.name)}</b><div class="note">${esc(x.g[x.side].name)} · ${esc(x.p.pos || '—')} · ${esc(matchup(x.g))} · ${esc(whenTxt(x.g))}</div></div>${x.has ? '<span class="pill strong">Props</span>' : ''}</a>`).join('')
+      : '<div class="note" style="padding:10px 12px">No player found in upcoming games.</div>'; };
+  inp.oninput = show; inp.onkeydown = e => { if (e.key === 'Enter'){ const a = $('#presults a'); if (a) location.hash = a.getAttribute('href'); } };
+  show(); if (state.focusSearch){ state.focusSearch = false; inp.focus(); } headerSync();
+}
+
+/* ---------- player page: best bet first, then market tabs ---------- */
+const MKT_TABS = {
+  nfl:[['td','Touchdowns', s => /td/.test(s)], ['pass','Passing', s => /^pass_(?!rush)|longest_completion/.test(s)], ['rush','Rushing', s => /^rush_(?!reception)|longest_rush/.test(s)], ['rec','Receiving', s => /^reception|^receptions|longest_reception/.test(s)], ['combo','Combos', s => /rush_reception|pass_rush/.test(s)]],
+  nba:[['pts','Points', s => s === 'points'], ['reb','Rebounds', s => s === 'rebounds'], ['ast','Assists', s => s === 'assists'], ['3pm','Threes', s => s === 'threes'], ['combo','Combos', s => /_/.test(s) && /points|rebounds|assists|blocks/.test(s) && !/_q1/.test(s)]],
+  mlb:[['hits','Hits', s => s === 'hits' || s === 'hits_runs_rbis'], ['hr','Home Runs', s => /home_run|first_hr/.test(s)], ['rbi','RBIs', s => s === 'rbis'], ['tb','Total Bases', s => s === 'total_bases'], ['k','Strikeouts', s => s === 'pitcher_strikeouts']],
+  nhl:[['g','Goals', s => /^goals$|goal_scorer/.test(s)], ['pts','Points', s => /points/.test(s)], ['sog','Shots', s => /shots/.test(s)], ['ast','Assists', s => s === 'assists'], ['sv','Saves', s => s === 'saves']],
+  soccer:[['g','Goals', s => /goal_scorer/.test(s)], ['shots','Shots', s => s === 'shots'], ['sot','Shots on Target', s => s === 'shots_on_target'], ['ast','Assists', s => /assists/.test(s)], ['cards','Cards', s => /card/.test(s)]],
+};
+function playerRows(R, pid){
+  const groups = [...R.book.values()].filter(G => G.scope === 'player' && G.playerId === pid), rows = [];
+  const mine = R.cands.filter(c => c.playerId === pid);
+  for (const G of groups){
+    const byLine = new Map();
+    for (const L of G.lines.values()){ const k = L.line == null ? 'x' : String(L.line); if (!byLine.has(k)) byLine.set(k, { line:L.line, alt:false }); const e = byLine.get(k); e[L.side] = L; if (L.offers.some(o => o.isAlt)) e.alt = true; }
+    for (const e of byLine.values()){
+      const ov = e.over || e.yes, un = e.under || e.no, cs = mine.filter(c => c.G === G && c.line === e.line).sort((a,b) => b.quality - a.quality);
+      const pick = cs.find(c => !c.noPath && c.quality >= 0.56 && c.ev >= -0.02), why = pick || cs[0] || null;
+      const bestL = pick ? (pick.side === (ov && ov.side) ? ov : un) : ov || un;
+      rows.push({ G, stat:G.market, line:e.line, alt:e.alt, ov, un, pick, why, book:bestL?.best?.book || bestL?.offers?.[0]?.book || '' });
+    }
+  }
+  // the main line is the one most books post; everything else is an alternate
+  for (const G of groups){ const rs = rows.filter(r => r.G === G); if (rs.length < 2) { rs.forEach(r => r.alt = false); continue; }
+    const main = rs.filter(r => !r.alt).sort((a,b) => ((b.ov?.books||0) + (b.un?.books||0)) - ((a.ov?.books||0) + (a.un?.books||0)))[0] || rs[0];
+    rs.forEach(r => r.alt = r !== main);
+    const top = rs.filter(r => r.pick).sort((a,b) => b.pick.quality - a.pick.quality)[0]; rs.forEach(r => { if (r !== top) r.pick = null; }); }
+  return rows;
+}
+const oddsCell = L => L ? (L.best ? `<b>${decToAm(L.best.dec)}</b>` : '<span class="note">line only</span>') : '<span class="note">—</span>';
+function mktRow(r, R, ctx){
+  const g = R.g, id = 'mk' + hsh(ctx + r.G.key + r.line), bin = r.line == null, sideLbl = s => ({ over:'Over', under:'Under', yes:'Yes', no:'No' })[s] || s;
+  return `<div class="mr-wrap"><div class="mr"><div class="mr-m"><b>${esc(statLabel(g.sport, r.stat))}${r.G.period !== 'FG' ? ' · ' + esc(r.G.period) : ''}</b>${r.pick ? ` <span class="tag">NP pick: ${esc(sideLbl(r.pick.side))}</span>` : ''}</div>
+    <div class="mr-l mono">${bin ? '—' : esc(r.alt && r.ov && !r.un ? Math.ceil(r.line) + '+' : r.line)}</div>
+    <div class="mr-o"><span class="note">${bin ? 'Yes' : 'Over'}</span>${oddsCell(r.ov)}</div><div class="mr-o"><span class="note">${bin ? 'No' : 'Under'}</span>${oddsCell(r.un)}</div>
+    <div class="mr-b note">${esc(r.book)}</div>
+    <div class="mr-w">${r.why ? togBtn(id, 'Why?') : ''}</div></div>
+    ${r.why ? `<div class="whybox" id="${id}" hidden>${r.why.stat && /td/.test(r.why.stat) && g.sport === 'nfl' ? tdWhy(r.why, R) : whyBox(r.why, R)}</div>` : ''}</div>`;
+}
+function rowsBlock(rows, R, ctx){
+  const main = rows.filter(r => !r.alt).sort((a,b) => !!b.pick - !!a.pick), alt = rows.filter(r => r.alt).sort((a,b) => String(a.stat).localeCompare(String(b.stat)) || a.line - b.line);
+  return `${main.length ? `<div class="rows mrows">${main.map(r => mktRow(r, R, ctx)).join('')}</div>` : ''}
+    ${alt.length ? `<details class="acc panel"><summary>Alt lines (${alt.length})</summary><div class="rows mrows" style="margin-top:8px">${alt.map(r => mktRow(r, R, ctx + 'alt')).join('')}</div></details>` : ''}`;
+}
+async function renderPlayer(gid, pid){
+  const g = gameOf(gid);
+  if (!g){ paint(`<a href="#players" class="back">← Players</a><div class="panel empty">That game isn't on the current slate.</div>`); headerSync(); return; }
+  if (!CACHE[gid]) paint(`<a href="#players" class="back">← Players</a><div class="panel loading"><span class="spin"></span>Loading his markets…</div>`);
+  let R; try { R = await analyzeGame(g); } catch(e){ paint(`<a href="#players" class="back">← Players</a><div class="panel" style="color:var(--bad)">Couldn't load this game: ${esc(e.message)}</div>`); return; }
+  if (location.hash !== plHref(gid, pid)) return;
+  const fromRoster = gamePlayers(g).find(x => x.pid === pid), info = R.idx[pid] || (fromRoster && { player:fromRoster.p, side:fromRoster.side });
+  if (!info){ paint(`<a href="#players" class="back">← Players</a><div class="panel empty">Player not found for this game.</div>`); headerSync(); return; }
+  const p = info.player, side = info.side, opp = g[side === 'home' ? 'away' : 'home'], inj = (R.D.injuries[side] || []).find(x => x.id === pid), lu = R.lineup?.[pid];
+  const best = R.cands.filter(c => c.playerId === pid && !c.noPath && c.ev >= -0.08).sort((a,b) => b.quality - a.quality)[0];
+  const rows = playerRows(R, pid), ctx = 'pl' + gid + pid, defs = MKT_TABS[g.sport] || [];
+  const tabs = [['main','Main lines', rowsBlock(rows.filter(r => !r.alt), R, ctx + 'main')]];
+  for (const [k, l, test] of defs){ const rs = rows.filter(r => test(r.stat)); if (!rs.length) continue;
+    tabs.push([k, l, rowsBlock(rs, R, ctx + k) + (k === 'td' && g.sport === 'nfl' ? `<div class="actions">${goLink('TD scorers', '#r-' + gid, `data-rtab="td" data-hl="${esc(pid)}"`)}</div>` : '')]); }
+  const used = new Set(defs.flatMap(([,,t]) => rows.filter(r => t(r.stat)))), other = rows.filter(r => !used.has(r));
+  if (other.length && tabs.length > 1) tabs.push(['more','More', rowsBlock(other, R, ctx + 'more')]);
+  const status = inj ? `<span class="pill warn">${esc(inj.status)}${inj.detail ? ' · ' + esc(inj.detail) : ''}</span>` : g.sport === 'soccer' ? `<span class="pill ${lu==='starter'?'strong':lu==='bench'?'bad':''}">${lu==='starter'?'Starting':lu==='bench'?'Bench':'Lineup TBA'}</span>` : '';
+  paint(`<a href="#players" class="back">← Players</a>
+    <div class="phead">${avatar(p, 'lg')}<div><div class="nm">${esc(p.name)}</div><div class="note">${esc(g[side].name)} · ${esc(p.pos || '—')} · ${side === 'home' ? 'vs' : '@'} ${esc(opp.name)} · ${esc(whenTxt(g))}</div><div class="row" style="gap:6px;margin-top:6px">${status}<a class="note" href="#g-${gid}">Game page →</a></div></div></div>
+    <section class="sec"><div class="sechead"><h3>Best bet for this player</h3></div>${best ? `<div class="bets two">${betCard(best, R, ctx, { top:true, tag:'Best bet' })}</div>` : `<div class="panel note">No markets available yet. They show up here as soon as books post lines for him.</div>`}</section>
+    ${rows.length ? `<section class="sec">${tabsHtml('pl' + gid + pid, tabs)}</section>` : ''}
+    <div class="actions">${goBtn('Deep research', `data-pdeep="${esc(gid)}|${esc(pid)}"`)}</div>`);
+  headerSync();
+}
+
+/* ---------- TD scorers (Deep Research, NFL) ---------- */
+function tdWhy(c, R){
+  const g = R.g, side = c.team, oppS = side === 'home' ? 'away' : 'home', p = c.player || R.idx[c.playerId]?.player || {}, ti = R.tdInfo?.[c.playerId] || {}, logs = R.logs[c.playerId] || [];
+  const tdList = logs.slice(0, 6).map(x => logVal('nfl', x, 'tds')).filter(v => v != null);
+  const oppPA = (R.D.lastFive[oppS] || []).map(e => e.pa).filter(v => v != null), sn = SCRIPT_TEXT(R.gm, g), top = Object.entries(R.gm.scripts).sort((a,b) => b[1]-a[1])[0];
+  const tt = R.gm.ttMean?.[side], inj = (R.D.injuries[side] || []), me = inj.find(x => x.id === c.playerId), mates = inj.filter(x => /^out|doubtful/i.test(x.status) && x.pos === p.pos && x.id !== c.playerId), oppOut = (R.D.injuries[oppS] || []).filter(x => /^out/i.test(x.status));
+  const L = c.G?.lines?.get(`${c.line == null ? 'x' : c.line}|${c.side}`), books = (L?.offers || []).filter(o => o.dec).sort((a,b) => b.dec - a.dec).slice(0, 5);
+  const li = (t, b) => `<li><b>${t}.</b> ${b}</li>`;
+  return `<div class="wb"><div class="wb-top">${c.quality != null ? strengthPill(c.quality) : ''}${c.noPath ? '<span class="pill bad">No clear path</span>' : ''}<span class="note">${esc(statLabel('nfl', c.stat))}</span></div>
+    <ul class="wb-pts">
+      ${li('Our chance', c.dec ? `We give him <b>${pct(c.p,0)}</b>. The ${decToAm(c.dec)} price implies ${pct(c.implied,0)}, so ${c.ev >= 0 ? `the payout is about <b>${fmt1(c.ev*100)}% better than fair</b>` : `the price is about ${fmt1(-c.ev*100)}% worse than fair`}.` : `We give him <b>${pct(c.p,0)}</b>. No price is posted yet.`)}
+      ${li('Red-zone & goal-line usage', `Carries and targets inside the 20, 10 and 5 aren't in the free data sources, so they're left out rather than guessed.${ti.carG != null ? ` Closest stand-in: ${fmt1(ti.carG)} carries and ${fmt1(ti.tgG)} targets a game lately.` : ''}`)}
+      ${li('Snap share & role', `${esc(p.pos || '—')}${c.model?.ctxNote ? ` · ${esc(c.model.ctxNote)}` : ''}. Snap share isn't in the free sources.`)}
+      ${li('Recent TDs', tdList.length ? `${tdList.filter(v => v > 0).length} of his last ${tdList.length} games with a TD (${tdList.join(', ')}).${ti.lam != null ? ` That's about ${fmt1(ti.lam)} TDs a game after adjusting for this matchup.` : ''}` : 'No game logs found.')}
+      ${li(`${esc(g[oppS].short)} defense`, `${oppPA.length ? `Allowed ${fmt1(avgArr(oppPA))} points a game over their last ${oppPA.length}.` : 'Recent points allowed not available.'} TDs allowed by position and red-zone defense aren't in the free sources.`)}
+      ${li('Team total & script', `${tt != null ? `${esc(g[side].short)} are projected for about ${fmt1(tt)} points (roughly ${fmt1(tt/7)} TDs).` : ''} Most likely script: ${esc(sn[top[0]].title)} (${pct(top[1],0)}).`)}
+      ${li('Injuries', `${me ? `He is listed ${esc(me.status)}.` : 'He has no injury listed.'} ${mates.length ? `Out at his position: ${mates.map(x => esc(x.name)).join(', ')} (more work for him).` : ''} ${oppOut.length ? `${esc(g[oppS].short)} are missing ${plural(oppOut.length, 'player')} (${oppOut.slice(0,3).map(x => `${esc(x.pos)} ${esc(x.name)}`).join(', ')}).` : ''}`)}
+      ${li('Odds across books', books.length ? books.map(o => `${esc(o.book)} ${decToAm(o.dec)}`).join(' · ') : 'Only one price or none posted.')}
+    </ul>
+    <div><span class="lbl">What could make it lose</span><ul class="small">${(() => { try { return failCase(R, c); } catch(e){ return ['He doesn\'t get the red-zone work this needs.']; } })().map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+    ${c.dec ? `<div><span class="lbl">How much to bet · from your ${money(bankroll())} budget</span>${sizesHtml(c.p, c.dec, 0.02)}</div>` : ''}
+    <div class="actions">${c.playerId ? goLink('Player page', plHref(g.id, c.playerId)) : ''}</div></div>`;
+}
+function tdScorersHtml(R){
+  const g = R.g, pool = [...R.cands, ...(R.unpriced || [])], ctx = 'td' + g.id;
+  const kinds = [['any','Anytime TD', c => c.stat === 'anytime_td' && c.side === 'yes'], ['first','First TD', c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'], ['two','2+ TDs', c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2]];
+  const tabs = kinds.map(([k, l, t]) => { const seen = new Set(), list = pool.filter(t).sort((a,b) => (!!a.noPath - !!b.noPath) || (!!b.dec - !!a.dec) || ((b.quality ?? b.p) - (a.quality ?? a.p))).filter(c => !seen.has(c.playerId) && seen.add(c.playerId));
+    if (!list.length) return null;
+    const rows = list.map((c, i) => { const p = c.player || R.idx[c.playerId]?.player || { name:c.G?.playerName }, id = 'tdw' + hsh(ctx + k + c.playerId);
+      return `<div class="br-wrap${state.tdHl === c.playerId ? ' hl' : ''}" id="td-${esc(c.playerId)}"><div class="br"><div class="br-i">${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${avatar(p)}</a>` : avatar(p)}</div>
+        <div class="br-t"><div class="br-g">#${i+1}${c.noPath ? ' · <span style="color:var(--bad)">no clear path</span>' : ''}</div><div><b>${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(p.name)}</a>` : esc(p.name)}</b></div><div class="note">${esc(p.pos || '')} · ${esc(g[c.team]?.abbr || '')}</div></div>
+        <div class="br-o"><b>${c.dec ? decToAm(c.dec) : '—'}</b><span>${esc(c.dec ? c.book : 'no price yet')}</span></div><div class="br-b">${togBtn(id, 'Why?')}</div></div>
+        <div class="whybox" id="${id}" hidden>${tdWhy(c, R)}</div></div>`; });
+    return [k, l, `<div class="rows">${moreList('tdm' + hsh(ctx + k), rows, 6)}</div>`]; }).filter(Boolean);
+  if (!tabs.length) return `<div class="panel note">No touchdown markets are posted for this game yet.${Providers.odds[1].enabled() ? ' Tap "Compare all sportsbooks" on the game page to pull them.' : ''}</div>`;
+  return `${tabsHtml('tdk', tabs)}<div class="note">Ranked on the same checks as every other bet. Players without a clear path to the end zone are listed last.</div>`;
+}
+
 /* ============================ FLOW: discover → analyze → monitor → repeat ============================ */
 const SCHED = { timer:null, next:0 };
 CONFIG.weekCap = 30; CONFIG.todayCap = 24;
 const isHome = () => !location.hash || location.hash === '#';
 const isWeek = () => location.hash === '#week';
-let paintT = 0; function repaint(){ const now = Date.now(); if (now - paintT < 700){ clearTimeout(repaint.t); repaint.t = setTimeout(repaint, 720); return; } paintT = now; if (isHome()) renderToday(); else if (isWeek()) renderWeek(); else headerSync(); }
+let paintT = 0; function repaint(){ const now = Date.now(); if (now - paintT < 700){ clearTimeout(repaint.t); repaint.t = setTimeout(repaint, 720); return; } paintT = now; if (isHome()) renderToday(); else if (isWeek()) renderWeek(); else if (location.hash === '#players' && document.activeElement?.id !== 'psearch') renderPlayers(); else headerSync(); }
 async function discoverSoccer(){
   if (state.soccerLeagues && Date.now() - state.soccerLeagues.at < 30*60000) return state.soccerLeagues.list;
   const today = ymd(Date.now()), found = [];
@@ -2714,6 +2897,8 @@ async function refresh(kind){
 function route(keepDrawer){
   if (!keepDrawer) closePlayer(); const h = location.hash;
   if (h.startsWith('#g-')) renderGame(h.slice(3)); else if (h.startsWith('#r-')) renderResearch(h.slice(3)); else if (h === '#health') renderHealth();
+  else if (h === '#players'){ renderPlayers(); if (!state.week.busy && !state.week.loadedAt) loadWeek(false); }
+  else if (h.startsWith('#p-')){ const s = h.slice(3), i = s.indexOf('-'); renderPlayer(s.slice(0, i), decodeURIComponent(s.slice(i + 1))); }
   else if (h === '#week'){ renderWeek(); if (!state.week.busy && (!state.week.loadedAt || Date.now() - state.week.loadedAt > 20*60000)) loadWeek(false); }
   else renderToday();
   headerSync();
@@ -2741,7 +2926,11 @@ document.addEventListener('click', e => {
     tbl.querySelectorAll('th').forEach(x => delete x.dataset.dir); th.dataset.dir = dir; rows.forEach(r => tb2.appendChild(r)); return; }
   if (e.target.closest('[data-clearf]')){ state.filters = {}; state.soccerFilter.team = ''; if (!$('#drawer').hidden && $('#pane').getAttribute('aria-label') === 'Advanced') openAdvanced(); renderToday(); return; }
   const wb = e.target.closest('[data-when]'); if (wb && !wb.closest('#whenSeg')){ setWhen(wb.dataset.when); window.scrollTo({ top:0 }); return; }
-  const pl = e.target.closest('[data-player]'); if (pl){ openPlayer(pl.dataset.game, pl.dataset.player); return; }
+  const pl = e.target.closest('[data-player]'); if (pl){ location.hash = plHref(pl.dataset.game, pl.dataset.player); return; }
+  const pd = e.target.closest('[data-pdeep]'); if (pd){ const [gid, pid] = pd.dataset.pdeep.split('|'); openPlayer(gid, pid); return; }
+  const rt = e.target.closest('[data-rtab]'); if (rt){ state.tabs.research = rt.dataset.rtab; state.tabs.tdk = 'any'; state.tdHl = rt.dataset.hl; OPEN.add('tdw' + hsh('td' + rt.getAttribute('href').slice(3) + 'any' + rt.dataset.hl)); }
+  const ps = e.target.closest('[data-pos]'); if (ps){ state.ppos = ps.dataset.pos; renderPlayers(); return; }
+  if (e.target.closest('#openSearch')){ if (location.hash === '#players') $('#psearch')?.focus(); else { state.focusSearch = true; location.hash = '#players'; } return; }
   if (e.target.id === 'drawer') closePlayer();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); });
