@@ -395,7 +395,7 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
   </div>
   <div class="hdr-r2">
     <div class="seg" id="sportSeg" role="group" aria-label="Sport"><button type="button" data-sport="all" aria-pressed="false">All</button><button type="button" data-sport="nfl" aria-pressed="false">NFL</button><button type="button" data-sport="nba" aria-pressed="false">NBA</button><button type="button" data-sport="mlb" aria-pressed="false">MLB</button><button type="button" data-sport="nhl" aria-pressed="false">NHL</button><button type="button" data-sport="soccer" aria-pressed="false">Soccer</button></div>
-    <div class="seg" id="whenSeg" role="group" aria-label="Time"><button type="button" data-when="today" aria-pressed="false">Today</button><button type="button" data-when="live" aria-pressed="false">Live</button><button type="button" data-when="upcoming" aria-pressed="false">Upcoming</button></div>
+    <div class="seg" id="whenSeg" role="group" aria-label="Time"><button type="button" data-when="today" aria-pressed="false">Today</button><button type="button" data-when="live" aria-pressed="false">Live</button></div>
     <span class="upd" id="upd"></span>
     <button class="linkbtn" id="openAdv" type="button">Advanced</button>
   </div>
@@ -2175,7 +2175,7 @@ const state = { sport: store.get('np_sport','all'), when: store.get('np_when','t
   leagueSel: store.get('np_leagues', null), filters:{}, soccerFilter:{ team:'' }, tabs:{},
   allGames(){ const m = new Map(); for (const l of [...Object.values(this.slates), ...Object.values(this.week.slates)]) for (const g of l || []) if (!m.has(g.id)) m.set(g.id, g); return [...m.values()]; } };
 if (!['all', ...SPORT_KEYS].includes(state.sport)) state.sport = 'all';
-if (!['today','live','upcoming'].includes(state.when)) state.when = 'today';
+if (!['today','live'].includes(state.when)) state.when = 'today';
 const sportsInView = () => state.sport === 'all' ? SPORT_KEYS : [state.sport];
 const bankroll = () => Math.max(0, +store.get('np_bank', '1000') || 0);
 const kelly = (p, dec, cap, frac) => { const bank = bankroll(), f = (p*dec-1)/(dec-1); return f > 0 ? Math.min(cap, f*frac)*bank : 0; };
@@ -2328,13 +2328,10 @@ function viewGames(){
   const sel = state.leagueSel; if (sel && sel.length) list = list.filter(g => g.sport !== 'soccer' || sel.includes(g.league));
   if (state.soccerFilter.team) list = list.filter(g => g.sport !== 'soccer' || (g.home.name + ' ' + g.away.name).toLowerCase().includes(state.soccerFilter.team.toLowerCase()));
   list.sort((a,b) => new Date(a.date) - new Date(b.date));
-  const today = etDate(Date.now()), notDone = list.filter(g => g.state !== 'post');
-  let day = list.filter(g => g.state === 'in' || etDate(g.date) === today), dayName = 'Today';
-  if (!day.some(g => g.state !== 'post') && notDone.length){ const d = etDate(notDone[0].date); day = list.filter(g => g.state === 'in' || etDate(g.date) === d); dayName = dayLabel(d); }
-  const live = list.filter(g => g.state === 'in'), upcoming = notDone.filter(g => g.state === 'pre' && !day.includes(g));
+  const today = etDate(Date.now());
+  const day = list.filter(g => g.state === 'in' || etDate(g.date) === today), live = list.filter(g => g.state === 'in');
   if (state.when === 'live') return { games:live, all:list, title:'Live', bets:'Top live bets', gamesH:'Live games', empty:'No games are live right now.' };
-  if (state.when === 'upcoming') return { games:upcoming, all:list, title:'Upcoming', bets:'Top upcoming bets', gamesH:'Upcoming games', empty:'No more games on the schedule yet.' };
-  return { games:day, all:list, title:dayName, bets: dayName === 'Today' ? 'Top bets today' : `Top bets · ${dayName}`, gamesH: dayName === 'Today' ? "Today's games" : `${dayName}'s games`, empty:'No games found for this filter.' };
+  return { games:day, all:list, title:'Today', bets:'Top bets today', gamesH:"Today's games", empty:'No games today for this filter.' };
 }
 function topBets(res){
   const F = state.filters; let all = res.flatMap(R => R.ranked.map(c => ({ c, R })));
@@ -2351,11 +2348,11 @@ function topBets(res){
   for (const x of all.sort((a,b)=>b.c.quality-a.c.quality)){ if ((seen.get(x.R.g.id)||0) >= per && !F.game) continue; top.push(x); seen.set(x.R.g.id, (seen.get(x.R.g.id)||0)+1); if (top.length >= CONFIG.topBets) break; }
   return top;
 }
-function gameRow(g){
+function gameRow(g, withSport){
   const R = CACHE[g.id], C = R ? R.gm.C : null, o = g.espnOdds || {}, live = g.state === 'in';
   const sp = C?.homeSpread ?? o.homeSpread, tot = C?.total ?? o.total;
   const spTxt = sp != null ? (sp === 0 ? 'PK' : `${sp < 0 ? g.home.abbr : g.away.abbr} ${fmtPt(-Math.abs(sp))}`) : '';
-  return `<div class="gr"><div class="gr-l"><div class="gr-tm">${teamLogo(g.away,'sm')}<span>${esc(g.away.short)}</span>${live ? `<b class="sc">${esc(g.away.score||0)}</b>` : ''}<span class="muted">@</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)}</span>${live ? `<b class="sc">${esc(g.home.score||0)}</b>` : ''}</div>
+  return `<div class="gr"><div class="gr-l"><div class="gr-tm">${withSport ? `<span>${SPORT[g.sport].icon}</span>` : ''}${teamLogo(g.away,'sm')}<span>${esc(g.away.short)}</span>${live ? `<b class="sc">${esc(g.away.score||0)}</b>` : ''}<span class="muted">@</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)}</span>${live ? `<b class="sc">${esc(g.home.score||0)}</b>` : ''}</div>
     <div class="gr-m">${live ? `<b style="color:var(--bad)">${esc(whenTxt(g))}</b>` : esc(whenTxt(g))}${g.sport==='soccer' && g.leagueName ? ` · ${esc(g.leagueName)}` : ''}${spTxt || tot != null ? ` · <span class="mono">${esc([spTxt, tot != null ? 'O/U ' + tot : ''].filter(Boolean).join(' · '))}</span>` : ''}</div></div>
     ${goLink('View bets', '#g-' + g.id)}</div>`;
 }
@@ -2378,7 +2375,7 @@ function renderToday(){
     <aside class="col-side">
       <section class="sec" aria-labelledby="h-sgp"><div class="sechead"><h2 id="h-sgp">Top SGPs</h2><span class="note">Best same-game parlay per tier · * price assumed</span></div>${tiersGrid(tierLists, 'home', { showGame:true, stack:true, busy:researching })}</section>
       <section class="sec" aria-labelledby="h-games"><div class="sechead"><h2 id="h-games">${esc(v.gamesH)}</h2></div>${gamesBySport(v.games, 'home') || empty}
-        ${state.when === 'today' && v.all.some(g => g.state === 'pre' && !v.games.includes(g)) ? `<button class="linkbtn" data-when="upcoming">See upcoming games →</button>` : ''}</section>
+        <a class="linkbtn" href="#week">Upcoming games are on This week's parlays →</a></section>
     </aside></div>`);
   headerSync();
 }
@@ -2394,17 +2391,23 @@ function weekGames(){
 function renderWeek(){
   const W = state.week, games = weekGames(), res = games.map(g => CACHE[g.id]).filter(Boolean);
   const P = buildWeekParlays(res), lists = {}; for (const t of TIERS) lists[t] = P[t].map(s => ({ s, R:null }));
-  const picks = res.filter(R => R.best[0] && R.g.state !== 'post').map(R => ({ R, c:R.best[0] }));
+  const today = etDate(Date.now()), later = games.filter(g => etDate(g.date) !== today && g.state !== 'in');
+  const picks = res.filter(R => R.best[0] && R.g.state !== 'post' && later.includes(R.g)).map(R => ({ R, c:R.best[0] }));
+  const days = [...new Set(later.map(g => etDate(g.date)))];
+  const gamesHtml = days.map(d => { const gs = later.filter(g => etDate(g.date) === d), key = 'wg' + hsh(state.sport + d);
+    return `<details class="grp" ${days.indexOf(d) < 2 ? 'open' : ''}><summary><span>${esc(dayLabel(d))}</span><span class="note">${plural(gs.length, 'game')}</span></summary><div class="grows">${moreList(key, gs.map(g => gameRow(g, true)), 6)}</div></details>`; }).join('');
   const rows = []; let lastDay = null;
   for (const { R, c } of picks){ const d = etDate(R.g.date); if (d !== lastDay){ rows.push(`<div class="dayh">${esc(dayLabel(d))}</div>`); lastDay = d; } rows.push(betRow(c, R, 'week', { game:true })); }
   const first = new Date(), last = new Date(Date.now() + 6*864e5), fmtD = d => d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
   const done = games.filter(g => CACHE[g.id]).length, todo = Math.min(games.filter(g => g.state !== 'post').length, CONFIG.weekCap);
   paint(`<div class="week">
     <div class="sechead"><h2>This week's parlays</h2><span class="note">${fmtD(first)} – ${fmtD(last)} · ${state.sport === 'all' ? 'all sports' : esc(SPORT[state.sport].label)}${W.busy ? ` · <span class="spin sm"></span> researching ${done} of ${todo} games` : ` · ${plural(res.length, 'game')} researched`}</span></div>
-    <section class="sec" aria-labelledby="h-wp"><div class="sechead"><h3 id="h-wp">Best picks this week</h3><span class="note">The top pick from each game</span></div>
+    <section class="sec" aria-labelledby="h-wp"><div class="sechead"><h3 id="h-wp">Best picks this week</h3><span class="note">The top pick from each game after today</span></div>
       ${picks.length ? `<div class="rows">${moreList('mwk' + hsh(state.sport), rows, 7)}</div>` : `<div class="panel note">${W.busy || !W.loadedAt ? '<span class="loading"><span class="spin"></span>Researching this week\'s games…</span>' : 'No games found this week for this filter.'}</div>`}</section>
-    <section class="sec" aria-labelledby="h-wt"><div class="sechead"><h3 id="h-wt">Parlays by risk</h3><span class="note">Built from the best picks across games · games that have started are locked out · * price assumed</span></div>
-      ${tiersGrid(lists, 'week', { busy:W.busy, weekly:true })}</section></div>`);
+    <section class="sec" aria-labelledby="h-wt"><div class="sechead"><h3 id="h-wt">Parlays by risk</h3><span class="note">Built from the best picks across the week, including tonight's games that haven't started · started games are locked out · * price assumed</span></div>
+      ${tiersGrid(lists, 'week', { busy:W.busy, weekly:true })}</section>
+    <section class="sec" aria-labelledby="h-wg"><div class="sechead"><h3 id="h-wg">Upcoming games</h3><span class="note">After today · tap a game for its full analysis</span></div>
+      ${gamesHtml || `<div class="panel note">${W.busy || !W.loadedAt ? '<span class="loading"><span class="spin"></span>Finding this week\'s games…</span>' : 'No more games this week for this filter.'}</div>`}</section></div>`);
   headerSync();
 }
 
@@ -2683,7 +2686,7 @@ async function reload(force){
   if (!cur(tok)) return;
   route(true);
   const v = viewGames(), first = [...v.games.filter(g => g.state === 'in'), ...v.games.filter(g => g.state !== 'in')];
-  await analyzeList(first, state.when === 'upcoming' ? 12 : CONFIG.todayCap, force, tok, cur);
+  await analyzeList(first, CONFIG.todayCap, force, tok, cur);
   if (!cur(tok)) return;
   state.busy = false; repaint(); headerSync(); schedule();
   if (isWeek()) loadWeek(force);
