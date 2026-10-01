@@ -2466,6 +2466,7 @@ async function renderGame(id, opts = {}){
   const shown = R.best.slice(0, 2), others = R.ranked.filter(c => !shown.includes(c)), creative = R.creative.filter(c => !shown.includes(c) && !others.slice(0, 15).includes(c));
   const bets = `${shown.length ? `<div class="bets two">${shown.map((c,i) => betCard(c, R, ctx, { top:i===0, tag:i===0 ? 'Best bet' : 'Next best' })).join('')}</div>` : '<div class="panel note">No lines are posted for this game yet. It fills in as books post markets.</div>'}
     ${others.length ? `<div class="sec"><div class="sechead"><h3>Other bets</h3><span class="note">${plural(others.length, 'more ranked bet')}</span></div><div class="rows">${moreList('mo' + hsh(ctx), others.map(c => betRow(c, R, ctx)), 5)}</div></div>` : ''}
+    ${g.sport === 'nfl' ? `<div class="sec"><div class="sechead"><h3>Touchdown picks</h3><span class="note">Most likely to score, from every player in the game</span></div><div id="gtdbox" data-gid="${g.id}"><div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE…</div></div></div>` : ''}
     ${creative.length ? `<div class="sec"><div class="sechead"><h3>Creative markets</h3><span class="note">Alt lines, periods, team props, scorers, corners & cards</span></div><div class="rows">${moreList('mc' + hsh(ctx), creative.map(c => betRow(c, R, ctx)), 3)}</div></div>` : ''}`;
   const sgps = `<div class="note" style="margin-bottom:8px">One recommended parlay per tier. Other options holds up to ${CONFIG.sgpPerTier - 1} more. * = price assumed at -110.</div>
     ${tiersGrid(Object.fromEntries(TIERS.map(t => [t, (R.sgps[t] || []).map(s => ({ s, R }))])), ctx)}`;
@@ -2482,6 +2483,7 @@ async function renderGame(id, opts = {}){
     ${R.changes.length ? `<div class="msg">${R.changes.map(esc).join('<br>')}</div>` : ''}
     ${tabsHtml('g-' + id, [['bets','Bets', bets], ['sgps','SGPs', sgps], ['research','Research', research]])}`);
   const lo = $('#loadOA'); if (lo) lo.onclick = () => renderGame(id, { useOA:true });
+  if (g.sport === 'nfl') fillTD(R, '#gtdbox', () => tdTopHtml(R));
   headerSync();
 }
 
@@ -2580,7 +2582,7 @@ async function renderResearch(id){
   paint(`<a href="#g-${g.id}" class="back">← Back to picks</a>
     <div class="gh"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">Deep research · ${esc(matchup(g))}</div><div class="note">${esc(timeET(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div></div>
     ${tabsHtml('research', tabs.filter(t => t[0] !== 'td' && t[0] !== 'sources').concat(tabs.filter(t => t[0] === 'td' || t[0] === 'sources')))}`);
-  if (state.tdHl){ const el = document.getElementById('td-' + state.tdHl); if (el) el.scrollIntoView({ block:'center' }); state.tdHl = null; }
+  if (g.sport === 'nfl') fillTD(R, '#tdbox', () => tdListHtml(R, 'td' + g.id));
   headerSync();
 }
 
@@ -2764,7 +2766,7 @@ function mktRow(r, R, ctx){
     <div class="mr-o"><span class="note">${bin ? 'Yes' : 'Over'}</span>${oddsCell(r.ov)}</div><div class="mr-o"><span class="note">${bin ? 'No' : 'Under'}</span>${oddsCell(r.un)}</div>
     <div class="mr-b note">${esc(r.book)}</div>
     <div class="mr-w">${r.why ? togBtn(id, 'Why?') : ''}</div></div>
-    ${r.why ? `<div class="whybox" id="${id}" hidden>${r.why.stat && /td/.test(r.why.stat) && g.sport === 'nfl' ? tdWhy(r.why, R) : whyBox(r.why, R)}</div>` : ''}</div>`;
+    ${r.why ? `<div class="whybox" id="${id}" hidden>${whyBox(r.why, R)}</div>` : ''}</div>`;
 }
 function rowsBlock(rows, R, ctx){
   const main = rows.filter(r => !r.alt).sort((a,b) => !!b.pick - !!a.pick), alt = rows.filter(r => r.alt).sort((a,b) => String(a.stat).localeCompare(String(b.stat)) || a.line - b.line);
@@ -2796,42 +2798,121 @@ async function renderPlayer(gid, pid){
   headerSync();
 }
 
-/* ---------- TD scorers (Deep Research, NFL) ---------- */
-function tdWhy(c, R){
-  const g = R.g, side = c.team, oppS = side === 'home' ? 'away' : 'home', p = c.player || R.idx[c.playerId]?.player || {}, ti = R.tdInfo?.[c.playerId] || {}, logs = R.logs[c.playerId] || [];
-  const tdList = logs.slice(0, 6).map(x => logVal('nfl', x, 'tds')).filter(v => v != null);
-  const oppPA = (R.D.lastFive[oppS] || []).map(e => e.pa).filter(v => v != null), sn = SCRIPT_TEXT(R.gm, g), top = Object.entries(R.gm.scripts).sort((a,b) => b[1]-a[1])[0];
-  const tt = R.gm.ttMean?.[side], inj = (R.D.injuries[side] || []), me = inj.find(x => x.id === c.playerId), mates = inj.filter(x => /^out|doubtful/i.test(x.status) && x.pos === p.pos && x.id !== c.playerId), oppOut = (R.D.injuries[oppS] || []).filter(x => /^out/i.test(x.status));
-  const L = c.G?.lines?.get(`${c.line == null ? 'x' : c.line}|${c.side}`), books = (L?.offers || []).filter(o => o.dec).sort((a,b) => b.dec - a.dec).slice(0, 5);
-  const li = (t, b) => `<li><b>${t}.</b> ${b}</li>`;
-  return `<div class="wb"><div class="wb-top">${c.quality != null ? strengthPill(c.quality) : ''}${c.noPath ? '<span class="pill bad">No clear path</span>' : ''}<span class="note">${esc(statLabel('nfl', c.stat))}</span></div>
-    <ul class="wb-pts">
-      ${li('Our chance', c.dec ? `We give him <b>${pct(c.p,0)}</b>. The ${decToAm(c.dec)} price implies ${pct(c.implied,0)}, so ${c.ev >= 0 ? `the payout is about <b>${fmt1(c.ev*100)}% better than fair</b>` : `the price is about ${fmt1(-c.ev*100)}% worse than fair`}.` : `We give him <b>${pct(c.p,0)}</b>. No price is posted yet.`)}
-      ${li('Red-zone & goal-line usage', `Carries and targets inside the 20, 10 and 5 aren't in the free data sources, so they're left out rather than guessed.${ti.carG != null ? ` Closest stand-in: ${fmt1(ti.carG)} carries and ${fmt1(ti.tgG)} targets a game lately.` : ''}`)}
-      ${li('Snap share & role', `${esc(p.pos || '—')}${c.model?.ctxNote ? ` · ${esc(c.model.ctxNote)}` : ''}. Snap share isn't in the free sources.`)}
-      ${li('Recent TDs', tdList.length ? `${tdList.filter(v => v > 0).length} of his last ${tdList.length} games with a TD (${tdList.join(', ')}).${ti.lam != null ? ` That's about ${fmt1(ti.lam)} TDs a game after adjusting for this matchup.` : ''}` : 'No game logs found.')}
-      ${li(`${esc(g[oppS].short)} defense`, `${oppPA.length ? `Allowed ${fmt1(avgArr(oppPA))} points a game over their last ${oppPA.length}.` : 'Recent points allowed not available.'} TDs allowed by position and red-zone defense aren't in the free sources.`)}
-      ${li('Team total & script', `${tt != null ? `${esc(g[side].short)} are projected for about ${fmt1(tt)} points (roughly ${fmt1(tt/7)} TDs).` : ''} Most likely script: ${esc(sn[top[0]].title)} (${pct(top[1],0)}).`)}
-      ${li('Injuries', `${me ? `He is listed ${esc(me.status)}.` : 'He has no injury listed.'} ${mates.length ? `Out at his position: ${mates.map(x => esc(x.name)).join(', ')} (more work for him).` : ''} ${oppOut.length ? `${esc(g[oppS].short)} are missing ${plural(oppOut.length, 'player')} (${oppOut.slice(0,3).map(x => `${esc(x.pos)} ${esc(x.name)}`).join(', ')}).` : ''}`)}
-      ${li('Odds across books', books.length ? books.map(o => `${esc(o.book)} ${decToAm(o.dec)}`).join(' · ') : 'Only one price or none posted.')}
-    </ul>
-    <div><span class="lbl">What could make it lose</span><ul class="small">${(() => { try { return failCase(R, c); } catch(e){ return ['He doesn\'t get the red-zone work this needs.']; } })().map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
-    ${c.dec ? `<div><span class="lbl">How much to bet · from your ${money(bankroll())} budget</span>${sizesHtml(c.p, c.dec, 0.02)}</div>` : ''}
-    <div class="actions">${c.playerId ? goLink('Player page', plHref(g.id, c.playerId)) : ''}</div></div>`;
+/* ---------- TD scorers (NFL): every QB/RB/WR/TE on both rosters, ranked by chance to score ---------- */
+/* Model (free data only):
+   team TDs  = market-implied team total × 0.113 (NFL points → TDs), nudged by weather and game script
+   rush/pass split = this team's own rushing vs receiving TDs in recent games (shrunk to the league's ~42% rush)
+   player λ  = team rush TDs × goal-line-weighted carry share + team pass TDs × red-zone-weighted target share,
+               blended with his own recent TD rate, then blended 50/50 with the sportsbook price when one exists.
+   Shares are taken among players who are actually available, so an injured starter's work moves to his teammates. */
+const TD_SKILL = /^(QB|RB|FB|WR|TE)$/;
+const TD_RZ_TGT = { TE:1.3, WR:1.0, RB:0.75, FB:0.9, QB:0 };
+async function tdModel(R){
+  if (R.tdm && R.tdm.at === R.at) return R.tdm;
+  const g = R.g, gm = R.gm, D = R.D, out = { at:R.at, rows:[], team:{} };
+  const ids = Object.entries(R.idx).filter(([, x]) => TD_SKILL.test(x.player.pos || '') && !/injured reserve|suspend|practice/i.test(x.player.status || '')).map(([id]) => id);
+  const need = ids.filter(id => !R.logs[id]);
+  if (need.length){ const arr = await pool(need, 6, id => viaProvider('playerData','gamelog','nfl', id).then(r => r.data || []).catch(() => [])); need.forEach((id, i) => R.logs[id] = arr[i] || []); }
+  const injOf = (side, id) => (D.injuries[side] || []).find(x => x.id === id);
+  const sides = ['away','home'], lamAll = {};
+  for (const side of sides){
+    const mine = ids.filter(id => R.idx[id].side === side);
+    const pf = (D.lastFive[side] || []).map(e => e.pf).filter(v => v != null);
+    let tt = gm.ttMean?.[side] ?? (pf.length ? avgArr(pf) : 21);
+    // recent team games (this season first): union of teammates' game ids, newest first
+    const games = new Map(); for (const id of mine) for (const x of (R.logs[id] || [])) if (!games.has(x.id) || x.season === 'this season') games.set(x.id, x);
+    const recent = [...games.values()].sort((a,b) => (a.season === b.season ? 0 : a.season === 'this season' ? -1 : 1) || new Date(b.date) - new Date(a.date)).slice(0, 6).map(x => x.id);
+    const wOf = gid => Math.pow(0.85, recent.indexOf(gid));
+    let rushTD = 0, recTD = 0;
+    const per = mine.map(id => { const p = R.idx[id].player, inj = injOf(side, id), logs = (R.logs[id] || []).filter(x => recent.includes(x.id));
+      let car = 0, tgt = 0, td = 0, w = 0, gp = 0, tdg = 0;
+      for (const x of logs){ const k = wOf(x.id), c = logVal('nfl', x, 'carries') || 0, t = logVal('nfl', x, 'targets') || 0, rt = logVal('nfl', x, 'rush_tds') || 0, et = logVal('nfl', x, 'reception_tds') || 0;
+        car += k*c; tgt += k*t; td += k*(rt + et); w += k; gp++; if (rt + et > 0) tdg++; rushTD += rt; recTD += et; }
+      const wAll = recent.reduce((s, gid) => s + wOf(gid), 0) || 1;
+      return { id, p, side, inj, out: !!inj && /^(out|doubtful|injured reserve)/i.test(inj.status), q: !!inj && /^questionable/i.test(inj.status),
+        car: car / wAll, tgt: tgt / wAll, carG: w ? car / w : 0, tgtG: w ? tgt / w : 0, tdRate: w ? td / w : 0, gp, tdg, logs: (R.logs[id] || []).slice(0, 6) }; });
+    // weather and script nudge how the team scores
+    const fav = gm.favSide === side, margin = Math.abs(gm.mu || 0), wx = R.weather;
+    let fr = (rushTD + 3.4) / (rushTD + recTD + 8);              // shrunk toward the league's ~42% of TDs on the ground
+    if (wx && ((wx.gust || 0) >= 20 || (wx.rain || 0) >= 50)) fr += 0.04;
+    if (fav && margin >= 3) fr += 0.03; else if (!fav && margin >= 6) fr -= 0.03;
+    fr = clamp(fr, 0.25, 0.6);
+    const teamTD = tt * 0.113, avail = per.filter(x => !x.out);
+    const carW = avail.reduce((s, x) => s + Math.pow(x.car, 1.15), 0) || 1, tgtW = avail.reduce((s, x) => s + x.tgt * (TD_RZ_TGT[x.p.pos] ?? 1), 0) || 1;
+    for (const x of avail){
+      const rushSh = Math.min(0.7, Math.pow(x.car, 1.15) / carW), tgtSh = Math.min(0.4, x.tgt * (TD_RZ_TGT[x.p.pos] ?? 1) / tgtW);   // even a workhorse rarely gets more than ~70% of goal-line work
+      const lamU = teamTD * (fr * rushSh + (1 - fr) * tgtSh);
+      const lamH = (x.tdRate * x.gp + lamU * 2) / (x.gp + 2) * clamp(tt / 22, 0.75, 1.3);   // his own TD rate, shrunk to his usage
+      let lam = x.gp >= 3 ? 0.65 * lamU + 0.35 * lamH : 0.85 * lamU + 0.15 * lamH;
+      if (x.q) lam *= 0.85;
+      lam = Math.min(lam, 0.95);
+      Object.assign(x, { lam, rushSh, tgtSh, lamU, lamH });
+    }
+    out.team[side] = { tt, teamTD, fr, rushTD, recTD, games:recent.length, outs:per.filter(x => x.out) };
+    lamAll[side] = teamTD;
+    out.rows.push(...avail.filter(x => x.lam > 0.005));
+  }
+  const allTD = (lamAll.home || 0) + (lamAll.away || 0);
+  // market prices (already collected) and blend with the book's own view
+  const mk = (pid, test) => R.cands.filter(c => c.playerId === pid && test(c) && c.dec).sort((a,b) => b.dec - a.dec)[0] || null;
+  for (const x of out.rows){
+    const m = { any:1 - Math.exp(-x.lam), first:(x.lam / (allTD || 1)) * (1 - Math.exp(-allTD)), two:1 - Math.exp(-x.lam) * (1 + x.lam) };
+    x.c = { any:mk(x.id, c => c.stat === 'anytime_td' && c.side === 'yes'), first:mk(x.id, c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'), two:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2) };
+    x.model = m; x.pr = {};
+    for (const k of ['any','first','two']){ const c = x.c[k]; const book = c ? (1 / c.dec) / (k === 'any' ? 1.07 : 1.2) : null;   // strip typical one-sided margin
+      x.pr[k] = book != null ? 0.5 * m[k] + 0.5 * book : m[k]; x.pBook = x.pBook || {}; x.pBook[k] = book; }
+  }
+  out.allTD = allTD; R.tdm = out; return out;
 }
-function tdScorersHtml(R){
-  const g = R.g, pool = [...R.cands, ...(R.unpriced || [])], ctx = 'td' + g.id;
-  const kinds = [['any','Anytime TD', c => c.stat === 'anytime_td' && c.side === 'yes'], ['first','First TD', c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'], ['two','2+ TDs', c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2]];
-  const tabs = kinds.map(([k, l, t]) => { const seen = new Set(), list = pool.filter(t).sort((a,b) => (!!a.noPath - !!b.noPath) || (!!b.dec - !!a.dec) || ((b.quality ?? b.p) - (a.quality ?? a.p))).filter(c => !seen.has(c.playerId) && seen.add(c.playerId));
-    if (!list.length) return null;
-    const rows = list.map((c, i) => { const p = c.player || R.idx[c.playerId]?.player || { name:c.G?.playerName }, id = 'tdw' + hsh(ctx + k + c.playerId);
-      return `<div class="br-wrap${state.tdHl === c.playerId ? ' hl' : ''}" id="td-${esc(c.playerId)}"><div class="br"><div class="br-i">${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${avatar(p)}</a>` : avatar(p)}</div>
-        <div class="br-t"><div class="br-g">#${i+1}${c.noPath ? ' · <span style="color:var(--bad)">no clear path</span>' : ''}</div><div><b>${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(p.name)}</a>` : esc(p.name)}</b></div><div class="note">${esc(p.pos || '')} · ${esc(g[c.team]?.abbr || '')}</div></div>
-        <div class="br-o"><b>${c.dec ? decToAm(c.dec) : '—'}</b><span>${esc(c.dec ? c.book : 'no price yet')}</span></div><div class="br-b">${togBtn(id, 'Why?')}</div></div>
-        <div class="whybox" id="${id}" hidden>${tdWhy(c, R)}</div></div>`; });
-    return [k, l, `<div class="rows">${moreList('tdm' + hsh(ctx + k), rows, 6)}</div>`]; }).filter(Boolean);
-  if (!tabs.length) return `<div class="panel note">No touchdown markets are posted for this game yet.${Providers.odds[1].enabled() ? ' Tap "Compare all sportsbooks" on the game page to pull them.' : ''}</div>`;
-  return `${tabsHtml('tdk', tabs)}<div class="note">Ranked on the same checks as every other bet. Players without a clear path to the end zone are listed last.</div>`;
+function tdWhy(x, R, k){
+  const g = R.g, side = x.side, oppS = side === 'home' ? 'away' : 'home', T = R.tdm.team[side], c = x.c?.[k], p = x.pr[k], li = (t, b) => `<li><b>${t}.</b> ${b}</li>`;
+  const tdList = x.logs.map(l => (logVal('nfl', l, 'rush_tds') || 0) + (logVal('nfl', l, 'reception_tds') || 0));
+  const oppPA = (R.D.lastFive[oppS] || []).map(e => e.pa).filter(v => v != null), sn = SCRIPT_TEXT(R.gm, g), top = Object.entries(R.gm.scripts).sort((a,b) => b[1]-a[1])[0];
+  const mates = T.outs.filter(o => o.p.pos === x.p.pos), oppOut = (R.D.injuries[oppS] || []).filter(i => /^out/i.test(i.status));
+  const L = c && c.G?.lines?.get(`${c.line == null ? 'x' : c.line}|${c.side}`), books = (L?.offers || []).filter(o => o.dec).sort((a,b) => b.dec - a.dec).slice(0, 6);
+  const fair = decToAm(1 / Math.max(p, 0.01)), lbl = { any:'score a TD', first:'score the first TD', two:'score 2+ TDs' }[k];
+  const fc = []; if (x.q) fc.push('He is questionable and could be limited.'); if (x.rushSh > 0.3) fc.push('Goal-line carries can go to a short-yardage back or the QB.'); if (x.tgtSh > 0.2) fc.push('Red-zone looks can spread to other targets or the run game.');
+  fc.push(`The game turns into "${sn[side === R.gm.favSide ? 'C' : 'A'].title}" and ${g[side].short} stall in the red zone.`); fc.push('TDs are rare events: even a 40% pick misses 6 times out of 10.');
+  return `<div class="wb"><div class="wb-top"><span class="pill ${p >= 0.4 ? 'strong' : p >= 0.25 ? 'solid' : 'lean'}">${pct(p,0)} to ${lbl}</span>${x.q ? '<span class="pill warn">Questionable</span>' : ''}</div>
+    <ul class="wb-pts">
+      ${li('Our chance', c ? `We give him <b>${pct(p,0)}</b> to ${lbl} (fair price ${fair}). The best price, ${decToAm(c.dec)} at ${esc(c.book)}, implies ${pct(1/c.dec,0)}, so ${p * c.dec >= 1 ? `<b>the payout beats fair by about ${fmt1((p * c.dec - 1) * 100)}%</b>` : `the price is about ${fmt1((1 - p * c.dec) * 100)}% short of fair. Only bet it at ${fair} or better`}.` : `We give him <b>${pct(p,0)}</b> to ${lbl}. Fair price ${fair}. No book price is posted yet, so take it only at ${fair} or better.`)}
+      ${li('Usage', `${fmt1(x.carG)} carries and ${fmt1(x.tgtG)} targets a game over his last ${x.gp} games. That's about ${pct(x.rushSh,0)} of the team's carries and ${pct(x.tgtSh,0)} of its targets once weighted for goal-line and red-zone value (TEs and big backs get more weight).${mates.length ? ` With ${mates.map(o => esc(o.p.name)).join(', ')} out, their work is split among the players still available.` : ''}`)}
+      ${li('Red zone, goal line & snaps', 'Inside-the-20/10/5 touches and snap share are not in the free data. The weighting above is the stand-in, so treat this as an estimate.')}
+      ${li('TD history', x.gp ? `${x.tdg} of his last ${x.gp} games with a TD (${tdList.join(', ')}). Model rate: ${fmt1(x.lam)} TDs a game.` : 'No recent game logs; this leans on his role and the team total.')}
+      ${li(`${esc(g[side].short)} scoring`, `Projected ${fmt1(T.tt)} points, about ${fmt1(T.teamTD)} TDs. ${pct(T.fr,0)} of them expected on the ground (from their own recent rushing vs receiving TDs${R.weather && ((R.weather.gust||0) >= 20 || (R.weather.rain||0) >= 50) ? ', nudged up for wind and rain' : ''}). Most likely script: ${esc(sn[top[0]].title)} (${pct(top[1],0)}).`)}
+      ${li(`${esc(g[oppS].short)} defense`, `${oppPA.length ? `Allowed ${fmt1(avgArr(oppPA))} points a game over their last ${oppPA.length}.` : 'Recent points allowed not available.'} ${oppOut.length ? `Missing ${oppOut.slice(0,3).map(i => `${esc(i.pos)} ${esc(i.name)}`).join(', ')}.` : ''} TDs allowed by position aren't in the free data.`)}
+      ${li('Injuries', `${x.inj ? `He is listed ${esc(x.inj.status)}${x.inj.detail ? ` (${esc(x.inj.detail)})` : ''}.` : 'No injury listed for him.'} ${T.outs.length ? `${esc(g[side].short)} out: ${T.outs.slice(0,4).map(o => `${esc(o.p.pos)} ${esc(o.p.name)}`).join(', ')}.` : ''}`)}
+      ${li('Prices across books', books.length ? books.map(o => `${esc(o.book)} ${decToAm(o.dec)}`).join(' · ') : 'No prices posted yet for this market.')}
+    </ul>
+    <div><span class="lbl">What could make it lose</span><ul class="small">${fc.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+    ${c ? `<div><span class="lbl">How much to bet · from your ${money(bankroll())} budget</span>${sizesHtml(p, c.dec, 0.02)}</div>` : ''}
+    <div class="actions">${goLink('Player page', plHref(g.id, x.id))}</div></div>`;
+}
+function tdRow(x, R, k, i, ctx){
+  const g = R.g, c = x.c[k], p = x.pr[k], id = 'tdw' + hsh('td' + g.id + k + x.id), val = c && p * c.dec >= 1.03;
+  return `<div class="br-wrap${state.tdHl === x.id && k === 'any' ? ' hl' : ''}" id="${k === 'any' ? 'td-' + esc(x.id) : ''}"><div class="br"><div class="br-i"><a class="plink" href="${plHref(g.id, x.id)}">${avatar(x.p)}</a></div>
+    <div class="br-t"><div class="br-g">#${i+1} · ${esc(x.p.pos)} · ${esc(g[x.side].abbr)}${x.q ? ' · <span style="color:var(--warn)">questionable</span>' : ''}</div><div><b><a class="plink" href="${plHref(g.id, x.id)}">${esc(x.p.name)}</a></b></div><div class="br-w">${pct(p,0)} chance${val ? ' <span class="tag">Value</span>' : ''}</div></div>
+    <div class="br-o"><b>${c ? decToAm(c.dec) : decToAm(1 / Math.max(p, 0.01))}</b><span>${c ? esc(c.book) : 'fair price'}</span></div><div class="br-b">${togBtn(id, 'Why?')}</div></div>
+    <div class="whybox" id="${id}" hidden>${tdWhy(x, R, k)}</div></div>`;
+}
+function tdScorersHtml(R){ return `<div id="tdbox" data-gid="${R.g.id}"><div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE in this game…</div></div>`; }
+function tdListHtml(R, ctx){
+  const M = R.tdm; if (!M.rows.length) return '<div class="panel note">No player game logs are available for this game yet.</div>';
+  const kinds = [['any','Anytime TD'], ['first','First TD'], ['two','2+ TDs']];
+  const tabs = kinds.map(([k, l]) => { const list = [...M.rows].sort((a,b) => b.pr[k] - a.pr[k]);
+    return [k, l, `<div class="rows">${moreList('tdm' + hsh(ctx + k), list.map((x, i) => tdRow(x, R, k, i, ctx)), 6)}</div>`]; });
+  const priced = M.rows.filter(x => x.c.any).length;
+  return `${tabsHtml('tdk', tabs)}<div class="note">Ranked by chance to score: every QB, RB, WR and TE on both rosters (${M.rows.length} players), using usage, TD history, the team totals, weather, script and injuries${priced ? `, blended with ${plural(priced, 'sportsbook price')}` : ''}. "Value" means the best price pays more than our fair price. Expected TDs in this game: ${fmt1(M.allTD)}.</div>`;
+}
+async function fillTD(R, sel, html){
+  try { await tdModel(R); } catch(e){ const b = document.querySelector(sel); if (b) b.innerHTML = `<div class="panel note">Couldn't load TD data right now (${esc(e.message)}).</div>`; return; }
+  const box = document.querySelector(sel); if (!box || box.dataset.gid !== R.g.id) return;
+  box.innerHTML = html(); restoreOpen(box);
+  if (state.tdHl){ const el = document.getElementById('td-' + state.tdHl); if (el) el.scrollIntoView({ block:'center' }); }
+}
+function tdTopHtml(R){
+  const M = R.tdm, top = [...M.rows].sort((a,b) => b.pr.any - a.pr.any).slice(0, 4);
+  return top.length ? `<div class="rows">${top.map((x, i) => tdRow(x, R, 'any', i, 'gtd' + R.g.id)).join('')}</div><div class="actions">${goLink('All TD scorers', '#r-' + R.g.id, 'data-rtab="td"')}</div>` : '';
 }
 
 /* ============================ FLOW: discover → analyze → monitor → repeat ============================ */
@@ -2896,6 +2977,7 @@ async function refresh(kind){
 }
 function route(keepDrawer){
   if (!keepDrawer) closePlayer(); const h = location.hash;
+  if (!h.startsWith('#r-')) state.tdHl = null;
   if (h.startsWith('#g-')) renderGame(h.slice(3)); else if (h.startsWith('#r-')) renderResearch(h.slice(3)); else if (h === '#health') renderHealth();
   else if (h === '#players'){ renderPlayers(); if (!state.week.busy && !state.week.loadedAt) loadWeek(false); }
   else if (h.startsWith('#p-')){ const s = h.slice(3), i = s.indexOf('-'); renderPlayer(s.slice(0, i), decodeURIComponent(s.slice(i + 1))); }
