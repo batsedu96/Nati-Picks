@@ -987,6 +987,17 @@ function parseEspnOdds(o, home, away){
   out.overPrice = num(o.overOdds ?? o.total?.over?.close?.odds); out.underPrice = num(o.underOdds ?? o.total?.under?.close?.odds);
   return out;
 }
+/* Live lines: prefer ESPN's "current" numbers over the pregame close. */
+function parseEspnLive(o, home, away){
+  const P = parseEspnOdds(o, home, away); if (!P) return null;
+  const n = v => { const x = num(v); return x === 0 && /even/i.test(String(v)) ? 100 : x; };
+  const set = (k, v) => { const x = n(v); if (x != null) P[k] = x; };
+  set('homeSpread', o.pointSpread?.home?.current?.line); set('homeSpreadPrice', o.pointSpread?.home?.current?.odds); set('awaySpreadPrice', o.pointSpread?.away?.current?.odds);
+  set('homeML', o.moneyline?.home?.current?.odds); set('awayML', o.moneyline?.away?.current?.odds); set('drawML', o.moneyline?.draw?.current?.odds);
+  set('total', o.total?.over?.current?.line); set('overPrice', o.total?.over?.current?.odds); set('underPrice', o.total?.under?.current?.odds);
+  P.provider = o.provider?.name || P.provider; return P;
+}
+const LIVE_BOOKS = {};   // gid → book → { sig, confirmed, changedAt }
 registerProvider('sportsData', { name:'ESPN',
   async slate(sport, league, opts = {}){
     const out = [];
@@ -1022,7 +1033,7 @@ registerProvider('sportsData', { name:'ESPN',
       D.lastFive[s] = (t.events||[]).map(e => { const isHome = e.homeTeamId === t.team.id; let pf = num(isHome ? e.homeTeamScore : e.awayTeamScore), pa = num(isHome ? e.awayTeamScore : e.homeTeamScore);
         if ((pf == null || pa == null) && e.score){ const m = String(e.score).match(/(\d+)\D+(\d+)/); if (m){ const a = +m[1], b = +m[2]; if (e.gameResult==='W'){ pf = Math.max(a,b); pa = Math.min(a,b); } else if (e.gameResult==='L'){ pf = Math.min(a,b); pa = Math.max(a,b); } else { pf = a; pa = b; } } }
         return { id:e.id, date:e.gameDate, opp:e.opponent?.abbreviation || e.opponent?.displayName, atVs:e.atVs, result:e.gameResult, pf, pa, comp:e.competitionName || '', league:e.leagueAbbreviation }; }).filter(e => e.pf != null); }
-    const pc = (j.pickcenter || []).find(p => p.provider) || (j.odds || [])[0];
+    const pc = (j.pickcenter || []).find(p => p.provider) || (j.odds || [])[0]; D.rawPick = pc || null;
     D.odds = parseEspnOdds(pc, g.home, g.away);
     const pr = j.predictor; if (pr && pr.homeTeam?.gameProjection != null) D.predictor = { home:num(pr.homeTeam.gameProjection)/100, away:num(pr.awayTeam?.gameProjection)/100 };
     D.news = ((j.news?.articles) || []).slice(0,6).map(a => ({ headline:a.headline, link:a.links?.web?.href, published:a.published }));
@@ -1113,6 +1124,31 @@ registerProvider('odds', { name:'ESPN', free:true,
     if (o.total != null){ push({ market:'total', side:'over', line:o.total, price:o.overPrice, open:o.totalOpen }); push({ market:'total', side:'under', line:o.total, price:o.underPrice, open:o.totalOpen }); }
     return { offers, meta:{ ok:true, book } };
   },
+  /* Free live odds: ESPN's odds list for the game (every book ESPN carries) + the pickcenter already in the summary call. */
+  async liveOffers(g, D){
+    const now = Date.now(), out = [], seen = new Set();
+    const add = o => { if (!o) return; const book = o.provider || 'ESPN'; if (seen.has(book)) return; seen.add(book);
+      const push = x => out.push({ book, source:'ESPN live', updated:now, fetchedAt:now, priced:x.price != null, scope:'game', period:'FG', ...x });
+      if (o.homeSpread != null){ push({ market:'spread', side:'home', line:o.homeSpread, price:o.homeSpreadPrice }); push({ market:'spread', side:'away', line:-o.homeSpread, price:o.awaySpreadPrice }); }
+      if (o.homeML != null) push({ market:'ml', side:'home', price:o.homeML }); if (o.awayML != null) push({ market:'ml', side:'away', price:o.awayML });
+      if (o.drawML != null && g.sport === 'soccer') push({ market:'ml', side:'draw', price:o.drawML });
+      if (o.total != null){ push({ market:'total', side:'over', line:o.total, price:o.overPrice }); push({ market:'total', side:'under', line:o.total, price:o.underPrice }); } };
+    const core = g.sport === 'soccer' ? (g.league ? `soccer/leagues/${g.league}` : null) : SPORT[g.sport].core;
+    if (core){ try { const j = await fetchJSON(`${ESPN_CORE}${core}/events/${g.id}/competitions/${g.id}/odds`, { ttl:25000 }); let refs = 0;
+      for (const it of (j.items || []).slice(0, 8)){ let o = it; if (o.details == null && o.overUnder == null && !o.pointSpread && o.$ref){ if (refs >= 4) continue; refs++; try { o = await fetchJSON(httpsRef(o.$ref), { ttl:25000 }); } catch(e){ continue; } } add(parseEspnLive(o, g.home, g.away)); } } catch(e){} }
+    add(parseEspnLive(D?.rawPick, g.home, g.away));
+    // a book counts as live only once its numbers move during the game (or differ from the pregame snapshot); frozen pregame lines are never shown as current
+    const S = preSnap(g.id), B = LIVE_BOOKS[g.id] || (LIVE_BOOKS[g.id] = {});
+    for (const book of new Set(out.map(o => o.book))){ const os = out.filter(o => o.book === book), sig = os.map(o => `${o.market}${o.side}${o.line}${o.price}`).join('|'), b = B[book] || (B[book] = { sig, confirmed:false, changedAt:null });
+      if (b.sig !== sig){ b.confirmed = true; b.changedAt = now; b.sig = sig; }
+      if (!b.confirmed && S){ const diff = os.some(o => { const k = `game|FG|${o.market}|`, pl = S.lines?.[k], pd = S.lines?.[k + '|' + o.side];
+        if (o.market === 'total' && pl != null && o.line != null && o.line !== pl) return true;
+        if (o.market === 'spread' && pl != null && o.line != null && Math.abs(o.line) !== Math.abs(pl)) return true;
+        if (o.market === 'ml' && pd && o.price != null && Math.abs(amToDec(o.price) - pd) > 0.08) return true; return false; });
+        if (diff){ b.confirmed = true; b.changedAt = now; } }
+      for (const o of os){ o.liveOk = b.confirmed; if (!b.confirmed){ o.stalePrice = o.price; o.price = null; o.priced = false; } } }
+    return out;
+  },
   async propOffers(g, idx){
     if (!SPORT[g.sport].core) return { offers:[], meta:{ ok:false } };
     const base = `${ESPN_CORE}${SPORT[g.sport].core}/events/${g.id}/competitions/${g.id}/odds`;
@@ -1152,7 +1188,7 @@ const OA_SOCCER = { 'eng.1':'soccer_epl', 'eng.2':'soccer_efl_champ', 'esp.1':'s
   'eng.fa':'soccer_fa_cup', 'esp.copa_del_rey':'soccer_spain_copa_del_rey', 'ger.dfb_pokal':'soccer_germany_dfb_pokal', 'fifa.world':'soccer_fifa_world_cup', 'ned.1':'soccer_netherlands_eredivisie', 'por.1':'soccer_portugal_primeira_liga' };
 const oaKey = () => store.get('np_oakey', '');
 const OA = { credits: store.get('np_oacredits', null) };
-registerProvider('odds', { name:'The Odds API', free:false, enabled: () => !!oaKey(),
+registerProvider('odds', { name:'The Odds API', free:false, enabled: () => !!oaKey() && store.get('np_useoa', false),
   sportKey(g){ return g.sport === 'soccer' ? OA_SOCCER[g.league] : SPORT[g.sport].oa; },
   async findEvent(g){
     const sk = this.sportKey(g); if (!sk) return null;
@@ -1984,10 +2020,13 @@ function playerLeft(R, pid){
 function applyLive(R){
   const g = R.g, D = R.D, LG = liveGame(R), LC = LG.LC, S = preSnap(g.id), now = Date.now(), lo = LIVE_OA[g.id];
   const fetchAge = lo ? (now - lo.at)/1000 : Infinity;
-  R.live = { ...LG, fetchAge, oddsAt: lo?.at || null, suspended: lo?.suspended || [], budgetLeft: Math.max(0, CONFIG.liveBudget - (lo?.spent || 0)) };
+  R.live = { ...LG, fetchAge, oddsAt: null, suspended: lo?.suspended || [], budgetLeft: Math.max(0, CONFIG.liveBudget - (lo?.spent || 0)) };
   const keep = [];
+  let espnAt = 0; for (const G of R.book.values()) for (const o of G.offers) if (o.source === 'ESPN live' && o.liveOk) espnAt = Math.max(espnAt, o.fetchedAt || 0);
   for (const c of R.cands){
-    const fresh = fetchAge <= CONFIG.liveStaleSec && (now - (c.updated || 0))/1000 <= 600;
+    if (!c.priced) continue;                                   // live picks need a real live price
+    const bo = c.G?.lines?.get(`${c.line == null ? 'x' : c.line}|${c.side}`)?.best;
+    const fresh = bo?.source === 'ESPN live' ? (!!bo.liveOk && now - (bo.fetchedAt || 0) <= 90000) : fetchAge <= CONFIG.liveStaleSec && (now - (c.updated || 0))/1000 <= 600;
     let p = null, push = 0, info = {}; const k = c.kind;
     if (g.sport === 'soccer'){ p = c.p; info = { note:'Live soccer model (score, minute, red cards)' }; }
     else if (c.period !== 'FG') continue;
@@ -2027,7 +2066,7 @@ function applyLive(R){
     c.liveOk = fresh && c.ev >= 0.02 && c.dec >= 1.25 && c.dec <= 5 && LC.rem >= 0.04 && !c.noPath;
     keep.push(c);
   }
-  R.cands = keep;
+  R.cands = keep; R.live.oddsAt = Math.max(lo?.at || 0, espnAt) || null; R.live.books = [...new Set([...R.book.values()].flatMap(G => G.offers.filter(o => o.source === 'ESPN live' && o.liveOk || o.source === 'The Odds API').map(o => o.book)))];
   const ok = keep.filter(c => c.liveOk);
   R.best = rankDiverse(ok, 3); R.ranked = rankDiverse(ok, 15); R.creative = [];
   R.liveStale = keep.filter(c => !c.live.fresh && c.ev >= 0.02).sort((a,b) => b.ev - a.ev).slice(0, 6);
@@ -2183,8 +2222,11 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   if (!live) try { const t1 = performance.now(); const r = await espn.gameOffers(g, D); offers.push(...r.offers); if (r.offers.length) sources.push(`${r.meta.book} (via ESPN)`); healthMark('ESPN · odds', true, performance.now()-t1, { markets:r.offers.length }); } catch(e){ healthMark('ESPN · odds', false, 0, { msg:e.message }); }
   if (sport !== 'soccer' && !live){ try { const t1 = performance.now(); const r = await espn.propOffers(g, idx); offers.push(...r.offers); healthMark('ESPN · props', true, performance.now()-t1, { markets:r.offers.length }); } catch(e){ healthMark('ESPN · props', false, 0, { msg:e.message }); dq.push({ lvl:'warn', t:'Free player prop lines could not be loaded.' }); } }
   let oaData = oa.enabled() && !live ? oa.cached(g) : null;
+  if (live){ try { const lv = await espn.liveOffers(g, D); offers.push(...lv); const ok = [...new Set(lv.filter(o => o.liveOk).map(o => o.book))];
+      if (ok.length) sources.push(`ESPN live odds (${ok.join(', ')})`); else dq.push({ lvl:'warn', t:'ESPN hasn\'t posted live odds for this game yet (or they are still the pregame numbers). Scores, tracker and research still update.' });
+      healthMark('ESPN · live odds', true, 0, { markets:lv.length }); } catch(e){ healthMark('ESPN · live odds', false, 0, { msg:e.message }); } }
   if (live){ if (useOA && oa.enabled()){ onStep('Pulling live odds…'); await liveOddsFetch(g, true); } oaData = LIVE_OA[g.id]?.data || null;
-    if (!oaData) dq.push({ lvl:'warn', t: oa.enabled() ? 'Live odds load on a credit budget; waiting for the next pull.' : 'Live odds need The Odds API key (Settings). Scoreboard, tracker and live research still work.' }); }
+    if (!oaData && oa.enabled()) dq.push({ lvl:'warn', t:'Odds API live odds load on a credit budget; waiting for the next pull.' }); }
   else if (useOA && oa.enabled()){
     try { onStep('Pulling every sportsbook from The Odds API…'); const t1 = performance.now(); oaData = await oa.loadAll(g, 'all'); healthMark('The Odds API · odds', true, performance.now()-t1, { markets:oaData.bookmakers.reduce((t,b)=>t+b.markets.length,0) });
       if (oaData.failed.length) dq.push({ lvl:'warn', t:`Some markets weren't offered: ${oaData.failed.slice(0,4).join('; ')}${oaData.failed.length>4?'…':''}` }); }
@@ -2795,7 +2837,8 @@ function openSettings(){
     <div class="stack"><label class="lbl" for="bankroll">Your betting budget</label><div class="money"><span>$</span><input id="bankroll" type="number" min="1" step="1" inputmode="numeric" value="${esc(store.get('np_bank','1000'))}"></div>
       <p class="note" style="margin:0">Bet sizes under every WHY? are worked out from this number, three ways: Cautious, Steady and Aggressive.</p>
       <label class="lbl" for="sgpN">Parlay options per tier</label><select id="sgpN">${[2,3,4,5,6].map(n=>`<option ${CONFIG.sgpPerTier===n?'selected':''}>${n}</option>`).join('')}</select>
-      <details class="acc"><summary>More sportsbooks (optional)</summary><div class="stack" style="margin-top:8px">
+      <details class="acc"><summary>More sportsbooks (optional, off)</summary><div class="stack" style="margin-top:8px">
+        <label class="row" style="gap:8px"><input type="checkbox" id="useOA" ${store.get('np_useoa', false)?'checked':''}> I have a The Odds API key, use it (off by default; everything works on free ESPN data without it)</label>
         <label class="lbl" for="oakey">The Odds API key (free tier)</label><input id="oakey" type="password" value="${esc(oaKey())}" placeholder="Paste your key">
         <p class="note" style="margin:0">Adds prices from up to 10 sportsbooks, alternate lines, first-half, touchdown and scorer markets, and soccer corners and cards. Used only when you tap "Compare all sportsbooks" on a game (about 20–40 credits per game; the free plan has 500 a month). Your key stays in this browser.</p>
         <label class="lbl" for="liveB">Live odds budget per game (credits)</label><select id="liveB">${[20,40,80,150].map(n => `<option ${CONFIG.liveBudget===n?'selected':''}>${n}</option>`).join('')}</select>
@@ -2803,7 +2846,7 @@ function openSettings(){
         <label class="row" style="gap:8px"><input type="checkbox" id="autoOA" ${store.get('np_autoOA', false)?'checked':''}> Compare all sportsbooks automatically when I open a game (uses credits)</label></div></details>
       <button class="btn primary" id="saveS">Save</button>
       <a href="#health" class="note">Data health (admin)</a></div>`, 'Settings');
-  $('#saveS').onclick = () => { store.set('np_bank', $('#bankroll').value); store.set('np_oakey', $('#oakey').value.trim()); store.set('np_autoOA', $('#autoOA').checked); CONFIG.liveBudget = +$('#liveB').value; store.set('np_livebudget', CONFIG.liveBudget); const n = +$('#sgpN').value; if (n !== CONFIG.sgpPerTier){ CONFIG.sgpPerTier = n; store.set('np_sgpN', n); for (const k of Object.keys(CACHE)) delete CACHE[k]; } closePlayer(); alertPush('ok','Settings saved.'); route(); if (!Object.keys(CACHE).length) reload(false); };
+  $('#saveS').onclick = () => { store.set('np_bank', $('#bankroll').value); store.set('np_oakey', $('#oakey').value.trim()); store.set('np_autoOA', $('#autoOA').checked); store.set('np_useoa', $('#useOA').checked); CONFIG.liveBudget = +$('#liveB').value; store.set('np_livebudget', CONFIG.liveBudget); const n = +$('#sgpN').value; if (n !== CONFIG.sgpPerTier){ CONFIG.sgpPerTier = n; store.set('np_sgpN', n); for (const k of Object.keys(CACHE)) delete CACHE[k]; } closePlayer(); alertPush('ok','Settings saved.'); route(); if (!Object.keys(CACHE).length) reload(false); };
 }
 function liveOddsTable(list){
   if (!list.length) return '<div class="panel note">Odds appear here once games are researched.</div>';
@@ -3164,7 +3207,8 @@ function renderLive(){
   const seen = new Map(), top = [];
   for (const x of res.flatMap(R => R.ranked.map(c => ({ c, R }))).sort((a,b) => b.c.quality - a.c.quality)){ if ((seen.get(x.R.g.id) || 0) >= 3) continue; seen.set(x.R.g.id, (seen.get(x.R.g.id) || 0) + 1); top.push(x); if (top.length >= 10) break; }
   const stale = res.flatMap(R => (R.liveStale || []).map(c => ({ c, R }))), oaOn = Providers.odds[1].enabled();
-  const why = !games.length ? 'No games are live right now. Live picks show up here as soon as a game starts.' : !oaOn ? 'Live odds come from The Odds API. Add your key in Settings to get live picks; scores and research below still update.' : res.length < games.length ? 'Researching live games…' : 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.';
+  const anyOdds = res.some(R => R.live?.books?.length);
+  const why = !games.length ? 'No games are live right now. Live picks show up here as soon as a game starts.' : res.length < games.length ? 'Researching live games…' : !anyOdds ? 'ESPN hasn\'t posted live odds for these games yet (or they still show the pregame numbers). Live picks appear as soon as live prices move. Scores and research below keep updating.' : 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.';
   const byS = SPORT_KEYS.filter(k => games.some(g => g.sport === k)).map(k => `<details class="grp" open><summary><span>${SPORT[k].icon} ${esc(SPORT[k].label)}</span><span class="note">${plural(games.filter(g => g.sport === k).length, 'game')}</span></summary><div class="grows">${games.filter(g => g.sport === k).map(liveGameRow).join('')}</div></details>`).join('');
   paint(`<section class="sec"><div class="sechead"><h2>Top live bets</h2><span class="note">Best live price across every book we track · refreshes every 20s</span></div>
       ${top.length ? `<div class="bets board">${moreList('mlive', top.map((x, i) => betCard(x.c, x.R, 'live', { board:true, top:i === 0, tag:i === 0 ? 'Best live bet' : null })), 6)}</div>` : `<div class="panel note">${esc(why)}</div>`}
@@ -3206,7 +3250,7 @@ function liveGameWhy(R){
     <li><b>Pace vs pregame.</b> Pregame total ${fmt1(L.preT)}; live projection ${fmt1(L.projT)}. Pregame ${esc(g.home.short)} ${L.preM >= 0 ? 'by ' + fmt1(L.preM) : '+' + fmt1(-L.preM)}; live projection ${esc(g.home.short)} ${L.projM >= 0 ? 'by ' + fmt1(L.projM) : 'trail by ' + fmt1(-L.projM)}.</li>
     ${wp.length ? `<li><b>Win probability.</b> ${esc(g.home.short)} ${fmt1(wp[wp.length - 1]*100)}% now (started ${fmt1(wp[0]*100)}%).</li>` : ''}
     ${scoring.length ? `<li><b>Recent scores.</b> ${scoring.map(p => esc(p.text)).join(' · ')}</li>` : ''}
-    <li><b>Odds.</b> ${R.live.oddsAt ? `Live odds updated ${agoEl(R.live.oddsAt)}; ${plural(Math.round(R.live.budgetLeft), 'credit')} left in this game's budget.` : 'No live odds pulled yet.'}${R.live.suspended.length ? ` Suspended right now: ${R.live.suspended.map(esc).join(', ')}.` : ''}</li>
+    <li><b>Odds.</b> ${R.live.oddsAt ? `Live odds from ${esc((R.live.books || []).join(', ') || 'ESPN')}, updated ${agoEl(R.live.oddsAt)}.` : 'ESPN hasn\'t posted live odds for this game yet.'}${R.live.suspended.length ? ` Suspended right now: ${R.live.suspended.map(esc).join(', ')}.` : ''}</li>
   </ul></div>`;
 }
 function renderLiveGame(R){
@@ -3218,13 +3262,13 @@ function renderLiveGame(R){
     <div class="sb"><div class="sb-t">${teamLogo(g.away,'')}<div><div class="sb-n">${esc(g.away.short)}</div><div class="sb-s">${esc(g.away.score ?? 0)}</div></div></div>
       <div class="sb-mid"><div class="pill bad">● LIVE</div><div class="sb-clock">${esc(g.statusText || L.LC.label || '')}</div><div class="note">${liveSituation(R)}</div></div>
       <div class="sb-t r"><div><div class="sb-n">${esc(g.home.short)}</div><div class="sb-s">${esc(g.home.score ?? 0)}</div></div>${teamLogo(g.home,'')}</div></div>
-    <div class="note lv-odds">${L.oddsAt ? `Live odds updated ${agoEl(L.oddsAt)}` : 'No live odds yet'} · ${oaOn ? `${plural(Math.round(L.budgetLeft), 'credit')} left of this game's ${CONFIG.liveBudget}-credit budget` : 'add an odds key in Settings for live prices'}${L.suspended.length ? ` · <b style="color:var(--warn)">Suspended: ${L.suspended.map(esc).join(', ')}</b>` : ''}
+    <div class="note lv-odds">${L.oddsAt ? `Live odds from ${esc((L.books || []).join(', ') || 'ESPN')} · updated ${agoEl(L.oddsAt)}` : 'Waiting for ESPN to post live odds for this game'}${oaOn ? ` · ${plural(Math.round(L.budgetLeft), 'credit')} left of this game's ${CONFIG.liveBudget}-credit budget` : ''}${L.suspended.length ? ` · <b style="color:var(--warn)">Suspended: ${L.suspended.map(esc).join(', ')}</b>` : ''}
       ${oaOn ? ` · <button class="linkbtn" id="liveRefresh">Refresh live odds (~${cost} credits)</button>` : ''}</div>
     ${R.changes.length ? `<div class="msg">${R.changes.map(esc).join('<br>')}</div>` : ''}
-    <section class="sec">${shown.length ? `<div class="bets two">${shown.map((c,i) => betCard(c, R, ctx, { top:i === 0, tag:i === 0 ? 'Live best bet' : 'Next best' })).join('')}</div>` : `<div class="panel note">${oaOn ? 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.' : 'Live picks need live odds from The Odds API (add your key in Settings).'}</div>`}</section>
+    <section class="sec">${shown.length ? `<div class="bets two">${shown.map((c,i) => betCard(c, R, ctx, { top:i === 0, tag:i === 0 ? 'Live best bet' : 'Next best' })).join('')}</div>` : `<div class="panel note">${L.oddsAt ? 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.' : 'No live prices yet: ESPN hasn\'t posted live odds for this game (or they still match the pregame numbers). The tracker and research below still update.'}</div>`}</section>
     ${others.length ? `<section class="sec"><div class="sechead"><h3>Other live bets</h3></div><div class="rows">${moreList('lo' + id, others.map(c => betRow(c, R, ctx)), 4)}</div></section>` : ''}
     ${R.liveStale?.length ? `<details class="acc panel"><summary>Waiting on fresh odds (${R.liveStale.length})</summary><div class="rows stale" style="margin-top:8px">${R.liveStale.map(c => betRow(c, R, ctx + 's')).join('')}</div></details>` : ''}
-    <section class="sec"><div class="sechead"><h3>Live player props</h3><span class="note">Tap a player for his live market tabs</span></div>${propPlayers.length ? `<div class="pchs">${moreList('lpp' + id, propPlayers.map(x => `<a class="pch" href="${plHref(id, x.pid)}">${avatar(x.p)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(boxLine(R, x.pid) || x.p.pos || '')}</span></span><span class="pill strong">${x.n}</span></a>`), 8)}</div>` : `<div class="panel note">${oaOn ? 'Live player props come in with the next live odds pull for this page (or tap Refresh live odds).' : 'Live props need the odds key.'}</div>`}</section>
+    <section class="sec"><div class="sechead"><h3>Live player props</h3><span class="note">Tap a player for his live market tabs</span></div>${propPlayers.length ? `<div class="pchs">${moreList('lpp' + id, propPlayers.map(x => `<a class="pch" href="${plHref(id, x.pid)}">${avatar(x.p)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(boxLine(R, x.pid) || x.p.pos || '')}</span></span><span class="pill strong">${x.n}</span></a>`), 8)}</div>` : `<div class="panel note">${oaOn ? 'Live player props come in with the next live odds pull for this page (or tap Refresh live odds).' : 'Live player prop prices aren\'t in the free ESPN feed. Each player\'s live stats and on-pace projection update on his page and in the tracker below.'}</div>`}</section>
     <section class="sec"><div class="sechead"><h3>Live SGPs</h3></div><div class="panel note">Not shown: the odds feed doesn't say which books offer live same-game parlays or what they pay, so we don't guess.</div></section>
     <section class="sec"><div class="sechead"><h3>Pregame picks tracker</h3><span class="note">Every pregame pick and SGP leg for this game</span></div>${trackerHtml(R)}</section>
     <div class="actions">${togBtn('lwhy' + id, 'Why?')}${goLink('Deep research', '#r-' + id)}</div><div class="whybox" id="lwhy${id}" hidden>${liveGameWhy(R)}</div>`);
