@@ -2831,7 +2831,7 @@ function oddsCompare(R){
     <div class="note">Highlighted = best price. Best price isn't the same as best bet; the ratings weigh all eight checks. Tap a column header to sort.</div>`;
 }
 function laddersHtml(R){
-  const L = R.ladders.slice(0, 6); if (!L.length) return `<div class="panel note">${Providers.odds[1].enabled() ? 'No alternate ladders posted for this game yet.' : 'Alternate-line ladders with prices come from The Odds API (optional key in Settings).'}</div>`;
+  const L = R.ladders.slice(0, 6); if (!L.length) return `<div class="panel note">${Providers.odds[1].enabled() ? 'No alternate ladders posted for this game yet.' : 'Alt-line ladders need a sportsbook price for every rung, which the free ESPN feed doesn\'t include.'}</div>`;
   return `<div class="ladders">${L.map(ld => `<details class="acc panel"><summary>${esc(ld.best.player?.name || statLabel(R.g.sport, ld.best.market))} · ${esc(statLabel(R.g.sport, ld.best.market))} ${esc(ld.best.side)} — best rung <b>${esc(ld.best.label)}</b></summary>
     <div class="tablewrap" style="margin-top:8px"><table class="sortable"><thead><tr><th>Line</th><th class="num">Chance</th><th class="num">Best odds</th><th class="num">Implied</th><th class="num">Edge</th><th>Rating</th></tr></thead><tbody>
     ${ld.rungs.map(c => `<tr class="${c===ld.best?'bestrow':''}"><td>${c.side==='over' && c.isAlt ? Math.ceil(c.line)+'+' : (c.kind==='margin' ? fmtPt(c.line) : c.line)}${c.isAlt?'':' <span class="note">main</span>'}</td><td class="num">${pct(c.p,0)}</td><td class="num">${priceStr(c)} <span class="note">${esc(c.priced?c.book:'')}</span></td><td class="num">${pct(c.implied,0)}</td><td class="num">${c.ev>=0?'+':''}${fmt1(c.ev*100)}%</td><td>${strengthPill(c.quality)}</td></tr>`).join('')}</tbody></table></div></details>`).join('')}</div>`;
@@ -2894,7 +2894,7 @@ async function renderResearch(id){
       <h3>Recent games</h3><div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${form('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${form('home')}</div></div>
       ${D.predictor ? `<div class="panel note">ESPN power index: ${esc(g.home.short)} ${pct(D.predictor.home,0)} · ${esc(g.away.short)} ${pct(D.predictor.away,0)}.</div>` : ''}
       ${g.sport === 'soccer' || !(STAT_CATS[g.sport] || []).length ? `<h3>Player stats</h3>${playerTable}` : ''}`], ...statCatTabs(R)])],
-    ['props','Player props', `${propsHtml(R)}<h3>Alternate-line ladders</h3>${laddersHtml(R)}`],
+    ['props','Player props', tabsHtml('pp', [['top','Top picks', propsHtml(R)], ...propCatTabs(R), ['alt','Alt lines', laddersHtml(R)]])],
     ['matchup','Matchup', `<h3>Game scripts</h3>${scriptsHtml(R)}${soccerMatch}`],
     ['injuries','Injuries', g.sport !== 'soccer' ? `<div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${injBy('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${injBy('home')}</div></div><div class="note">From ESPN's injury report.</div>` : `<div class="panel note">Soccer injury lists aren't in the free data. Confirmed lineups (about an hour before kickoff) are on the Matchup tab and are used instead.</div>`],
     ['moves','Line movement', moves.length ? `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Book</th><th>Market</th><th>Side</th><th class="num">Open</th><th class="num">Now</th><th class="num">High</th><th class="num">Low</th><th>Last change</th></tr></thead><tbody>${moves.map(h=>`<tr><td>${esc(h.book)}</td><td>${esc(statLabel(g.sport,h.market))} ${esc(String(h.entity||'').replace(/^\d+$/, x=>R.idx[x]?.player.name||x))}</td><td>${esc(h.side)}</td><td class="num">${h.open?.line ?? ''} ${h.open?.price!=null?decToAm(amToDec(h.open.price)):''}</td><td class="num">${h.cur?.line ?? ''} ${h.cur?.price!=null?decToAm(amToDec(h.cur.price)):''}</td><td class="num">${h.hi ?? ''}</td><td class="num">${h.lo ?? ''}</td><td class="note">${agoEl(h.hist[h.hist.length-1]?.t)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="panel note">No movement recorded yet. The site saves every price it sees, so movement builds up over time (plus the book openers ESPN provides).</div>'],
@@ -2949,6 +2949,27 @@ function statCatTabs(R){
       <div class="note">Averages over each player's last 5 and last 10 games (game logs). Tap a column to sort, tap a player for his page.</div>`
       : `<div class="panel note">No ${esc(label.toLowerCase())} game logs for this game yet.${g.sport === 'nfl' && !/defense|kicking/.test(k) ? ' Logs for every QB, RB, WR and TE load automatically.' : ' These logs load for players with posted props in this category.'}</div>`;
     return [k, label, html]; });
+}
+
+/* ---------- Deep Research → Player props: one sub-tab per prop category ---------- */
+const PROP_EXTRA = { nfl:[['def','Defense', s => /sacks|tackles|def_interceptions/.test(s)], ['kick','Kicking', s => /field_goals|kicking_points|pats/.test(s)]] };
+function propCatTabs(R){
+  const g = R.g, defs = [...(MKT_TABS[g.sport] || []), ...(PROP_EXTRA[g.sport] || [])];
+  const best = new Map();
+  for (const c of R.cands.filter(c => c.kind === 'player' && !c.isAlt && c.playerId).sort((a,b) => b.quality - a.quality)){ const k = c.playerId + '|' + c.stat + '|' + (c.model?.kind === 'binary' ? c.side : ''); if (!best.has(k)) best.set(k, c); }
+  const all = [...best.values()].filter(c => c.model?.kind !== 'binary' || c.side === 'yes');
+  const distRow = c => `<tr class="click" data-player="${c.playerId}" data-game="${g.id}"><td><div class="pl">${avatar(c.player)}<div><b>${esc(c.player?.name)}</b><div class="note">${esc(c.player?.pos||'')} · ${esc(g[c.team]?.abbr||'')}</div></div></div></td>
+    <td>${esc(statLabel(g.sport, c.stat))}</td><td class="num">${c.line ?? '—'}${c.G?.open!=null && c.G.open!==c.line?`<div class="note">opened ${c.G.open}</div>`:''}</td><td class="num">${c.model?.kind === 'dist' ? fmt1(c.model.proj) : '—'}</td>
+    <td><b style="color:${c.side==='over'||c.side==='yes'?'var(--good)':'var(--bad)'}">${esc(String(c.side).toUpperCase())}</b></td><td class="num ${c.p>=0.58?'hot':''}">${pct(c.p,0)}</td><td class="num">${priceStr(c)} <span class="note">${c.priced?esc(c.book):''}</span></td><td class="num">${c.hit10?`${c.hit10.h}/${c.hit10.n}`:'—'}</td><td>${c.noPath ? '<span class="pill bad">No path</span>' : strengthPill(c.quality)}</td></tr>`;
+  const table = list => `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Player</th><th>Prop</th><th class="num">Line</th><th class="num">Proj.</th><th>Pick</th><th class="num">Chance</th><th class="num">Best odds</th><th class="num">Hit L10</th><th>Rating</th></tr></thead><tbody>${list.map(distRow).join('')}</tbody></table></div>`;
+  const used = new Set(), tabs = [];
+  for (const [k, label, test] of defs){
+    const list = all.filter(c => test(c.stat || '')); list.forEach(c => used.add(c)); if (!list.length) continue;
+    tabs.push([k, `${label} (${list.length})`, `${table(list)}<div class="note">Every ${esc(label.toLowerCase())} prop posted for this game, best rated first. Tap a column to sort, tap a player for his page.</div>`]);
+  }
+  const rest = all.filter(c => !used.has(c)); if (rest.length) tabs.push(['other', `Other (${rest.length})`, table(rest)]);
+  if (g.sport === 'nfl' && !tabs.some(t => t[0] === 'td')) tabs.unshift(['td', 'Touchdowns', `<div class="panel note">Touchdown odds aren't in the free ESPN feed, so there are no TD prop lines here. TD scorers has every QB, RB, WR and TE ranked by chance to score, with a fair price for each.</div><div class="actions">${goBtn('Open TD scorers', 'data-tabjump="research:td"')}</div>`]);
+  return tabs;
 }
 
 /* ============================ DATA HEALTH (admin only) ============================ */
@@ -3665,6 +3686,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-clearf]')){ state.filters = {}; state.soccerFilter.team = ''; if (!$('#drawer').hidden && $('#pane').getAttribute('aria-label') === 'Advanced') openAdvanced(); renderToday(); return; }
   const wb = e.target.closest('[data-when]'); if (wb && !wb.closest('#whenSeg')){ setWhen(wb.dataset.when); window.scrollTo({ top:0 }); return; }
   const pl = e.target.closest('[data-player]'); if (pl){ location.hash = plHref(pl.dataset.game, pl.dataset.player); return; }
+  const tj = e.target.closest('[data-tabjump]'); if (tj){ const [key, tab] = tj.dataset.tabjump.split(':'); const b = document.querySelector(`[data-tabs="${key}"] [data-tab="${tab}"]`); if (b){ b.click(); b.scrollIntoView({ block:'nearest' }); } return; }
   const tb2 = e.target.closest('[data-track]'); if (tb2){ trkToggle(tb2.dataset.track); return; }
   const ut = e.target.closest('[data-untrack]'); if (ut){ trkSave(trkLoad().filter(x => x.key !== ut.dataset.untrack)); trkBadge(); openTracker(true); return; }
   if (e.target.closest('[data-trkclear]')){ trkSave(trkLoad().filter(x => !(x.type === 'parlay' ? x.legs.every(l => ['Hit','Lost'].includes(trkEval(l).status)) : ['Hit','Lost','Push'].includes(trkEval(x).status)))); trkBadge(); openTracker(true); return; }
