@@ -404,6 +404,7 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
 .drawer .pane{max-height:100dvh;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .drawer .pane>*{flex-shrink:0}
 body.noscroll{overflow:hidden}
+.mscripts .script{gap:10px} .ms ol,.ms ul{margin:4px 0 0;padding-left:20px;font-size:13px;display:flex;flex-direction:column;gap:3px} .ms .lbl{color:var(--sun)}
 /* tracker + live stats */
 .ticker{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 16px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 .ticker::-webkit-scrollbar{display:none}
@@ -2895,7 +2896,7 @@ async function renderResearch(id){
       ${D.predictor ? `<div class="panel note">ESPN power index: ${esc(g.home.short)} ${pct(D.predictor.home,0)} · ${esc(g.away.short)} ${pct(D.predictor.away,0)}.</div>` : ''}
       ${g.sport === 'soccer' || !(STAT_CATS[g.sport] || []).length ? `<h3>Player stats</h3>${playerTable}` : ''}`], ...statCatTabs(R)])],
     ['props','Player props', tabsHtml('pp', [['top','Top picks', propsHtml(R)], ...propCatTabs(R), ['alt','Alt lines', laddersHtml(R)]])],
-    ['matchup','Matchup', `<h3>Game scripts</h3>${scriptsHtml(R)}${soccerMatch}`],
+    ['matchup','Matchup', `<h3>Game scripts: what to bet in each</h3>${g.sport === 'soccer' ? scriptsHtml(R) : matchupScriptsHtml(R)}${soccerMatch}`],
     ['injuries','Injuries', g.sport !== 'soccer' ? `<div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${injBy('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${injBy('home')}</div></div><div class="note">From ESPN's injury report.</div>` : `<div class="panel note">Soccer injury lists aren't in the free data. Confirmed lineups (about an hour before kickoff) are on the Matchup tab and are used instead.</div>`],
     ['moves','Line movement', moves.length ? `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Book</th><th>Market</th><th>Side</th><th class="num">Open</th><th class="num">Now</th><th class="num">High</th><th class="num">Low</th><th>Last change</th></tr></thead><tbody>${moves.map(h=>`<tr><td>${esc(h.book)}</td><td>${esc(statLabel(g.sport,h.market))} ${esc(String(h.entity||'').replace(/^\d+$/, x=>R.idx[x]?.player.name||x))}</td><td>${esc(h.side)}</td><td class="num">${h.open?.line ?? ''} ${h.open?.price!=null?decToAm(amToDec(h.open.price)):''}</td><td class="num">${h.cur?.line ?? ''} ${h.cur?.price!=null?decToAm(amToDec(h.cur.price)):''}</td><td class="num">${h.hi ?? ''}</td><td class="num">${h.lo ?? ''}</td><td class="note">${agoEl(h.hist[h.hist.length-1]?.t)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="panel note">No movement recorded yet. The site saves every price it sees, so movement builds up over time (plus the book openers ESPN provides).</div>'],
     ['odds','Odds comparison', `${oddsCompare(R)}<h3>Every market</h3>${market}`],
@@ -2957,19 +2958,108 @@ function propCatTabs(R){
   const g = R.g, defs = [...(MKT_TABS[g.sport] || []), ...(PROP_EXTRA[g.sport] || [])];
   const best = new Map();
   for (const c of R.cands.filter(c => c.kind === 'player' && !c.isAlt && c.playerId).sort((a,b) => b.quality - a.quality)){ const k = c.playerId + '|' + c.stat + '|' + (c.model?.kind === 'binary' ? c.side : ''); if (!best.has(k)) best.set(k, c); }
-  const all = [...best.values()].filter(c => c.model?.kind !== 'binary' || c.side === 'yes');
-  const distRow = c => `<tr class="click" data-player="${c.playerId}" data-game="${g.id}"><td><div class="pl">${avatar(c.player)}<div><b>${esc(c.player?.name)}</b><div class="note">${esc(c.player?.pos||'')} · ${esc(g[c.team]?.abbr||'')}</div></div></div></td>
-    <td>${esc(statLabel(g.sport, c.stat))}</td><td class="num">${c.line ?? '—'}${c.G?.open!=null && c.G.open!==c.line?`<div class="note">opened ${c.G.open}</div>`:''}</td><td class="num">${c.model?.kind === 'dist' ? fmt1(c.model.proj) : '—'}</td>
-    <td><b style="color:${c.side==='over'||c.side==='yes'?'var(--good)':'var(--bad)'}">${esc(String(c.side).toUpperCase())}</b></td><td class="num ${c.p>=0.58?'hot':''}">${pct(c.p,0)}</td><td class="num">${priceStr(c)} <span class="note">${c.priced?esc(c.book):''}</span></td><td class="num">${c.hit10?`${c.hit10.h}/${c.hit10.n}`:'—'}</td><td>${c.noPath ? '<span class="pill bad">No path</span>' : strengthPill(c.quality)}</td></tr>`;
-  const table = list => `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Player</th><th>Prop</th><th class="num">Line</th><th class="num">Proj.</th><th>Pick</th><th class="num">Chance</th><th class="num">Best odds</th><th class="num">Hit L10</th><th>Rating</th></tr></thead><tbody>${list.map(distRow).join('')}</tbody></table></div>`;
+  const posted = [...best.values()].filter(c => c.model?.kind !== 'binary' || c.side === 'yes').map(c => ({ ...c, conf:c.quality }));
+  const all = [...posted, ...statProps(R)];                       // posted lines first, then a stats line for everything else
+  const row = (c, star) => `<tr class="click" data-player="${c.playerId}" data-game="${g.id}"><td>${star ? '⭐' : ''}</td><td><div class="pl">${avatar(c.player)}<div><b>${esc(c.player?.name)}</b><div class="note">${esc(c.player?.pos||'')} · ${esc(g[c.team]?.abbr||'')}</div></div></div></td>
+    <td>${esc(statLabel(g.sport, c.stat))}</td><td class="num">${c.line ?? '—'}${!c.synth && c.G?.open!=null && c.G.open!==c.line?`<div class="note">opened ${c.G.open}</div>`:''}</td><td class="num">${c.synth || c.model?.kind === 'dist' ? fmt1(c.synth ? c.proj : c.model.proj) : '—'}</td>
+    <td><b style="color:${c.side==='over'||c.side==='yes'?'var(--good)':'var(--bad)'}">${esc(String(c.side).toUpperCase())}</b></td><td class="num ${c.p>=0.58?'hot':''}">${pct(c.p,0)}</td>
+    <td class="num">${c.synth ? `<span class="note">fair</span> ${decToAm(1/Math.max(c.p, 0.02))}` : `${priceStr(c)} <span class="note">${c.priced?esc(c.book):''}</span>`}</td><td class="num">${c.hit10?`${c.hit10.h}/${c.hit10.n}`:'—'}</td>
+    <td>${c.synth ? '<span class="pill">Stats line</span>' : '<span class="pill solid">Posted</span>'}</td><td>${c.noPath ? '<span class="pill bad">No path</span>' : strengthPill(c.conf)}</td></tr>`;
+  const table = list => { const sorted = [...list].sort((a,b) => b.conf - a.conf), top = new Set(sorted.filter(c => !c.noPath).slice(0, 5));
+    return `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Top</th><th>Player</th><th>Prop</th><th class="num">Line</th><th class="num">Proj.</th><th>Pick</th><th class="num">Chance</th><th class="num">Odds</th><th class="num">Hit L10</th><th>Source</th><th>Rating</th></tr></thead><tbody>${sorted.map(c => row(c, top.has(c))).join('')}</tbody></table></div>`; };
+  const legend = '<div class="note">⭐ = our top 5 in this category. <b>Posted</b> = a book line. <b>Stats line</b> = no line posted yet, so it uses his recent median, with the chance from his last 10 games and a fair price (bet it only at that price or better). Tap a column to sort, a player for his page.</div>';
   const used = new Set(), tabs = [];
   for (const [k, label, test] of defs){
     const list = all.filter(c => test(c.stat || '')); list.forEach(c => used.add(c)); if (!list.length) continue;
-    tabs.push([k, `${label} (${list.length})`, `${table(list)}<div class="note">Every ${esc(label.toLowerCase())} prop posted for this game, best rated first. Tap a column to sort, tap a player for his page.</div>`]);
+    tabs.push([k, `${label} (${list.length})`, `${table(list)}${legend}`]);
   }
-  const rest = all.filter(c => !used.has(c)); if (rest.length) tabs.push(['other', `Other (${rest.length})`, table(rest)]);
-  if (g.sport === 'nfl' && !tabs.some(t => t[0] === 'td')) tabs.unshift(['td', 'Touchdowns', `<div class="panel note">Touchdown odds aren't in the free ESPN feed, so there are no TD prop lines here. TD scorers has every QB, RB, WR and TE ranked by chance to score, with a fair price for each.</div><div class="actions">${goBtn('Open TD scorers', 'data-tabjump="research:td"')}</div>`]);
+  const rest = all.filter(c => !used.has(c)); if (rest.length) tabs.push(['other', `Other (${rest.length})`, table(rest) + legend]);
+  if (g.sport === 'nfl') { const i = tabs.findIndex(t => t[0] === 'td'); const btn = `<div class="actions">${goBtn('Open TD scorers', 'data-tabjump="research:td"')}</div><div class="note">TD scorers ranks every QB, RB, WR and TE by chance to score, using usage, team totals and injuries.</div>`;
+    if (i >= 0) tabs[i][2] += btn; else tabs.unshift(['td', 'Touchdowns', btn]); }
+  if (!tabs.length) tabs.push(['none', 'Props', `<div class="panel note">${Object.keys(R.logs).length ? 'No player stats are deep enough yet for a pick.' : 'Player logs are loading…'}</div>`]);
   return tabs;
+}
+
+/* ============================ STATS-BASED PROPS + MATCHUP BY GAME SCRIPT ============================ */
+/* When a book hasn't posted a line, the site still gives a pick: a "stats line" (his recent median, at the usual .5),
+   our chance over/under from his last 10 games, and a fair price. Posted lines are always preferred and listed first. */
+const SYN_SKIP = /^(minutes|targets|carries|longest_completion|longest_rush|longest_reception|pats|kicking_points)$/;
+const synMin = st => /yds|yards/.test(st) ? 10 : /td|goal|home_runs|stolen|interceptions|blocks|steals|power_play/.test(st) ? 0.12 : 0.8;
+function logDist(R, pid, st){
+  const g = R.g, v = (R.logs[pid] || []).slice(0, 10).map(x => logVal(g.sport, x, st)).filter(x => x != null);
+  if (v.length < 3) return null;
+  let sw = 0, sm = 0; v.forEach((x, i) => { const w = Math.pow(0.85, i); sw += w; sm += w*x; });
+  const mean = sm/sw, sd = Math.max(Math.sqrt(avgArr(v.map(x => (x - mean)**2))), /yds|yards/.test(st) ? Math.max(8, mean*0.3) : Math.max(0.5, Math.sqrt(Math.max(mean, 0.2))*0.9));
+  const sorted = [...v].sort((a,b) => a - b), med = sorted[Math.floor(sorted.length/2)];
+  return { v, mean, sd, med, n:v.length };
+}
+function pOverStats(d, line, mult = 1){
+  const m = d.mean*mult, emp = (d.v.filter(x => x*mult > line).length + 1)/(d.n + 2), nrm = 1 - normCdf((line - m)/(d.sd*Math.sqrt(mult)));
+  return clamp(d.n >= 6 ? 0.5*emp + 0.5*nrm : 0.35*emp + 0.65*nrm, 0.03, 0.92);   // short samples lean on the smoother normal estimate
+}
+function statProps(R){
+  if (R._syn && R._synAt === R.at && R._synN === Object.keys(R.logs).length) return R._syn;
+  const g = R.g, keys = Object.keys(SPORT[g.sport]?.log || {}).filter(k => !SYN_SKIP.test(k)), out = [];
+  const posted = new Set(R.cands.filter(c => c.playerId && !c.isAlt).map(c => c.playerId + '|' + c.stat));
+  for (const pid of Object.keys(R.logs)){ const info = R.idx[pid]; if (!info) continue;
+    if (g.sport === 'mlb'){ /* hitters vs pitchers share stat names */ }
+    for (const st of keys){
+      if (posted.has(pid + '|' + st)) continue;
+      const pit = /^(P|SP|RP)$/.test(info.player.pos || ''); if (g.sport === 'mlb' && (pit !== /^pitcher_|earned_runs|hits_allowed/.test(st))) continue;
+      const d = logDist(R, pid, st); if (!d || d.mean < synMin(st)) continue;
+      const line = /td|goal|home_runs/.test(st) && d.mean < 1.2 ? 0.5 : Math.floor(d.med) + 0.5;
+      const tdLike = /td|goal|home_runs|stolen/.test(st), po = pOverStats(d, line), side = tdLike || po >= 0.5 ? 'over' : 'under', p = side === 'over' ? po : 1 - po;   // scorer stats: always the "yes" side
+      out.push({ synth:true, playerId:pid, player:info.player, team:info.side, stat:st, line, side, p, proj:d.mean, n:d.n, d,
+        hit10:{ h:d.v.filter(x => side === 'over' ? x > line : x < line).length, n:d.n }, conf:clamp(0.45 + (p - 0.5)*1.5, 0, 0.85)*(d.n >= 6 ? 1 : 0.85),
+        label:`${info.player.name} ${side === 'over' ? 'Over' : 'Under'} ${line} ${statLabel(g.sport, st)}` });
+    } }
+  R._syn = out; R._synAt = R.at; R._synN = Object.keys(R.logs).length; return out;
+}
+/* how a game script moves each player's numbers */
+function scriptMult(R, side, st, s){
+  const g = R.g, fav = R.gm.favSide === side; if (s === 'B') return 1;
+  const lead = (s === 'A') === fav;               // is this player's team the one in control?
+  if (g.sport === 'nfl'){
+    if (/td/.test(st)) return lead ? 1.18 : 0.8;
+    if (/^rush_|carries|rush_attempts|longest_rush/.test(st)) return lead ? 1.12 : 0.82;
+    if (/^pass_|reception|receptions|targets/.test(st)) return lead ? 0.93 : 1.1;
+    return 1;
+  }
+  if (g.sport === 'nba') return lead ? 0.95 : 0.97;          // blowouts sit starters on both sides
+  if (g.sport === 'mlb' || g.sport === 'nhl') return lead ? 1.1 : 0.88;
+  return 1;
+}
+function scriptPicks(R, s){
+  const g = R.g, sn = SCRIPT_TEXT(R.gm, g);
+  const gameBets = R.cands.filter(c => !c.playerId && (c.align?.[s] || 0) > 0 && c.ev > -0.06).sort((a,b) => (b.quality + 0.15*b.align[s]) - (a.quality + 0.15*a.align[s])).slice(0, 3);
+  const props = [];
+  for (const c of R.cands.filter(c => c.playerId && !c.isAlt && c.line != null && c.model?.kind === 'dist')){ const d = logDist(R, c.playerId, c.stat); if (!d) continue;
+    const po = pOverStats(d, c.line, scriptMult(R, c.team, c.stat, s)), p = c.side === 'over' ? po : 1 - po; props.push({ c, p, posted:true }); }
+  for (const x of statProps(R)){ if (/td|goal|home_runs|stolen/.test(x.stat)) continue; const po = pOverStats(x.d, x.line, scriptMult(R, x.team, x.stat, s)), side = po >= 0.5 ? 'over' : 'under', p = Math.max(po, 1 - po);
+    props.push({ c:{ ...x, side, label:`${x.player.name} ${side === 'over' ? 'Over' : 'Under'} ${x.line} ${statLabel(g.sport, x.stat)}` }, p, posted:false }); }
+  const sc = x => x.p + (x.posted ? 0.04 : 0) + (x.c.side === 'over' ? 0.02 : 0) - (x.p > 0.82 ? 0.1 : 0) + (/yds|receptions|points|rebounds|assists|hits|total_bases|shots|strikeouts/.test(x.c.stat) ? 0.03 : 0);
+  const seen = new Set(), bestProps = props.sort((a,b) => sc(b) - sc(a)).filter(x => { const k = x.c.playerId + x.c.stat; if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 5);
+  let td = null;
+  if (g.sport === 'nfl' && R.tdm?.rows?.length){
+    const rows = R.tdm.rows.filter(x => !x.live?.tds).map(x => { const m = scriptMult(R, x.side, 'tds', s), p0 = x.pr.any, ps = 1 - Math.exp(-x.lam*m); return { x, p0, ps, drop:ps/Math.max(p0, 0.01) }; });
+    const best = [...rows].sort((a,b) => b.ps - a.ps).slice(0, 3);
+    const avoid = [...rows].sort((a,b) => b.p0 - a.p0).slice(0, 10).filter(r => !best.includes(r)).sort((a,b) => a.drop - b.drop).slice(0, 3);
+    td = { best, avoid };
+  }
+  return { gameBets, bestProps, td, title:sn[s].title };
+}
+function matchupScriptsHtml(R){
+  const { g, gm } = R, sn = SCRIPT_TEXT(gm, g);
+  const item = (href, label, note, star) => `<li>${star ? '⭐ ' : ''}${href ? `<a class="plink" href="${href}">${esc(label)}</a>` : esc(label)} <span class="note">${note}</span></li>`;
+  const order = ['A','B','C'].sort((a,b) => gm.scripts[b] - gm.scripts[a]);
+  return `<div class="scripts mscripts">${order.map((s, i) => { const P = scriptPicks(R, s);
+    return `<div class="script"><div class="row" style="justify-content:space-between"><h3>${esc(sn[s].title)}</h3><b class="mono">${pct(gm.scripts[s],0)}</b></div><div class="bar"><i style="width:${(gm.scripts[s]*100).toFixed(0)}%"></i></div><div class="note">${esc(sn[s].sub)}${i === 0 ? ' · most likely' : ''}</div>
+      <div class="ms"><span class="lbl">Best bets in this script</span>${P.gameBets.length ? `<ol>${P.gameBets.map((c, j) => item(null, c.label, `${priceStr(c)} · ${esc(c.book)}`, j === 0)).join('')}</ol>` : '<div class="note">No game line fits this script better than the others.</div>'}</div>
+      <div class="ms"><span class="lbl">Best player props in this script</span>${P.bestProps.length ? `<ol>${P.bestProps.map((x, j) => item(plHref(g.id, x.c.playerId), x.c.label, `${pct(x.p,0)} in this script · ${x.posted ? `${priceStr(x.c)} posted` : 'stats line, fair ' + decToAm(1/Math.max(x.p, 0.02))}`, j < 2)).join('')}</ol>` : '<div class="note">Player logs are still loading.</div>'}</div>
+      ${g.sport === 'nfl' ? (P.td ? `<div class="ms"><span class="lbl">Best TD scorers</span><ol>${P.td.best.map((r, j) => item(plHref(g.id, r.x.id), `${r.x.p.name} anytime TD`, `${pct(r.ps,0)} in this script${r.x.c.any ? ` · ${decToAm(r.x.c.any.dec)} ${esc(r.x.c.any.book)}` : ` · fair ${decToAm(1/Math.max(r.ps, 0.02))}`}`, j === 0)).join('')}</ol></div>
+        <div class="ms"><span class="lbl" style="color:var(--bad)">TD scorers to avoid</span><ul>${P.td.avoid.map(r => `<li><a class="plink" href="${plHref(g.id, r.x.id)}">${esc(r.x.p.name)}</a> <span class="note">${r.drop < 0.95 ? `${pct(r.p0,0)} overall → ${pct(r.ps,0)} here (${esc(g[r.x.side].short)} score less in this script)` : `only ${pct(r.ps,0)} to score in this script, low for a regular target`}</span></li>`).join('')}</ul></div>` : '<div class="ms note">TD picks load in a moment…</div>') : ''}
+    </div>`; }).join('')}</div>
+  <div class="note">⭐ = our top pick in that list. "Stats line" = no book line posted yet, so the line is his recent median and the chance comes from his last 10 games, adjusted for the script.</div>`;
 }
 
 /* ============================ DATA HEALTH (admin only) ============================ */
