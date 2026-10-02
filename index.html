@@ -400,6 +400,10 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
 .tbar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden} .tbar i{display:block;height:100%;border-radius:99px;background:var(--sun)} .tbar.ok i{background:var(--good)} .tbar.no i{background:var(--bad)}
 .plays{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin-top:6px;font-size:12.5px}
 .play{padding:4px 6px;border-radius:6px} .play.sc{background:var(--sun-soft)}
+/* drawers scroll (tracker, settings, player card): children must not shrink inside the fixed-height pane */
+.drawer .pane{max-height:100dvh;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.drawer .pane>*{flex-shrink:0}
+body.noscroll{overflow:hidden}
 /* tracker + live stats */
 .ticker{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 16px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 .ticker::-webkit-scrollbar{display:none}
@@ -1839,6 +1843,8 @@ const THEMES = {
   lotteryProps:{ name:'Lottery: player stack', legs:[5,6], lotto:true, minPlayers:3, test:c => true, score:c => c.quality + 0.03*(c.dec-2) + (c.kind==='player' ? 0.05 : 0), blurb:'Plus-money player lines that ride the same game script. Highest risk.' },
   lotteryCorr:{ name:'Lottery: correlated', legs:[5,6], lotto:true, corr:true, test:c => true, score:c => c.quality + 0.03*(c.dec-2), blurb:'Plus-money legs picked because they tend to win together. Highest risk.' },
 };
+THEMES.stack = { name:'Correlated stack', legs:[3,4], corr:true, script:'top', needAligned:true, test:c => c.p >= 0.35, blurb:'Every leg fits the same game story, so they tend to hit together: a better chance at the same kind of odds.' };
+THEMES.stackSafe = { name:'Correlated stack', legs:[2,3], corr:true, script:'top', needAligned:true, test:c => c.p >= 0.55, blurb:'Two or three high-chance legs that hit together.' };
 const TIER_PLAN = {
   nfl:{ 1:['conservative','altline','gamescript','balanced'], 2:['player','environment','passing','ground','upside','balanced2'], 3:['aggressive','longshot','correlation','creative','highscore','lowscore'] },
   nba:{ 1:['conservative','altline','gamescript','balanced'], 2:['player','environment','upside','balanced2'], 3:['aggressive','longshot','correlation','creative','highscore'] },
@@ -1860,7 +1866,7 @@ function buildSGPs(R){
     for (const tk of (plan[tier] || LOTTO_PLAN)){
       if (result[tier].length >= CONFIG.sgpPerTier) break;
       const T = THEMES[tk]; const script = T.script === 'top' ? order[0] : T.script === 'second' ? (order[1] || order[0]) : T.script || order[0];
-      let list = pool.filter(c => T.test(c) && (tier === 3 || !c.questionable));
+      let list = pool.filter(c => T.test(c) && (tier === 3 || !c.questionable) && legAllowed(R, c, tier) && c.p >= TIER_FLOOR[tier]);
       if (T.lotto) list = list.filter(lottoLeg);
       if (T.needAligned) list = list.filter(c => (c.align?.[script] ?? 0) >= 0);
       const scoreOf = c => (T.score ? T.score(c) : c.quality) + 0.1*(c.align?.[script] || 0);
@@ -1873,7 +1879,7 @@ function buildSGPs(R){
       } else {
         let start = [];
         if (T.needKind){ const need = list.filter(c => c.kind === T.needKind && (!T.side || c.side === T.side)).sort((a,b)=>scoreOf(b)-scoreOf(a))[0]; if (need) start = [need]; else if (T.needKind==='total') continue; }
-        legs = pickLegs(R, list.sort((a,b)=>scoreOf(b)-scoreOf(a)), T.legs[1], scoreOf, { start, corrFocus:T.corr, lotto:T.lotto });
+        legs = pickLegs(R, list.sort((a,b)=>scoreOf(b)-scoreOf(a)), T.legs[1], scoreOf, { start, corrFocus:T.corr, lotto:T.lotto, tdCap:TD_CAP[tier] });
       }
       if (legs.length < T.legs[0]) continue;
       if (T.lotto && !lottoOk(legs)) continue;
@@ -1887,10 +1893,11 @@ function buildSGPs(R){
     }
   }
   const all = TIERS.flatMap(t => result[t]);
-  all.forEach(s => { s.rankScore = 0.35*clamp(0.5 + s.edge/0.3, 0, 1) + 0.3*avgArr(s.legs.map(l=>l.quality)) + 0.2*clamp(0.5 + s.coherence, 0, 1) + 0.15*(gm.scripts[s.script]||0.3); });
+  all.forEach(s => { s.rankScore = 0.3*clamp(0.5 + s.edge/0.3, 0, 1) + 0.25*avgArr(s.legs.map(l=>l.quality)) + 0.2*clamp(0.5 + s.coherence, 0, 1) + 0.1*(gm.scripts[s.script]||0.3) + 0.15*clamp((s.boost - 1)/0.8, 0, 1); });
   for (const t of TIERS) result[t].sort((a,b)=>b.rankScore-a.rankScore).forEach((s,i)=>s.rank = i+1);
   return result;
 }
+for (const sp of Object.keys(TIER_PLAN)){ const P = TIER_PLAN[sp]; P[1] = ['stackSafe', ...P[1]]; P[2] = ['stack', ...P[2]]; P[3] = ['correlation', ...P[3].filter(x => x !== 'correlation')]; P[4] = ['lotteryCorr', ...(P[4] || LOTTO_PLAN).filter(x => x !== 'lotteryCorr')]; }
 /* This Week's Parlays: cross-game parlays built only from each game's existing rankings (no separate model). */
 const WEEK_TIERS = {
   1:{ legs:[3,3], test:c => c.p >= 0.6, score:c => c.quality + 0.4*(c.p-0.6), blurb:'Three of the most likely picks this week, from different games.' },
@@ -1907,12 +1914,13 @@ function buildWeekParlays(results){
     for (const c of [...R.ranked, ...R.creative]){
       if (seen.has(c.id)) continue; seen.add(c.id);
       if (c.noPath || c.mathOnly || c.stale || c.questionable || (c.side === 'draw' && c.ev < 0.02) || c.quality < 0.42 || c.ev < -0.05) continue;
+      if (!legAllowed(R, c, 0)) continue;
       pool.push(c);
     }
   }
   const out = { 1:[], 2:[], 3:[], 4:[] };
   for (const t of TIERS){
-    const T = WEEK_TIERS[t], list = pool.filter(T.test), used = new Map();
+    const T = WEEK_TIERS[t], list = pool.filter(c => T.test(c) && legAllowed(CACHE[c.gid], c, t) && c.p >= TIER_FLOOR[t]), used = new Map();
     for (let v = 0; v < CONFIG.sgpPerTier + 3 && out[t].length < CONFIG.sgpPerTier; v++){
       const scoreOf = c => (T.score ? T.score(c) : c.quality) - 0.07*(used.get(legKey(c)) || 0);
       const legs = [], sorted = [...list].sort((a,b)=>scoreOf(b)-scoreOf(a));
@@ -1926,6 +1934,7 @@ function buildWeekParlays(results){
           if (same.length >= 2) continue;
           if (same.length === 1){ if (same[0].family === c.family) continue; if (corrPair(CACHE[c.gid], same[0], c) < 0.15) continue; }
           if (T.lotto){ if (c.dec < 2 && legs.filter(l=>l.dec<2).length >= 2) continue; if (c.dec > 4 && legs.some(l=>l.dec>4)) continue; }
+          if (isTDLeg(c) && legs.filter(isTDLeg).length >= TD_CAP[t]) continue;
           legs.push(c);
         }
       }
@@ -1955,20 +1964,38 @@ function finishParlay(legs, tier, sig){
     games:new Set(legs.map(l=>l.gid)).size, book:null, priced:legs.every(l=>l.priced), at:Date.now(), ...TIER_META[tier], tierName:TIER_META[tier].name, name:TIER_META[tier].name };
 }
 const jaccard = (a, b) => { const A = new Set(a), B = new Set(b); let i = 0; for (const x of A) if (B.has(x)) i++; return i / (A.size + B.size - i); };
+const isTDLeg = c => c.kind === 'player' && /(^|_)td$|anytime_td|first_td|1st_td|^tds$|goal_scorer|first_hr|first_basket/.test(c.stat || '');
+const TD_CAP = { 0:9, 1:9, 2:9, 3:9, 4:9 };            // no cap: full selection (user preference)
+const TIER_FLOOR = { 0:0, 1:0, 2:0, 3:0, 4:0 };          // no extra floor: full selection (user preference)
+const qbMobile = (R, pid) => { const l = (R?.logs?.[pid] || []).slice(0, 6).map(x => logVal('nfl', x, 'carries')).filter(v => v != null); return l.length >= 2 && avgArr(l) >= 4.5; };
+/* One leg rule learned the hard way: no rushing or TD props for pocket QBs in parlays (kneel-downs, few carries). */
+function legAllowed(R, c, tier){
+  if (!R) return true;
+  const qb = c.kind === 'player' && posRole(c.player?.pos || R.idx?.[c.playerId]?.player?.pos) === 'qb';
+  if (qb && /^rush_|rush_attempts|longest_rush|anytime_td|first_td|1st_td/.test(c.stat || '') && !qbMobile(R, c.playerId)) return false;
+  return true;
+}
+/* Greedy, but every next leg is chosen for its own rating PLUS how strongly it wins together with the legs already picked.
+   Same kind of legs and odds, but they now tell one story, so the parlay's real chance of hitting goes up. */
 function pickLegs(R, list, max, scoreOf, opts = {}){
-  const legs = [...(opts.start || [])];
-  for (const c of list){
-    if (legs.length >= max) break;
-    if (opts.lotto && opts.lottoDone) break;
-    if (opts.lotto){ if (c.dec < 2 && legs.filter(l=>l.dec<2).length >= 2) continue; if (c.dec > 4 && legs.some(l=>l.dec>4)) continue; }
-    if (legs.includes(c) || legs.some(l => l.family === c.family)) continue;
-    if (c.playerId && legs.filter(l => l.playerId === c.playerId).length >= (opts.maxPerPlayer || 2)) continue;
-    if (!c.playerId && legs.some(l => !l.playerId && l.kind === c.kind && l.period === c.period && l.team === c.team)) continue;
+  const legs = [...(opts.start || [])], pool = list.slice(0, 80), W = opts.corrWeight ?? 0.35;
+  const ok = c => {
+    if (isTDLeg(c) && legs.filter(isTDLeg).length >= (opts.tdCap ?? 9)) return null;
+    if (opts.lotto){ if (c.dec < 2 && legs.filter(l=>l.dec<2).length >= 2) return null; if (c.dec > 4 && legs.some(l=>l.dec>4)) return null; }
+    if (legs.includes(c) || legs.some(l => l.family === c.family)) return null;
+    if (c.playerId && legs.filter(l => l.playerId === c.playerId).length >= (opts.maxPerPlayer || 2)) return null;
+    if (!c.playerId && legs.some(l => !l.playerId && l.kind === c.kind && l.period === c.period && l.team === c.team)) return null;
     const rs = legs.map(l => corrPair(R, l, c));
-    if (rs.some(r => r < -0.08)) continue;
-    if (opts.corrFocus && legs.length && Math.max(...rs) < 0.12) continue;
-    legs.push(c);
-    if (opts.lotto && legs.length >= 5 && legs.reduce((x,l)=>x*l.dec,1) >= 45) opts.lottoDone = true;
+    if (rs.some(r => r < -0.05)) return null;                       // never combine legs that work against each other
+    const mx = rs.length ? Math.max(...rs) : 0, avg = rs.length ? avgArr(rs) : 0;
+    if (opts.corrFocus && legs.length && mx < 0.12) return null;
+    return (scoreOf ? scoreOf(c) : c.quality) + W*(0.6*mx + 0.4*avg);
+  };
+  while (legs.length < max){
+    if (opts.lotto && legs.length >= 5 && legs.reduce((x,l)=>x*l.dec,1) >= 45) break;
+    let best = null, bs = -Infinity;
+    for (const c of pool){ const v = ok(c); if (v != null && v > bs){ bs = v; best = c; } }
+    if (!best) break; legs.push(best);
   }
   return legs;
 }
@@ -2111,6 +2138,59 @@ async function liveOddsFetch(g, watched){
     LIVE_OA[g.id] = { data, at:Date.now(), spent:(prev?.spent || 0) + mk.length, calls:(prev?.calls || 0) + 1, keys, suspended };
     healthMark('The Odds API · live', true, performance.now() - t1, { markets:keys.size }); jobRun('live-odds', true, `${g.short}: ${keys.size} markets`);
   } catch(e){ healthMark('The Odds API · live', false, 0, { msg:e.message }); jobRun('live-odds', false, e.message); }
+}
+
+/* ============================ SELF-CALIBRATION: every settled pick teaches the model ============================ */
+/* When a game goes final, each saved pregame pick, parlay leg and tracked bet is graded from the box score.
+   Results are kept per bet type on this device. If a bet type keeps hitting less often than the model said,
+   its chances are pulled down (and its picks drop in the rankings); if it beats the model, they're nudged up a little.
+   Shrunk hard toward "no change" until there's enough history, so one bad night can't wreck it. */
+const CAL_LABEL = { td:'Anytime TD', td_first:'First TD', qb_rush:'QB rushing', 'p:rush':'Rushing props', 'p:rec':'Receiving props', 'p:receptions':'Receptions', 'p:pass':'Passing props',
+  'p:other':'Other player props', 'g:spread':'Spreads', 'g:ml':'Moneylines', 'g:total':'Game totals', 'g:other':'Other game lines' };
+function calCat(x, R){
+  const st = x.stat || x.market || '';
+  if (/^(first_td|1st_td)$/.test(st)) return 'td_first';
+  if (/td|goal_scorer/.test(st) && st !== 'pass_tds') return 'td';
+  if (x.playerId){ const pos = R?.idx?.[x.playerId]?.player?.pos || '';
+    if (posRole(pos) === 'qb' && /^rush_|rush_attempts/.test(st)) return 'qb_rush';
+    if (/^rush_/.test(st)) return 'p:rush'; if (/^reception_yds|longest_reception/.test(st)) return 'p:rec'; if (st === 'receptions') return 'p:receptions'; if (/^pass_/.test(st)) return 'p:pass'; return 'p:other'; }
+  return ({ spread:'g:spread', ml:'g:ml', total:'g:total' })[x.market] || 'g:other';
+}
+const calStore = () => store.get('np_calib', {});
+function calFactor(cat){
+  const s = calStore()[cat]; if (!s || s.n < 4) return 1;
+  const avgP = s.sumP / s.n, k = 15;                    // 15 pseudo-results of "the model was right"
+  return clamp((s.hits + k*avgP) / (s.sumP + k*avgP), 0.7, 1.1);
+}
+function applyCalibration(R){
+  for (const c of R.cands){
+    const f = calFactor(calCat(c, R)); if (f === 1) continue;
+    c.p = clamp(c.p * f, 0.01, 0.97); c.ev = c.p*(c.dec - 1) - (1 - c.p - (c.push || 0));
+    c.quality = clamp(c.quality * clamp(f, 0.8, 1.04), 0, 1); c.calib = f;
+    if (f < 0.95) c.flags = [...(c.flags || []), `This bet type has hit less often than expected lately, so its chance was lowered ${Math.round((1 - f)*100)}%.`];
+  }
+  // pocket QBs: rushing props swing on kneel-downs and a couple of scrambles
+  for (const c of R.cands) if (c.kind === 'player' && posRole(c.player?.pos) === 'qb' && /^rush_|rush_attempts/.test(c.stat || '') && !qbMobile(R, c.playerId)){
+    c.quality *= 0.75; c.flags = [...(c.flags || []), 'Pocket QB: kneel-downs and few carries make his rushing props close to a coin flip.']; }
+}
+function settleGame(R){
+  const g = R.g, S = preSnap(g.id), seen = store.get('np_calib_seen', {}), cal = calStore(); let added = 0;
+  const items = [...(S?.picks || []), ...(S?.legs || []), ...trkLoad().flatMap(t => t.type === 'parlay' ? t.legs : [t]).filter(x => x.gid === g.id)];
+  for (const x of items){
+    const key = g.id + '|' + x.id; if (seen[key] || x.p == null) continue;
+    const t = trackItem(x, R); if (t.status !== 'Hit' && t.status !== 'Lost') continue;
+    const cat = calCat(x, R), s = cal[cat] || (cal[cat] = { n:0, hits:0, sumP:0 });
+    s.n++; s.sumP += x.p; if (t.status === 'Hit') s.hits++; seen[key] = 1; added++;
+  }
+  if (added){ store.set('np_calib', cal); store.set('np_calib_seen', seen); jobRun('settle', true, `${g.short}: graded ${added}`); }
+}
+function calSummaryHtml(){
+  const cal = calStore(), rows = Object.entries(cal).filter(([, s]) => s.n).sort((a,b) => b[1].n - a[1].n);
+  if (!rows.length) return '<div class="note">Results show up here after games go final. Every graded pick fine-tunes the model.</div>';
+  const tot = rows.reduce((a, [, s]) => ({ n:a.n + s.n, h:a.h + s.hits, p:a.p + s.sumP }), { n:0, h:0, p:0 });
+  return `<div class="note">Overall: ${tot.h} of ${tot.n} hit (${pct(tot.h/tot.n,0)}) vs ${pct(tot.p/tot.n,0)} expected.</div>
+    <div class="tablewrap"><table class="sortable"><thead><tr><th>Bet type</th><th class="num">Hit</th><th class="num">Expected</th><th>Model adjustment</th></tr></thead><tbody>
+    ${rows.map(([k, s]) => { const f = calFactor(k); return `<tr><td>${esc(CAL_LABEL[k] || k)}</td><td class="num">${s.hits}/${s.n} (${pct(s.hits/s.n,0)})</td><td class="num">${pct(s.sumP/s.n,0)}</td><td>${f === 1 ? '<span class="note">Not enough results yet</span>' : f < 1 ? `<span class="pill bad">Lowered ${Math.round((1-f)*100)}%</span>` : `<span class="pill strong">Raised ${Math.round((f-1)*100)}%</span>`}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 
 const RESEARCH_NOTES = {
@@ -2271,6 +2351,7 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   const gm = gameModel(g, D, book, { weather, soccer });
   const R = { g, D, gm, book, idx, logs, pm:new Map(), tdInfo:{}, soccer, lineup, weather, sources, at:Date.now() };
   R.cands = buildCandidates(R); R.cands.forEach(c => c.gid = g.id);
+  if (!live) applyCalibration(R);
   R.isLive = live;
   if (R.ruledOut.length) dq.push({ lvl:'ok', t:`Removed bets on players ruled out: ${[...new Set(R.ruledOut)].slice(0,6).join(', ')}.` });
   R.best = rankDiverse(R.cands, 3); R.ranked = rankDiverse(R.cands, 15);
@@ -2278,6 +2359,7 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   R.creative = rankDiverse(R.cands.filter(c => c.creative), 8, { anyType:true });
   R.sgps = buildSGPs(R);
   if (live) applyLive(R); else if (g.state === 'pre') try { savePreSnap(R); } catch(e){}
+  if (g.state === 'post') try { settleGame(R); } catch(e){}
   // recommendation protection: compare with the last run
   const prev = PREV[g.id]; R.changes = [];
   if (prev){ for (const c of prev.best){ const now = R.cands.find(x => x.id === c.id); if (!now) R.changes.push(`${c.label} is no longer offered, so it was removed.`); else if (now.priced && c.priced && Math.abs(now.dec - c.dec) > 0.05) R.changes.push(`${c.label} moved from ${decToAm(c.dec)} to ${decToAm(now.dec)}.`); }
@@ -2563,7 +2645,7 @@ function tierCard(t, list, ctx, opts = {}){
   const M = TIER_META[t], first = list[0];
   if (!first) return `<article class="pc ${M.cls} none"><div class="pc-row"><div><div class="pc-tier">${esc(M.name)}</div><div class="pc-sub">${esc(M.risk)}</div></div><div class="pc-odds muted">—</div></div><p class="note" style="margin:0">${esc(opts.busy ? 'Researching…' : opts.weekly && t < 4 ? 'Not enough strong picks from different games yet. This fills in as more games are researched.' : TIER_EMPTY[t])}</p></article>`;
   const { s, R } = first, id = 'p' + hsh(ctx + t + s.sig.join()), oid = 'o' + hsh(ctx + 'others' + t);
-  const sub = [plural(s.legs.length, 'leg'), s.weekly ? plural(s.games, 'game') : opts.showGame && R ? matchup(R.g) : '', s.weekly || s.name === M.name ? '' : s.name].filter(Boolean).join(' · ');
+  const sub = [plural(s.legs.length, 'leg'), s.boost >= 1.1 ? `legs hit together ${fmt1(s.boost)}× more often` : '', s.weekly ? plural(s.games, 'game') : opts.showGame && R ? matchup(R.g) : '', s.weekly || s.name === M.name ? '' : s.name].filter(Boolean).join(' · ');
   const others = list.slice(1, 6);
   return `<article class="pc ${M.cls}">
     <div class="pc-row"><div><div class="pc-tier">${esc(M.name)}${t === 4 ? ' <span class="pill bad">Highest risk</span>' : ''}</div><div class="pc-sub">${esc(sub)}</div></div><div class="pc-odds">${decToAm(s.estDec)}${s.priced ? '' : '*'}</div></div>
@@ -2808,10 +2890,10 @@ async function renderResearch(id){
   const recs = [...R.best, ...R.creative.slice(0,3)].filter((c,i,a)=>a.indexOf(c)===i);
   const tabs = [
     ...((g.state === 'in' || Object.keys(D.box || {}).length) && g.sport !== 'soccer' || g.state === 'in' ? [['live','Live', liveResearchHtml(R)]] : []),
-    ['stats','Stats', `<h3>Game environment</h3>${env}${soccerStats}
+    ['stats','Stats', tabsHtml('st', [['ov','Overview', `<h3>Game environment</h3>${env}${soccerStats}
       <h3>Recent games</h3><div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${form('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${form('home')}</div></div>
       ${D.predictor ? `<div class="panel note">ESPN power index: ${esc(g.home.short)} ${pct(D.predictor.home,0)} · ${esc(g.away.short)} ${pct(D.predictor.away,0)}.</div>` : ''}
-      <h3>Player stats</h3>${playerTable}`],
+      ${g.sport === 'soccer' || !(STAT_CATS[g.sport] || []).length ? `<h3>Player stats</h3>${playerTable}` : ''}`], ...statCatTabs(R)])],
     ['props','Player props', `${propsHtml(R)}<h3>Alternate-line ladders</h3>${laddersHtml(R)}`],
     ['matchup','Matchup', `<h3>Game scripts</h3>${scriptsHtml(R)}${soccerMatch}`],
     ['injuries','Injuries', g.sport !== 'soccer' ? `<div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${injBy('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${injBy('home')}</div></div><div class="note">From ESPN's injury report.</div>` : `<div class="panel note">Soccer injury lists aren't in the free data. Confirmed lineups (about an hour before kickoff) are on the Matchup tab and are used instead.</div>`],
@@ -2833,8 +2915,40 @@ async function renderResearch(id){
   paint(`<a href="#g-${g.id}" class="back">← Back to picks</a>
     <div class="gh"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">Deep research · ${esc(matchup(g))}</div><div class="note">${esc(timeET(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div></div>
     ${tabsHtml('research', tabs.filter(t => t[0] !== 'td' && t[0] !== 'sources').concat(tabs.filter(t => t[0] === 'td' || t[0] === 'sources')))}`);
-  if (g.sport === 'nfl') fillTD(R, '#tdbox', () => tdListHtml(R, 'td' + g.id));
+  if (g.sport === 'nfl'){ const had = !!R.tdm; fillTD(R, '#tdbox', () => tdListHtml(R, 'td' + g.id)).then(() => { if (!had && R.tdm && location.hash === '#r-' + id) renderResearch(id); }); }   // re-render once so every skill player's logs fill the stat tabs
   headerSync();
+}
+
+/* ---------- Deep Research → Stats: one sub-tab per statistical category ---------- */
+const STAT_CATS = {
+  nfl:[['passing','Passing',[['pass_completions','CMP'],['pass_attempts','ATT'],['pass_yds','Yds'],['pass_tds','TD'],['pass_interceptions','INT']], p => /^QB/.test(p)],
+    ['rushing','Rushing',[['carries','Car'],['rush_yds','Yds'],['rush_tds','TD'],['longest_rush','Long']]],
+    ['receiving','Receiving',[['targets','Tgt'],['receptions','Rec'],['reception_yds','Yds'],['reception_tds','TD'],['longest_reception','Long']]],
+    ['tds','Touchdowns',[['tds','Total TD'],['rush_tds','Rush TD'],['reception_tds','Rec TD']]],
+    ['defense','Defense',[['tackles_assists','Tackles'],['solo_tackles','Solo'],['sacks','Sacks'],['def_interceptions','INT']], p => posRole(p) === 'def'],
+    ['kicking','Kicking',[['field_goals','FG'],['pats','XP']], p => /^(K|PK)$/.test(p)]],
+  nba:[['scoring','Scoring',[['minutes','Min'],['points','Pts'],['threes','3PM']]], ['rebounds','Rebounds',[['rebounds','Reb']]], ['playmaking','Playmaking',[['assists','Ast'],['turnovers','TO']]],
+    ['defense','Defense',[['steals','Stl'],['blocks','Blk']]], ['combos','Combos',[['points_rebounds_assists','PRA'],['points_rebounds','P+R'],['points_assists','P+A'],['rebounds_assists','R+A']]]],
+  mlb:[['hitting','Hitting',[['hits','H'],['total_bases','TB'],['home_runs','HR'],['rbis','RBI'],['runs_scored','R'],['batter_walks','BB'],['batter_strikeouts','K'],['stolen_bases','SB']], p => !/^(P|SP|RP)$/.test(p)],
+    ['pitching','Pitching',[['pitcher_strikeouts','K'],['pitcher_outs','Outs'],['earned_runs','ER'],['hits_allowed','H'],['pitcher_walks','BB']], p => /^(P|SP|RP)$/.test(p)]],
+  nhl:[['scoring','Scoring',[['goals','G'],['assists','A'],['points','Pts'],['power_play_points','PPP']]], ['shots','Shots',[['shots_on_goal','SOG'],['blocked_shots','Blk']]], ['goalies','Goalies',[['saves','Saves']]]],
+};
+function statCatTabs(R){
+  const g = R.g, cats = STAT_CATS[g.sport] || [];
+  const players = Object.keys(R.logs).map(pid => ({ pid, info:R.idx[pid], logs:R.logs[pid] || [] })).filter(x => x.info && x.logs.length);
+  const avg = (logs, st, n) => { const v = logs.slice(0, n).map(x => logVal(g.sport, x, st)).filter(v => v != null); return v.length ? avgArr(v) : null; };
+  return cats.map(([k, label, stats, posOk]) => {
+    const rows = players.filter(x => !posOk || posOk(x.info.player.pos || '')).map(x => {
+      const vals = stats.map(([st]) => [avg(x.logs, st, 5), avg(x.logs, st, 10)]), tot = vals.reduce((t, [a, b]) => t + (a || 0) + (b || 0), 0);
+      const prop = R.cands.filter(c => c.playerId === x.pid && stats.some(([st]) => st === c.stat) && c.line != null && !c.isAlt).sort((a,b) => b.quality - a.quality)[0];
+      return { x, vals, tot, prop, gp:Math.min(10, x.logs.length) }; }).filter(r => r.tot > 0).sort((a,b) => (b.vals[0][0] ?? b.vals[0][1] ?? 0) - (a.vals[0][0] ?? a.vals[0][1] ?? 0));
+    const html = rows.length ? `<div class="tablewrap tall"><table class="sortable"><thead><tr><th>Player</th><th>Team</th><th class="num">GP</th>${stats.map(([, l]) => `<th class="num">${esc(l)} L5</th><th class="num">${esc(l)} L10</th>`).join('')}<th>Prop line</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td><a class="pl plink" href="${plHref(g.id, r.x.pid)}">${avatar(r.x.info.player)}<span><b>${esc(r.x.info.player.name)}</b> <span class="note">${esc(r.x.info.player.pos || '')}</span></span></a></td><td>${esc(g[r.x.info.side].abbr)}</td><td class="num">${r.gp}</td>
+        ${r.vals.map(([a, b]) => `<td class="num">${a == null ? '—' : fmt1(a)}</td><td class="num">${b == null ? '—' : fmt1(b)}</td>`).join('')}
+        <td>${r.prop ? `${esc(statLabel(g.sport, r.prop.stat))} ${esc(r.prop.side)} ${r.prop.line}${r.prop.hit10 ? ` <span class="note">(${r.prop.hit10.h}/${r.prop.hit10.n} L10)</span>` : ''}` : '<span class="note">—</span>'}</td></tr>`).join('')}</tbody></table></div>
+      <div class="note">Averages over each player's last 5 and last 10 games (game logs). Tap a column to sort, tap a player for his page.</div>`
+      : `<div class="panel note">No ${esc(label.toLowerCase())} game logs for this game yet.${g.sport === 'nfl' && !/defense|kicking/.test(k) ? ' Logs for every QB, RB, WR and TE load automatically.' : ' These logs load for players with posted props in this category.'}</div>`;
+    return [k, label, html]; });
 }
 
 /* ============================ DATA HEALTH (admin only) ============================ */
@@ -2862,7 +2976,7 @@ async function renderHealth(){
 }
 
 /* ============================ SETTINGS + ADVANCED (drawers) ============================ */
-function openDrawer(html, label){ $('#pane').innerHTML = `<button class="btn ghost" id="closeP" style="align-self:flex-end">Close ✕</button>${html}`; $('#pane').setAttribute('aria-label', label); $('#drawer').hidden = false; $('#closeP').onclick = closePlayer; $('#closeP').focus(); }
+function openDrawer(html, label){ document.body.classList.add('noscroll'); $('#pane').scrollTop = 0; $('#pane').innerHTML = `<button class="btn ghost" id="closeP" style="align-self:flex-end">Close ✕</button>${html}`; $('#pane').setAttribute('aria-label', label); $('#drawer').hidden = false; $('#closeP').onclick = closePlayer; $('#closeP').focus(); }
 function openSettings(){
   openDrawer(`<h2>Settings</h2>
     <div class="stack"><label class="lbl" for="bankroll">Your betting budget</label><div class="money"><span>$</span><input id="bankroll" type="number" min="1" step="1" inputmode="numeric" value="${esc(store.get('np_bank','1000'))}"></div>
@@ -2935,7 +3049,7 @@ function openPlayer(gid, pid){
       <div class="stack"><span class="lbl">Averages · last 5 / last 10</span><div class="grid2">${statsShown.map(([s,l])=>`<div class="mk"><span class="lbl">${l}</span><b>${avg(s, games.slice(0,5))} <span class="note">/ ${avg(s, games.slice(0,10))}</span></b></div>`).join('')}</div></div>` : `<div class="panel note">${sport==='soccer' ? 'Soccer player game logs (minutes, shots, xG, key passes) are not in the free sources. Lineup status and market prices are used instead.' : 'No game logs found.'}</div>`}
     ${sport==='nfl' ? '<div class="note">Snap %, routes and red-zone usage: not available from free sources.</div>' : ''}`, 'Player details');
 }
-function closePlayer(){ $('#drawer').hidden = true; }
+function closePlayer(){ $('#drawer').hidden = true; document.body.classList.remove('noscroll'); }
 
 /* ============================ PLAYERS (search · browse · player pages) — uses only data already collected ============================ */
 const plHref = (gid, pid) => `#p-${gid}-${pid}`;
@@ -3424,8 +3538,9 @@ function openTracker(refresh){
       ${list.some(x => (x.type === 'parlay' ? x.legs.every(l => ['Hit','Lost'].includes(trkEval(l).status)) : ['Hit','Lost','Push'].includes(trkEval(x).status))) ? '<button class="btn ghost sm" data-trkclear style="align-self:flex-start">Clear finished</button>' : ''}`
     : `<div class="panel note">Nothing tracked yet. Tap <b>Track</b> on any bet, parlay, parlay leg or player prop and it shows up here with live progress.</div>
       ${sug.length ? `<h3>Popular right now</h3>${sug.map(x => `<div class="trk"><div class="trk-t"><b>${esc(x.c.label)}</b> <span class="note">${esc(matchup(x.R.g))} · ${priceStr(x.c)}</span></div><div>${trackBtn(trkSingle(x.c, x.R.g.id))}</div></div>`).join('')}` : ''}`}`;
-  if (refresh){ const pane = $('#pane'); pane.innerHTML = `<button class="btn ghost" id="closeP" style="align-self:flex-end">Close ✕</button>${html}`; $('#closeP').onclick = closePlayer; return; }
-  openDrawer(html, 'My tracker');
+  const html2 = html + `<h3 style="margin-top:8px">How our picks have done</h3>${calSummaryHtml()}`;
+  if (refresh){ const pane = $('#pane'); pane.innerHTML = `<button class="btn ghost" id="closeP" style="align-self:flex-end">Close ✕</button>${html2}`; $('#closeP').onclick = closePlayer; return; }
+  openDrawer(html2, 'My tracker');
 }
 /* live tag + current stat for a player in a live game */
 function liveTag(R, pid, stat){ if (!R || R.g.state !== 'in' || !R.D?.box?.[pid]) return ''; const v = stat ? liveStat(R.D, pid, stat, R.g.sport) : null;
