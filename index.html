@@ -381,7 +381,27 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
 .mr-o{display:flex;flex-direction:column;line-height:1.2;font-family:var(--f-mono)} .mr-o .note{font-family:var(--f-body);font-size:10.5px}
 .mr-wrap>.whybox{padding:10px 12px 12px;margin:0}
 .br-wrap.hl{box-shadow:inset 4px 0 0 var(--sun);background:rgba(255,212,59,.05)}
+/* live */
+.lbadge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:99px;background:var(--bad);color:#fff;font:800 11.5px var(--f-body);letter-spacing:0}
+.bc.stale,.rows.stale{opacity:.55;filter:grayscale(.6)}
+.lv-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12px;color:var(--muted)}
+.lv-meta b{color:var(--ink)}
+.live-pts{border-left:3px solid var(--bad);padding-left:22px}
+.lstrip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px} .lstrip::-webkit-scrollbar{display:none}
+.lchip{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--bad);color:var(--ink);text-decoration:none;font-size:13px}
+.sb{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.sb-t{display:flex;align-items:center;gap:12px} .sb-t.r{justify-content:flex-end;text-align:right} .sb-t .logo{width:44px;height:44px}
+.sb-n{font-family:var(--f-display);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.04em} .sb-s{font:600 34px/1 var(--f-mono)}
+.sb-mid{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center} .sb-clock{font:700 16px var(--f-body)}
+.lv-odds{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.trk{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:4px 12px;padding:9px 12px;border-bottom:1px solid var(--line);align-items:center}
+.trkl .trk:last-child,.trkl .morebox .trk:last-child{border-bottom:0}
+.trk-t{font-size:13.5px} .trk .tbar{grid-column:1/-1}
+.tbar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden} .tbar i{display:block;height:100%;border-radius:99px;background:var(--sun)} .tbar.ok i{background:var(--good)} .tbar.no i{background:var(--bad)}
+.plays{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin-top:6px;font-size:12.5px}
+.play{padding:4px 6px;border-radius:6px} .play.sc{background:var(--sun-soft)}
 @media (max-width:760px){
+  .sb-s{font-size:28px} .sb-n{font-size:16px} .sb{padding:10px;gap:6px} .sb-t .logo{width:32px;height:32px} .trk{grid-template-columns:minmax(0,1fr)}
   .mr{grid-template-columns:repeat(3,minmax(0,1fr)) auto;grid-template-areas:'m m m w' 'l o u w' 'b b b w';row-gap:4px}
   .mr-m{grid-area:m} .mr-l{grid-area:l} .mr-o:nth-of-type(3){grid-area:o} .mr-o:nth-of-type(4){grid-area:u} .mr-b{grid-area:b} .mr-w{grid-area:w}
   .brand-t{display:none}
@@ -409,15 +429,15 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
   .tiers{grid-template-columns:minmax(0,1fr)}
   .nums{grid-template-columns:repeat(2,1fr)}
 }
-@media (max-width:480px){ .hide-s{display:none} }
-@media (max-width:420px){ .mainnav a{font-size:14px;letter-spacing:.02em;padding:0 5px} .hdr-r1{gap:5px} .np-logo{width:30px;height:30px} .iconbtn{width:34px;height:34px;font-size:17px} }
+@media (max-width:560px){ .hide-s{display:none} }
+@media (max-width:420px){ .mainnav a{font-size:13.5px;letter-spacing:.01em;padding:0 4px} .sb-mid .note{font-size:11px} .sb-n{font-size:14px} .hdr-r1{gap:5px} .np-logo{width:30px;height:30px} .iconbtn{width:34px;height:34px;font-size:17px} }
 </style>
 </head>
 <body>
 <header class="hdr" id="hdr"><div class="hdr-in">
   <div class="hdr-r1">
     <a class="brand" href="#" aria-label="Nati Picks home"><svg class="np-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#FFD43B"/><g fill="#14172E" transform="translate(3.5 0) skewX(-9)"><path d="M12 46V18h6.8l9.6 15.4V18h6v28h-6.6L18 30.4V46z"/><path fill-rule="evenodd" d="M38.5 46V18h10.2c6 0 9.6 3.6 9.6 8.8s-3.6 8.9-9.6 8.9h-4.2V46zM44.5 23.2v7.3h3.9c2.5 0 3.9-1.4 3.9-3.65s-1.4-3.65-3.9-3.65z"/></g></svg><span class="brand-t"><span class="bn">Nati <span class="p">Picks</span></span><span class="tagline">They got our account. We got their playbook.</span></span></a>
-    <nav class="mainnav" aria-label="Main"><a href="#" data-nav="today">Today</a><a href="#week" data-nav="week"><span class="hide-s">This&nbsp;</span>week&#8217;s parlays</a><a href="#players" data-nav="players">Players</a></nav>
+    <nav class="mainnav" aria-label="Main"><a href="#" data-nav="today">Today</a><a href="#live" data-nav="live">Live<span class="lbadge" id="liveBadge" hidden></span></a><a href="#week" data-nav="week"><span class="hide-s">This week&#8217;s&nbsp;</span>Parlays</a><a href="#players" data-nav="players">Players</a></nav>
     <button class="iconbtn" id="openSettings" type="button" aria-label="Settings">⚙</button>
   </div>
   <div class="hdr-r2">
@@ -993,7 +1013,7 @@ registerProvider('sportsData', { name:'ESPN',
   },
   async detail(g){
     const path = g.sport==='soccer' ? `soccer/${g.league}` : SPORT[g.sport].site;
-    const j = await fetchJSON(`${ESPN_SITE}${path}/summary?event=${g.id}`, { ttl: g.state==='in' ? 45000 : 120000 });
+    const j = await fetchJSON(`${ESPN_SITE}${path}/summary?event=${g.id}`, { ttl: g.state==='in' ? 15000 : 120000 });
     const D = { injuries:{}, lastFive:{}, news:[], odds:null, predictor:null, rosters:{}, officials:[], boxStats:{}, keyEvents:[], status:j.header?.competitions?.[0]?.status || null, raw:{} };
     const sideOf = id => id === g.home.id ? 'home' : id === g.away.id ? 'away' : null;
     for (const t of j.injuries || []){ const s = sideOf(t.team?.id); if (!s) continue;
@@ -1012,6 +1032,23 @@ registerProvider('sportsData', { name:'ESPN',
       D.rosters[s] = { formation:r.formation || null, players:(r.roster||[]).map(p => ({ id:p.athlete?.id, name:p.athlete?.displayName || p.athlete?.fullName, pos:p.position?.abbreviation || p.position?.name || '', starter:!!p.starter, sub:p.subbedIn, jersey:p.jersey })) }; }
     for (const t of j.boxscore?.teams || []){ const s = sideOf(t.team?.id); if (!s) continue; D.boxStats[s] = parseTeamStats(t.statistics); }
     D.keyEvents = (j.keyEvents || []).map(k => ({ type:k.type?.text || k.type?.type, clock:k.clock?.displayValue, team:sideOf(k.team?.id), text:k.text || k.shortText || '' }));
+    // live: the same summary call feeds the scoreboard, box score, plays, drives and win probability
+    const hc = j.header?.competitions?.[0];
+    if (hc){ D.score = {}; for (const c of hc.competitors || []){ const s = sideOf(c.team?.id || c.id); if (s && c.score != null) D.score[s] = num(c.score); }
+      D.state = hc.status?.type?.state; D.statusDetail = hc.status?.type?.shortDetail || hc.status?.type?.detail || ''; D.period = hc.status?.period; D.clock = hc.status?.displayClock; }
+    const sit = j.situation || hc?.situation;
+    if (sit) D.situation = { downDistance: sit.downDistanceText || sit.shortDownDistanceText || '', possession: sideOf(sit.possession) || null, redZone: !!sit.isRedZone, balls: sit.balls, strikes: sit.strikes, outs: sit.outs, onFirst: !!sit.onFirst, onSecond: !!sit.onSecond, onThird: !!sit.onThird, lastPlay: sit.lastPlay?.text || '' };
+    D.box = {}; D.boxPlayers = [];
+    for (const t of j.boxscore?.players || []){ const s = sideOf(t.team?.id); if (!s) continue;
+      for (const cat of t.statistics || []){ const keys = cat.keys || [], labels = cat.labels || cat.names || [];
+        const rows = (cat.athletes || []).map(a => { const id = a.athlete?.id; if (!id) return null; const st = D.box[id] || (D.box[id] = { side:s, name:a.athlete?.displayName, stats:{}, active:a.active, starter:a.starter });
+          (a.stats || []).forEach((v, i) => { const k = keys[i]; if (!k) return; st.stats[k] = parseStatVal(v); const ks = String(k).split(/[\/-]/), vs = String(v).split(/[\/-]/); if (ks.length > 1 && vs.length === ks.length) ks.forEach((x, n) => st.stats[x] = parseStatVal(vs[n])); });
+          return { id, name:a.athlete?.displayName, stats:a.stats || [] }; }).filter(Boolean);
+        D.boxPlayers.push({ side:s, cat:cat.text || cat.name || '', labels, rows }); } }
+    D.winProb = (j.winprobability || []).map(w => w.homeWinPercentage).filter(v => v != null);
+    D.plays = []; for (const d of [...(j.drives?.previous || []), ...(j.drives?.current ? [j.drives.current] : [])]) for (const p of d.plays || []) D.plays.push({ ...pickPlay(p), team:sideOf(d.team?.id) });
+    if (!D.plays.length) for (const p of j.plays || []) D.plays.push({ ...pickPlay(p), team:sideOf(p.team?.id) });
+    D.drives = (j.drives?.previous || []).map(d => ({ team:sideOf(d.team?.id), result:d.displayResult || d.result || '', yards:d.yards, plays:d.offensivePlays, rz:(d.plays || []).some(p => (p.start?.yardsToEndzone ?? 99) <= 20) }));
     return D;
   },
 });
@@ -1144,6 +1181,12 @@ registerProvider('odds', { name:'The Odds API', free:false, enabled: () => !!oaK
     const data = { event:ev, bookmakers:[...bookmakers.values()], failed, at:Date.now() };
     store.set(cacheKey, { at:Date.now(), data });
     return data;
+  },
+  async loadLive(g, markets){
+    const ev = await this.findEvent(g); if (!ev) throw new Error('This game is not listed on The Odds API.');
+    const r = await fetchJSON(`${ODDS_API}/sports/${this.sportKey(g)}/events/${ev.id}/odds?apiKey=${encodeURIComponent(oaKey())}&bookmakers=${ODDS_BOOKS}&markets=${markets.join(',')}&oddsFormat=american`, { raw:true, proxy:false, retries:0 });
+    const rem = r.headers.get('x-requests-remaining'); if (rem != null){ OA.credits = +rem; store.set('np_oacredits', OA.credits); }
+    return { event:ev, bookmakers:r.data.bookmakers || [], failed:[], at:Date.now(), live:true, markets };
   },
   cached(g){ for (const s of ['all','core']){ const c = store.get(`np_oa_${g.id}_${s}`, null); if (c && Date.now()-c.at < 3*3600e3) return c.data; } return null; },
 });
@@ -1888,6 +1931,129 @@ function finishSGP(R, legs, tier, tk, script, sig){
   return { tier, theme:tk, name:THEMES[tk].name, blurb:THEMES[tk].blurb, script, legs, sig, joint, indep, boost, naive, estDec, implied:1/estDec, edge:joint*estDec - 1, pairs, coherence, book: common && common.length ? common[0] : null,
     priced: legs.every(l => l.priced), at:Date.now(), ...TIER_META[tier], tierName:TIER_META[tier].name, name:THEMES[tk].name };
 }
+/* ============================ LIVE ENGINE: one live fetch per game → scoreboard, box score, projections, live odds ============================ */
+const LIVE_LEN = { nfl:{ per:4, sec:900, wall:11000 }, nba:{ per:4, sec:720, wall:8400 }, nhl:{ per:3, sec:1200, wall:9000 }, mlb:{ per:9, wall:10800 }, soccer:{ per:2, sec:2700, wall:6600 } };
+const LIVE_SD = { nfl:{ t:13.5, m:13.5 }, nba:{ t:18, m:12.5 }, mlb:{ t:4.4, m:4.2 }, nhl:{ t:2.4, m:2.3 }, soccer:{ t:1.6, m:1.5 } };
+const LIVE_PROPS = { nfl:['player_pass_yds','player_rush_yds','player_reception_yds','player_receptions','player_anytime_td'], nba:['player_points','player_rebounds','player_assists','player_threes'],
+  mlb:['batter_hits','batter_total_bases','pitcher_strikeouts'], nhl:['player_points','player_shots_on_goal'], soccer:['btts'] };
+const LIVE_OA = {};                        // gid → { data, at, spent, calls, prevKeys, suspended }
+CONFIG.liveBudget = store.get('np_livebudget', 40);   // Odds API credits per live game (user setting)
+CONFIG.liveStaleSec = 150;                  // older than this = "Odds updating", never shown as current
+const pickPlay = p => ({ id:p.id, text:p.text || '', period:p.period?.number, clock:p.clock?.displayValue || '', scoring:!!p.scoringPlay, type:p.type?.text || '', ytg:p.start?.yardsToEndzone ?? null, score: p.awayScore != null ? `${p.awayScore}-${p.homeScore}` : '' });
+const parseClock = s => { const m = String(s || '').match(/(\d+):(\d+)/); return m ? +m[1]*60 + +m[2] : 0; };
+function liveClock(g, D){
+  const L = LIVE_LEN[g.sport] || LIVE_LEN.nfl, per = D?.period || g.period || 1, det = D?.statusDetail || g.statusText || '';
+  if (g.sport === 'mlb'){ const half = /bot|mid|end/i.test(det) ? 0.5 : 0, outs = D?.situation?.outs || 0, el = clamp((per - 1 + half + (half ? outs : outs)/6)/9, 0, 1);
+    return { el, rem: Math.max(0.03, 1 - el), per, label: det }; }
+  if (/half/i.test(det) && g.sport !== 'soccer') return { el:0.5, rem:0.5, per, label:det };
+  const clk = parseClock(D?.clock || g.clock);
+  if (g.sport === 'soccer'){ const min = D?.minute || (per - 1)*45 + (45 - clk/60); const el = clamp(min/90, 0, 1); return { el, rem: Math.max(0.03, 1 - el), per, label:det }; }
+  const el = per > L.per ? 1 : clamp(((per - 1)*L.sec + (L.sec - clk))/(L.per*L.sec), 0, 1);
+  return { el, rem: per > L.per ? 0.06 : Math.max(0.02, 1 - el), per, label:det, ot: per > L.per };
+}
+const preSnap = gid => store.get('np_pre_' + gid, null);
+function snapPick(c){ return { id:c.id, label:c.label, kind:c.kind, market:c.market, stat:c.stat, side:c.side, line:c.line, playerId:c.playerId || null, team:c.team || null, period:c.period, price:c.priced ? decToAm(c.dec) : null, book:c.book, p:c.p }; }
+function savePreSnap(R){
+  const proj = {}, td = {}, lines = {};
+  for (const c of R.cands){ if (c.playerId && c.model?.kind === 'dist' && proj[c.playerId + '|' + c.stat] == null) proj[c.playerId + '|' + c.stat] = c.model.proj;
+    if (c.playerId && c.stat === 'anytime_td' && c.side === 'yes' && td[c.playerId] == null) td[c.playerId] = -Math.log(Math.max(0.01, 1 - c.p)); }
+  for (const G of R.book.values()){ if (G.consensusLine != null) lines[G.key] = G.consensusLine; for (const L of G.lines.values()) if (L.best && L.line == null) lines[G.key + '|' + L.side] = L.best.dec; }
+  const legs = []; for (const t of TIERS){ const s = (R.sgps[t] || [])[0]; if (s) s.legs.forEach(l => legs.push({ ...snapPick(l), tier:t, parlay:TIER_META[t].name })); }
+  store.set('np_pre_' + R.g.id, { at:Date.now(), mu:R.gm.mu, muT:R.gm.muT, tt:R.gm.ttMean, picks:R.best.map(snapPick), legs, proj, td, lines });
+}
+function liveGame(R){
+  const g = R.g, D = R.D, S = preSnap(g.id), LC = liveClock(g, D), sd = LIVE_SD[g.sport] || LIVE_SD.nfl;
+  const hs = D.score?.home ?? (+g.home.score || 0), as = D.score?.away ?? (+g.away.score || 0);
+  const preT = S?.muT ?? D.odds?.total ?? R.gm.muT, preM = S?.mu ?? (D.odds?.homeSpread != null ? -D.odds.homeSpread : R.gm.mu);
+  const pace = preT > 0 ? ((hs + as)/Math.max(LC.el, 0.08))/preT : 1, w = Math.min(0.45, LC.el*0.6), adj = clamp(1 + w*(pace - 1), 0.7, 1.35);
+  const remT = preT*LC.rem*adj, remM = preM*LC.rem;
+  return { LC, hs, as, preT, preM, pace, adj, projT: hs + as + remT, projM: hs - as + remM, sdT: sd.t*Math.sqrt(LC.rem), sdM: sd.m*Math.sqrt(LC.rem),
+    projH: hs + remT/2 + remM/2, projA: as + remT/2 - remM/2, sdTT: sd.t*Math.sqrt(LC.rem)/1.45, snap: !!S };
+}
+// P(X > line), P(push) for X ~ Normal(mean, sd), continuity-corrected when lines are whole numbers
+function nOver(mean, sd, line, count){
+  sd = Math.max(sd, 0.35);
+  if (Number.isInteger(line)) return { over: 1 - normCdf((line + 0.5 - mean)/sd), push: normCdf((line + 0.5 - mean)/sd) - normCdf((line - 0.5 - mean)/sd) };
+  const cc = count ? 0 : 0; return { over: 1 - normCdf((line + cc - mean)/sd), push:0 };
+}
+function liveStat(D, pid, stat, sport){ const b = D.box?.[pid]; if (!b) return null; const v = logVal(sport, { stats:b.stats }, stat); return v ?? null; }
+function playerLeft(R, pid){
+  const nm = R.idx[pid]?.player?.name || R.D.box?.[pid]?.name; if (!nm) return false; const ln = lastName(nm);
+  return (R.D.plays || []).slice(-60).some(p => p.text.includes(ln) && /injur|ruled out|questionable to return|will not return|helped off|carted|left the game/i.test(p.text));
+}
+function applyLive(R){
+  const g = R.g, D = R.D, LG = liveGame(R), LC = LG.LC, S = preSnap(g.id), now = Date.now(), lo = LIVE_OA[g.id];
+  const fetchAge = lo ? (now - lo.at)/1000 : Infinity;
+  R.live = { ...LG, fetchAge, oddsAt: lo?.at || null, suspended: lo?.suspended || [], budgetLeft: Math.max(0, CONFIG.liveBudget - (lo?.spent || 0)) };
+  const keep = [];
+  for (const c of R.cands){
+    const fresh = fetchAge <= CONFIG.liveStaleSec && (now - (c.updated || 0))/1000 <= 600;
+    let p = null, push = 0, info = {}; const k = c.kind;
+    if (g.sport === 'soccer'){ p = c.p; info = { note:'Live soccer model (score, minute, red cards)' }; }
+    else if (c.period !== 'FG') continue;
+    else if (c.market === 'total'){ const r = nOver(LG.projT, LG.sdT, c.line); p = c.side === 'over' ? r.over : 1 - r.over - r.push; push = r.push; info = { cur: LG.hs + LG.as, proj: LG.projT, pre: LG.preT, unit:'pts' }; }
+    else if (c.market === 'team_total'){ const side = c.team, m = side === 'home' ? LG.projH : LG.projA, r = nOver(m, LG.sdTT, c.line); p = c.side === 'over' ? r.over : 1 - r.over - r.push; push = r.push; info = { cur: side === 'home' ? LG.hs : LG.as, proj:m }; }
+    else if (c.market === 'spread'){ const m = c.side === 'home' ? LG.projM : -LG.projM, r = nOver(m, LG.sdM, -c.line); p = r.over; push = r.push; info = { cur: c.side === 'home' ? LG.hs - LG.as : LG.as - LG.hs, proj:m }; }
+    else if (c.market === 'ml'){ const m = c.side === 'home' ? LG.projM : -LG.projM; if (c.side === 'draw') continue; const r = nOver(m, LG.sdM, 0); p = r.over + r.push/2; info = { cur: c.side === 'home' ? LG.hs - LG.as : LG.as - LG.hs, proj:m }; }
+    else if (c.kind === 'player' && c.playerId){
+      if (playerLeft(R, c.playerId)){ c.flags = [...(c.flags || []), 'Left the game per play-by-play.']; continue; }
+      if (c.stat === 'anytime_td'){ const tds = liveStat(D, c.playerId, 'tds', 'nfl') || 0; if (tds > 0) continue;
+        const lam0 = S?.td?.[c.playerId] ?? -Math.log(Math.max(0.01, 1 - Math.min(c.p, 0.9))); const ptsAdj = LG.adj;
+        p = 1 - Math.exp(-lam0*LC.rem*ptsAdj); if (c.side === 'no') p = 1 - p; info = { cur:0, pre:lam0, unit:'TD' }; }
+      else if (BINARY_STATS.has(c.stat)) continue;
+      else {
+        const cur = liveStat(D, c.playerId, c.stat, g.sport) ?? 0, pre = S?.proj?.[c.playerId + '|' + c.stat] ?? (c.model?.seasonAvg ?? null);
+        if (pre == null || !(pre > 0)) continue;
+        if (c.side === 'over' && cur > c.line) continue;          // already won: nothing to bet
+        if (c.side === 'under' && cur > c.line) continue;         // already lost
+        const exp = pre*LC.el, r = (cur + 1)/(exp + 1), uAdj = clamp(1 + Math.min(0.4, LC.el)*(r - 1), 0.6, 1.5);
+        const remMean = pre*LC.rem*uAdj, yds = /yds|yards/.test(c.stat), sd = Math.sqrt(Math.max(0.5, remMean*(yds ? 0.38*Math.max(pre, 10) : 1.25)));
+        const o = nOver(cur + remMean, sd, c.line, !yds); p = c.side === 'over' ? o.over : 1 - o.over - o.push; push = o.push;
+        info = { cur, pre, proj: cur + remMean, uAdj, exp, sd, unit: statLabel(g.sport, c.stat) };
+      }
+    }
+    else continue;
+    if (p == null || !isFinite(p)) continue;
+    p = clamp(p, 0.005, 0.995);
+    c.p = p; c.push = push; c.ev = p*(c.dec - 1) - (1 - p - push);
+    const sdRef = c.market === 'total' ? LG.sdT : c.market === 'team_total' ? LG.sdTT : c.market === 'spread' || c.market === 'ml' ? LG.sdM : info.sd;
+    const overreact = info.proj != null && sdRef && c.line != null && Math.abs(c.line - (c.market === 'spread' ? -info.proj : info.proj)) > 0.6*sdRef && c.ev > 0.02;
+    c.live = { ...info, LC, fresh, fetchAge, goodTo: 1.02/p, overreact, pre: info.pre };
+    if (c.model) c.model = { ...c.model, proj: info.proj ?? c.model.proj };
+    c.layers = { ...(c.layers || {}), model: clamp(0.5 + c.ev*3, 0, 1), data: fresh ? 0.75 : 0.3, market: fresh ? 0.65 : 0.35 };
+    c.quality = clamp(0.42 + c.ev*2.2, 0, 0.95)*(fresh ? 1 : 0.6)*(LG.snap || c.kind !== 'player' ? 1 : 0.9);
+    c.risk = p >= 0.6 ? 'Low' : p >= 0.45 ? 'Medium' : 'High';
+    // validation: no chasing, no forcing, not too late, real edge only
+    c.liveOk = fresh && c.ev >= 0.02 && c.dec >= 1.25 && c.dec <= 5 && LC.rem >= 0.04 && !c.noPath;
+    keep.push(c);
+  }
+  R.cands = keep;
+  const ok = keep.filter(c => c.liveOk);
+  R.best = rankDiverse(ok, 3); R.ranked = rankDiverse(ok, 15); R.creative = [];
+  R.liveStale = keep.filter(c => !c.live.fresh && c.ev >= 0.02).sort((a,b) => b.ev - a.ev).slice(0, 6);
+  R.sgps = { 1:[], 2:[], 3:[], 4:[] };
+}
+/* Live odds from The Odds API on a per-game credit budget. Never polls games that haven't started; stops when final. */
+function liveOddsDue(g, watched){
+  const oa = Providers.odds[1]; if (!oa.enabled() || g.state !== 'in') return false;
+  if (OA.credits != null && OA.credits < 30) return false;
+  const lo = LIVE_OA[g.id], cost = 3 + (watched ? (LIVE_PROPS[g.sport] || []).length : 0), left = CONFIG.liveBudget - (lo?.spent || 0);
+  if (left < cost) return false;
+  const LC = liveClock(g, CACHE[g.id]?.D), remSec = LC.rem*(LIVE_LEN[g.sport]?.wall || 10000), calls = Math.max(1, Math.floor(left/cost));
+  const gap = clamp(remSec/calls, 60, 1200)*1000;
+  return !lo || Date.now() - lo.at >= gap;
+}
+async function liveOddsFetch(g, watched){
+  const oa = Providers.odds[1], mk = [...(g.sport === 'soccer' ? ['h2h','totals','spreads'] : ['h2h','spreads','totals']), ...(watched ? (LIVE_PROPS[g.sport] || []) : [])];
+  const t1 = performance.now();
+  try { const data = await oa.loadLive(g, mk); const prev = LIVE_OA[g.id], keys = new Set();
+    for (const b of data.bookmakers) for (const m of b.markets) keys.add(m.key);
+    const suspended = prev ? [...prev.keys].filter(k => !keys.has(k) && mk.includes(k)) : [];
+    LIVE_OA[g.id] = { data, at:Date.now(), spent:(prev?.spent || 0) + mk.length, calls:(prev?.calls || 0) + 1, keys, suspended };
+    healthMark('The Odds API · live', true, performance.now() - t1, { markets:keys.size }); jobRun('live-odds', true, `${g.short}: ${keys.size} markets`);
+  } catch(e){ healthMark('The Odds API · live', false, 0, { msg:e.message }); jobRun('live-odds', false, e.message); }
+}
+
 const RESEARCH_NOTES = {
   '401872964': { at:'Oct 1, 2026, 2:45 PM ET', items:[
     'Line movement at several books: Pittsburgh opened -3 and is now -2.5; the total opened 37.5 and has risen to 38.5 (TheSpread, updated 2:09 PM ET).',
@@ -1995,6 +2161,9 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   let D;
   try { D = (await viaProvider('sportsData', 'detail', g)).data; } catch(e){ D = null; }
   if (!D){ D = { injuries:{}, lastFive:{}, news:[], odds:null, rosters:{}, officials:[], boxStats:{}, keyEvents:[] }; dq.push({ lvl:'bad', t:'Game details (injuries, form, line history) are unavailable right now. Using odds only.' }); }
+  if (D.state && D.state !== g.state){ g.state = D.state; }
+  if (D.state === 'in' || D.state === 'post'){ g.statusText = D.statusDetail || g.statusText; g.period = D.period ?? g.period; g.clock = D.clock ?? g.clock; if (D.score){ if (D.score.home != null) g.home.score = D.score.home; if (D.score.away != null) g.away.score = D.score.away; } }
+  const live = g.state === 'in';
   // weather
   let weather = null;
   if (SPORT[sport].outdoor){ try { weather = (await viaProvider('weather','forecast', g)).data; } catch(e){} }
@@ -2011,10 +2180,12 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   onStep('Collecting odds from every source…');
   let offers = [], sources = [];
   const espn = Providers.odds.find(p => p.name === 'ESPN'), oa = Providers.odds.find(p => p.name === 'The Odds API');
-  try { const t1 = performance.now(); const r = await espn.gameOffers(g, D); offers.push(...r.offers); if (r.offers.length) sources.push(`${r.meta.book} (via ESPN)`); healthMark('ESPN · odds', true, performance.now()-t1, { markets:r.offers.length }); } catch(e){ healthMark('ESPN · odds', false, 0, { msg:e.message }); }
-  if (sport !== 'soccer'){ try { const t1 = performance.now(); const r = await espn.propOffers(g, idx); offers.push(...r.offers); healthMark('ESPN · props', true, performance.now()-t1, { markets:r.offers.length }); } catch(e){ healthMark('ESPN · props', false, 0, { msg:e.message }); dq.push({ lvl:'warn', t:'Free player prop lines could not be loaded.' }); } }
-  let oaData = oa.enabled() ? oa.cached(g) : null;
-  if (useOA && oa.enabled()){
+  if (!live) try { const t1 = performance.now(); const r = await espn.gameOffers(g, D); offers.push(...r.offers); if (r.offers.length) sources.push(`${r.meta.book} (via ESPN)`); healthMark('ESPN · odds', true, performance.now()-t1, { markets:r.offers.length }); } catch(e){ healthMark('ESPN · odds', false, 0, { msg:e.message }); }
+  if (sport !== 'soccer' && !live){ try { const t1 = performance.now(); const r = await espn.propOffers(g, idx); offers.push(...r.offers); healthMark('ESPN · props', true, performance.now()-t1, { markets:r.offers.length }); } catch(e){ healthMark('ESPN · props', false, 0, { msg:e.message }); dq.push({ lvl:'warn', t:'Free player prop lines could not be loaded.' }); } }
+  let oaData = oa.enabled() && !live ? oa.cached(g) : null;
+  if (live){ if (useOA && oa.enabled()){ onStep('Pulling live odds…'); await liveOddsFetch(g, true); } oaData = LIVE_OA[g.id]?.data || null;
+    if (!oaData) dq.push({ lvl:'warn', t: oa.enabled() ? 'Live odds load on a credit budget; waiting for the next pull.' : 'Live odds need The Odds API key (Settings). Scoreboard, tracker and live research still work.' }); }
+  else if (useOA && oa.enabled()){
     try { onStep('Pulling every sportsbook from The Odds API…'); const t1 = performance.now(); oaData = await oa.loadAll(g, 'all'); healthMark('The Odds API · odds', true, performance.now()-t1, { markets:oaData.bookmakers.reduce((t,b)=>t+b.markets.length,0) });
       if (oaData.failed.length) dq.push({ lvl:'warn', t:`Some markets weren't offered: ${oaData.failed.slice(0,4).join('; ')}${oaData.failed.length>4?'…':''}` }); }
     catch(e){ healthMark('The Odds API · odds', false, 0, { msg:e.message }); dq.push({ lvl:'bad', t:`The Odds API: ${e.message}` }); alertPush('warn', `The Odds API failed (${e.message}). Showing free lines only.`); }
@@ -2038,11 +2209,13 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   const gm = gameModel(g, D, book, { weather, soccer });
   const R = { g, D, gm, book, idx, logs, pm:new Map(), tdInfo:{}, soccer, lineup, weather, sources, at:Date.now() };
   R.cands = buildCandidates(R); R.cands.forEach(c => c.gid = g.id);
+  R.isLive = live;
   if (R.ruledOut.length) dq.push({ lvl:'ok', t:`Removed bets on players ruled out: ${[...new Set(R.ruledOut)].slice(0,6).join(', ')}.` });
   R.best = rankDiverse(R.cands, 3); R.ranked = rankDiverse(R.cands, 15);
   R.ladders = ladders(R);
   R.creative = rankDiverse(R.cands.filter(c => c.creative), 8, { anyType:true });
   R.sgps = buildSGPs(R);
+  if (live) applyLive(R); else if (g.state === 'pre') try { savePreSnap(R); } catch(e){}
   // recommendation protection: compare with the last run
   const prev = PREV[g.id]; R.changes = [];
   if (prev){ for (const c of prev.best){ const now = R.cands.find(x => x.id === c.id); if (!now) R.changes.push(`${c.label} is no longer offered, so it was removed.`); else if (now.priced && c.priced && Math.abs(now.dec - c.dec) > 0.05) R.changes.push(`${c.label} moved from ${decToAm(c.dec)} to ${decToAm(now.dec)}.`); }
@@ -2180,7 +2353,7 @@ const JOBS = store.get('np_jobs', {});
 function jobRun(name, ok, err){ const j = JOBS[name] ||= { name }; j.last = Date.now(); j.ok = ok; j.err = err || ''; j.runs = (j.runs||0) + 1; store.set('np_jobs', JOBS); }
 function nextInterval(games){
   const now = Date.now(), live = games.some(g => g.state === 'in');
-  if (live) return CONFIG.liveRefreshMs;
+  if (live || games.some(g => g.state === 'pre' && new Date(g.date).getTime() <= now)) return CONFIG.liveRefreshMs;   // catch kickoff quickly
   const soon = games.filter(g => g.state === 'pre').map(g => new Date(g.date).getTime() - now).filter(x => x > 0);
   const nearest = soon.length ? Math.min(...soon) : Infinity;
   return nearest < 3*3600e3 ? 5*60000 : 20*60000;
@@ -2191,7 +2364,7 @@ async function maintenance(){
     const now = Date.now(); let removed = 0;
     for (const [k, v] of await DB.all('odds')) if (v.start && now - new Date(v.start).getTime() > 14*864e5){ await DB.del('odds', k); removed++; }
     for (const [k, v] of await DB.all('events')) if (v.date && now - new Date(v.date).getTime() > 2*864e5 && v.state !== 'archived'){ v.state = 'archived'; await DB.put('events', k, v); }
-    try { for (const k of Object.keys(localStorage)){ if (!/^np_(c_|log_|oa_|sm_|roster_)/.test(k)) continue; const v = JSON.parse(localStorage.getItem(k)); if (v && v.at && now - v.at > 3*864e5) localStorage.removeItem(k); } } catch(e){}
+    try { for (const k of Object.keys(localStorage)){ if (!/^np_(c_|log_|oa_|sm_|roster_|pre_)/.test(k)) continue; const v = JSON.parse(localStorage.getItem(k)); if (v && v.at && now - v.at > 3*864e5) localStorage.removeItem(k); } } catch(e){}
     jobRun('maintenance', true, removed ? `Archived ${removed} old odds records` : '');
   } catch(e){ jobRun('maintenance', false, e.message); }
 }
@@ -2244,7 +2417,7 @@ function whoWhat(c, g){
   if (side){ const t = g[side]; let w = c.label.replace(t.short, '').replace(/\s+/g,' ').trim(); if (c.market === 'spread') w = `${w} spread`; if (c.market === 'ml') w = w.replace(/^to win$/,'to win (moneyline)'); return { who:t.name, what:w }; }
   return { who:`${g.away.name} @ ${g.home.name}`, what:c.label };
 }
-const reason1 = (R, c) => firstSentences(whyText(R, c), 1);
+const reason1 = (R, c) => c.live && R.live ? liveReason(c, R) : firstSentences(whyText(R, c), 1);
 function whyBox(c, R){
   const g = R.g, m = c.model, L = c.layers || {};
   const ic = v => v >= 0.62 ? ['ok','✓'] : v >= 0.45 ? ['mid','~'] : ['no','!'];
@@ -2253,12 +2426,13 @@ function whyBox(c, R){
   const proj = m?.kind === 'dist' ? `<li>Model projection: <b>${fmt1(m.proj)}</b> against a line of ${c.line}.${m.last3!=null?` Last 3 games: ${fmt1(m.last3)} a game.`:''}</li>` : '';
   const hit = c.hit10 ? `<li>Went over this line in ${c.hit10.h} of his last ${c.hit10.n} games.</li>` : '';
   return `<div class="wb">
-    <div class="wb-top">${strengthPill(c.quality)}${riskPill(c.risk)}<span class="note">${esc(c.type)}</span></div>
+    <div class="wb-top">${c.live ? '<span class="pill bad">● Live</span>' : ''}${strengthPill(c.quality)}${riskPill(c.risk)}<span class="note">${esc(c.type)}</span></div>
+    ${c.live && R.live ? liveWhyHtml(c, R) : ''}
     <ul class="wb-pts">
       <li>We give it a <b>${pct(c.p,0)}</b> chance. The ${priceStr(c)} price implies ${pct(c.implied,0)}, so ${c.ev >= 0 ? `the payout is about <b>${fmt1(c.ev*100)}% better than fair</b>` : `the price is about ${fmt1(-c.ev*100)}% worse than fair`}.</li>
       ${proj}${hit}${move}
     </ul>
-    <p class="wb-txt">${esc(whyText(R, c))}</p>
+    ${c.live && R.live ? '' : `<p class="wb-txt">${esc(whyText(R, c))}</p>`}
     <div><span class="lbl">The 8 checks</span><div class="chks">${row(L.model,'Model vs price')}${row(L.market,'Market','Line movement & book agreement')}${row(L.context, c.kind==='player' ? 'Role & form' : 'Form & injuries', c.kind==='player' ? 'Role, usage & recent form' : 'Team form, injuries, ratings')}${row(L.matchup,'Matchup')}${row(L.script,'Game script','Fits the likely game script')}${row(L.data, c.priced ? 'Data' : 'Price assumed', c.priced ? 'Fresh, clean data' : 'Price assumed at -110')}${row(L.price,'Best price','Price vs other books')}<span class="chk ${c.flags?.length ? 'mid' : 'ok'}" title="What could make it lose (below)"><b>${c.flags?.length ? '~' : '✓'}</b>Failure case</span></div></div>
     <div><span class="lbl">What could make it lose</span><ul class="small">${failCase(R, c).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
     ${c.flags?.length ? `<div class="flag">${c.flags.map(esc).join('<br>')}</div>` : ''}
@@ -2271,10 +2445,10 @@ function whyBox(c, R){
 /* ---------- Level 1: bet card ---------- */
 function betCard(c, R, ctx, opts = {}){
   const g = R.g, { who, what } = whoWhat(c, g), id = 'w' + hsh(ctx + g.id + c.id);
-  return `<article class="bc${opts.top ? ' best' : ''}">
+  return `<article class="bc${opts.top ? ' best' : ''}${c.live && !c.live.fresh ? ' stale' : ''}">
     <div class="bc-h">${pickIcon(c, g)}<div class="bc-t">${opts.tag || opts.board ? `<div class="bc-ctx">${opts.tag ? `<span class="tag">${esc(opts.tag)}</span>` : ''}${opts.board ? esc(`${SPORT[g.sport].label} · ${matchup(g)} · ${whenTxt(g)}`) : ''}</div>` : ''}<div class="bc-who">${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(who)}</a>` : esc(who)}</div></div></div>
     <div class="bc-what">${esc(what)}</div>
-    <div class="bc-odds"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span></div>
+    <div class="bc-odds"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span></div>${liveBadges(c, R)}
     <p class="bc-why">${esc(reason1(R, c))}</p>
     <div class="bc-foot">${togBtn(id, 'Why?')}</div>
     <div class="whybox" id="${id}" hidden>${whyBox(c, R)}</div>
@@ -2286,7 +2460,7 @@ function betRow(c, R, ctx, opts = {}){
   return `<div class="br-wrap"><div class="br">
     <div class="br-i">${pickIcon(c, g)}</div>
     <div class="br-t">${opts.game ? `<div class="br-g">${esc(SPORT[g.sport].icon)} ${esc(matchup(g))} · ${esc(whenTxt(g))}${lock ? ' <span class="pill warn">🔒 Started</span>' : ''}</div>` : ''}<div><b>${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(who)}</a>` : esc(who)}</b></div><div class="br-w">${esc(what)}</div></div>
-    <div class="br-o"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span></div>
+    <div class="br-o"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span>${c.live ? `<span class="note">${c.live.fresh ? `good to ${decToAm(c.live.goodTo)}` : 'odds updating'}</span>` : ''}</div>
     <div class="br-b">${togBtn(id, 'Why?')}</div></div>
     <div class="whybox" id="${id}" hidden><p class="bc-why" style="margin:0 0 8px">${esc(reason1(R, c))}</p>${whyBox(c, R)}${opts.game ? `<div class="actions" style="margin-top:8px">${goLink('View match', '#g-' + g.id)}</div>` : ''}</div></div>`;
 }
@@ -2340,7 +2514,8 @@ const tiersGrid = (lists, ctx, opts = {}) => `<div class="tiers${opts.stack ? ' 
 
 /* ---------- header ---------- */
 function headerSync(){
-  const h = location.hash, week = h === '#week', cur = week ? 'week' : (h === '#players' || h.startsWith('#p-')) ? 'players' : /^#(g|r)-|^#health/.test(h) ? '' : 'today';
+  const h = location.hash, week = h === '#week', cur = week ? 'week' : h === '#live' ? 'live' : (h === '#players' || h.startsWith('#p-')) ? 'players' : /^#(g|r)-|^#health/.test(h) ? '' : 'today';
+  const nLive = liveGamesInView().length, lb = $('#liveBadge'); if (lb){ lb.textContent = nLive; lb.hidden = !nLive; }
   document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', String(a.dataset.nav === cur)));
   document.querySelectorAll('#sportSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sport === state.sport)));
   document.querySelectorAll('#whenSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.when === state.when)));
@@ -2399,6 +2574,7 @@ function renderToday(){
     <section class="sec col-main" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top">${esc(v.bets)}</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.games.filter(g=>CACHE[g.id]).length} of ${v.games.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Ranked on 8 checks'}</span></div>
       ${top.length ? `<div class="bets board">${moreList('mtop' + hsh(state.sport + state.when), top.map((x, i) => betCard(x.c, x.R, 'top', { board:true, top:i === 0, tag:i === 0 ? 'Best bet' : null })), 6)}</div><div class="swipe-hint note">Swipe for more · ${plural(top.length,'pick')}</div>`
         : empty || `<div class="panel note">${res.length ? (nF ? 'Nothing matches the advanced filters.' : 'No bets clear our checks yet.') : '<span class="loading"><span class="spin"></span>Researching games…</span>'}</div>`}
+      ${liveStrip()}
     </section>
     <aside class="col-side">
       <section class="sec" aria-labelledby="h-sgp"><div class="sechead"><h2 id="h-sgp">Top SGPs</h2><span class="note">Best same-game parlay per tier · * price assumed</span></div>${tiersGrid(tierLists, 'home', { showGame:true, stack:true, busy:researching })}</section>
@@ -2462,6 +2638,7 @@ async function renderGame(id, opts = {}){
   let R; try { R = await analyzeGame(g, { useOA:!!opts.useOA || (store.get('np_autoOA', false) && !Providers.odds[1].cached(g)), onStep:t => { const s = $('#steps span:last-child'); if (s) s.textContent = t; } }); }
   catch(e){ paint(`<a href="#" class="back">← Today</a><div class="panel" style="color:var(--bad)">Analysis failed: ${esc(e.message)}. The rest of the site keeps working.</div>`); return; }
   if (location.hash !== '#g-'+id) return;
+  if (R.isLive && g.state === 'in'){ renderLiveGame(R); return; }
   const wx = R.weather, oaOn = Providers.odds[1].enabled(), oaHas = !!Providers.odds[1].cached(g), ctx = 'g' + id;
   const shown = R.best.slice(0, 2), others = R.ranked.filter(c => !shown.includes(c)), creative = R.creative.filter(c => !shown.includes(c) && !others.slice(0, 15).includes(c));
   const bets = `${shown.length ? `<div class="bets two">${shown.map((c,i) => betCard(c, R, ctx, { top:i===0, tag:i===0 ? 'Best bet' : 'Next best' })).join('')}</div>` : '<div class="panel note">No lines are posted for this game yet. It fills in as books post markets.</div>'}
@@ -2557,6 +2734,7 @@ async function renderResearch(id){
   const moves = hist.filter(h => h.hist.length > 1 || (h.open && h.cur && (h.open.line !== h.cur.line))).slice(0, 60);
   const recs = [...R.best, ...R.creative.slice(0,3)].filter((c,i,a)=>a.indexOf(c)===i);
   const tabs = [
+    ...((g.state === 'in' || Object.keys(D.box || {}).length) && g.sport !== 'soccer' || g.state === 'in' ? [['live','Live', liveResearchHtml(R)]] : []),
     ['stats','Stats', `<h3>Game environment</h3>${env}${soccerStats}
       <h3>Recent games</h3><div class="inj"><div class="panel"><h3>${esc(g.away.short)}</h3>${form('away')}</div><div class="panel"><h3>${esc(g.home.short)}</h3>${form('home')}</div></div>
       ${D.predictor ? `<div class="panel note">ESPN power index: ${esc(g.home.short)} ${pct(D.predictor.home,0)} · ${esc(g.away.short)} ${pct(D.predictor.away,0)}.</div>` : ''}
@@ -2620,10 +2798,12 @@ function openSettings(){
       <details class="acc"><summary>More sportsbooks (optional)</summary><div class="stack" style="margin-top:8px">
         <label class="lbl" for="oakey">The Odds API key (free tier)</label><input id="oakey" type="password" value="${esc(oaKey())}" placeholder="Paste your key">
         <p class="note" style="margin:0">Adds prices from up to 10 sportsbooks, alternate lines, first-half, touchdown and scorer markets, and soccer corners and cards. Used only when you tap "Compare all sportsbooks" on a game (about 20–40 credits per game; the free plan has 500 a month). Your key stays in this browser.</p>
+        <label class="lbl" for="liveB">Live odds budget per game (credits)</label><select id="liveB">${[20,40,80,150].map(n => `<option ${CONFIG.liveBudget===n?'selected':''}>${n}</option>`).join('')}</select>
+        <p class="note" style="margin:0">Live odds refresh as fast as this budget allows over the rest of the game (never more than once a minute). More credits = fresher live odds.</p>
         <label class="row" style="gap:8px"><input type="checkbox" id="autoOA" ${store.get('np_autoOA', false)?'checked':''}> Compare all sportsbooks automatically when I open a game (uses credits)</label></div></details>
       <button class="btn primary" id="saveS">Save</button>
       <a href="#health" class="note">Data health (admin)</a></div>`, 'Settings');
-  $('#saveS').onclick = () => { store.set('np_bank', $('#bankroll').value); store.set('np_oakey', $('#oakey').value.trim()); store.set('np_autoOA', $('#autoOA').checked); const n = +$('#sgpN').value; if (n !== CONFIG.sgpPerTier){ CONFIG.sgpPerTier = n; store.set('np_sgpN', n); for (const k of Object.keys(CACHE)) delete CACHE[k]; } closePlayer(); alertPush('ok','Settings saved.'); route(); if (!Object.keys(CACHE).length) reload(false); };
+  $('#saveS').onclick = () => { store.set('np_bank', $('#bankroll').value); store.set('np_oakey', $('#oakey').value.trim()); store.set('np_autoOA', $('#autoOA').checked); CONFIG.liveBudget = +$('#liveB').value; store.set('np_livebudget', CONFIG.liveBudget); const n = +$('#sgpN').value; if (n !== CONFIG.sgpPerTier){ CONFIG.sgpPerTier = n; store.set('np_sgpN', n); for (const k of Object.keys(CACHE)) delete CACHE[k]; } closePlayer(); alertPush('ok','Settings saved.'); route(); if (!Object.keys(CACHE).length) reload(false); };
 }
 function liveOddsTable(list){
   if (!list.length) return '<div class="panel note">Odds appear here once games are researched.</div>';
@@ -2791,7 +2971,7 @@ async function renderPlayer(gid, pid){
   if (other.length && tabs.length > 1) tabs.push(['more','More', rowsBlock(other, R, ctx + 'more')]);
   const status = inj ? `<span class="pill warn">${esc(inj.status)}${inj.detail ? ' · ' + esc(inj.detail) : ''}</span>` : g.sport === 'soccer' ? `<span class="pill ${lu==='starter'?'strong':lu==='bench'?'bad':''}">${lu==='starter'?'Starting':lu==='bench'?'Bench':'Lineup TBA'}</span>` : '';
   paint(`<a href="#players" class="back">← Players</a>
-    <div class="phead">${avatar(p, 'lg')}<div><div class="nm">${esc(p.name)}</div><div class="note">${esc(g[side].name)} · ${esc(p.pos || '—')} · ${side === 'home' ? 'vs' : '@'} ${esc(opp.name)} · ${esc(whenTxt(g))}</div><div class="row" style="gap:6px;margin-top:6px">${status}<a class="note" href="#g-${gid}">Game page →</a></div></div></div>
+    <div class="phead">${avatar(p, 'lg')}<div><div class="nm">${esc(p.name)}</div><div class="note">${esc(g[side].name)} · ${esc(p.pos || '—')} · ${side === 'home' ? 'vs' : '@'} ${esc(opp.name)} · ${esc(whenTxt(g))}</div><div class="row" style="gap:6px;margin-top:6px">${status}<a class="note" href="#g-${gid}">Game page →</a></div>${R.isLive && boxLine(R, pid) ? `<div class="note" style="margin-top:4px"><span class="pill bad">● Live</span> ${esc(boxLine(R, pid))}</div>` : ''}</div></div>
     <section class="sec"><div class="sechead"><h3>Best bet for this player</h3></div>${best ? `<div class="bets two">${betCard(best, R, ctx, { top:true, tag:'Best bet' })}</div>` : `<div class="panel note">No markets available yet. They show up here as soon as books post lines for him.</div>`}</section>
     ${rows.length ? `<section class="sec">${tabsHtml('pl' + gid + pid, tabs)}</section>` : ''}
     <div class="actions">${goBtn('Deep research', `data-pdeep="${esc(gid)}|${esc(pid)}"`)}</div>`);
@@ -2854,15 +3034,29 @@ async function tdModel(R){
   }
   const allTD = (lamAll.home || 0) + (lamAll.away || 0);
   // market prices (already collected) and blend with the book's own view
+  // live: TDs so far, red-zone touches from the play-by-play, and the time left
+  let LV = null;
+  if (R.isLive){ const L = R.live || liveGame(R), ab = {}, rz = {};
+    for (const x of out.rows){ const n = String(x.p.name).split(' '); ab[x.id] = ((n[0] || '')[0] + '.' + lastName(x.p.name)).toLowerCase(); }
+    for (const pl of (D.plays || [])){ if (pl.ytg == null || pl.ytg > 20) continue; const t = pl.text.toLowerCase().replace(/^(\([^)]*\)\s*)+/, '');
+      for (const x of out.rows){ const a = ab[x.id]; if (!a || !t.includes(a)) continue; const r = rz[x.id] || (rz[x.id] = { car:0, tgt:0 });
+        if (t.includes(' to ' + a)) r.tgt++; else if (t.startsWith(a)) r.car++; } }
+    const firstTD = (D.plays || []).find(p => p.scoring && /touchdown|\btd\b|yd run|yd pass/i.test(p.text));
+    LV = { L, ab, rz, firstTD, allRem: allTD*L.LC.rem*L.adj, rzTrips:{ home:(D.drives || []).filter(d => d.team === 'home' && d.rz).length, away:(D.drives || []).filter(d => d.team === 'away' && d.rz).length } }; }
   const mk = (pid, test) => R.cands.filter(c => c.playerId === pid && test(c) && c.dec).sort((a,b) => b.dec - a.dec)[0] || null;
   for (const x of out.rows){
-    const m = { any:1 - Math.exp(-x.lam), first:(x.lam / (allTD || 1)) * (1 - Math.exp(-allTD)), two:1 - Math.exp(-x.lam) * (1 + x.lam) };
+    let m = { any:1 - Math.exp(-x.lam), first:(x.lam / (allTD || 1)) * (1 - Math.exp(-allTD)), two:1 - Math.exp(-x.lam) * (1 + x.lam) };
+    if (LV){ const LC = LV.L.LC, tds = liveStat(D, x.id, 'tds', 'nfl') || 0, car = liveStat(D, x.id, 'carries', 'nfl') || 0, tgt = liveStat(D, x.id, 'targets', 'nfl') || 0;
+      const exp = (x.carG + x.tgtG)*LC.el, use = clamp(1 + Math.min(0.4, LC.el)*(((car + tgt + 1)/(exp + 1)) - 1), 0.5, 1.6), lr = x.lam*LC.rem*LV.L.adj*use;
+      const ft = LV.firstTD ? (LV.firstTD.text.toLowerCase().includes(LV.ab[x.id]) || LV.firstTD.text.includes(x.p.name)) : null;
+      x.live = { tds, car, tgt, rz:LV.rz[x.id] || { car:0, tgt:0 }, use, lr };
+      m = { any: tds > 0 ? 1 : 1 - Math.exp(-lr), two: tds >= 2 ? 1 : tds === 1 ? 1 - Math.exp(-lr) : 1 - Math.exp(-lr)*(1 + lr), first: ft == null ? (lr/(LV.allRem || 1))*(1 - Math.exp(-LV.allRem)) : ft ? 1 : 0 }; }
     x.c = { any:mk(x.id, c => c.stat === 'anytime_td' && c.side === 'yes'), first:mk(x.id, c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'), two:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2) };
     x.model = m; x.pr = {};
     for (const k of ['any','first','two']){ const c = x.c[k]; const book = c ? (1 / c.dec) / (k === 'any' ? 1.07 : 1.2) : null;   // strip typical one-sided margin
       x.pr[k] = book != null ? 0.5 * m[k] + 0.5 * book : m[k]; x.pBook = x.pBook || {}; x.pBook[k] = book; }
   }
-  out.allTD = allTD; R.tdm = out; return out;
+  out.allTD = allTD; out.live = LV; R.tdm = out; return out;
 }
 function tdWhy(x, R, k){
   const g = R.g, side = x.side, oppS = side === 'home' ? 'away' : 'home', T = R.tdm.team[side], c = x.c?.[k], p = x.pr[k], li = (t, b) => `<li><b>${t}.</b> ${b}</li>`;
@@ -2875,6 +3069,7 @@ function tdWhy(x, R, k){
   fc.push(`The game turns into "${sn[side === R.gm.favSide ? 'C' : 'A'].title}" and ${g[side].short} stall in the red zone.`); fc.push('TDs are rare events: even a 40% pick misses 6 times out of 10.');
   return `<div class="wb"><div class="wb-top"><span class="pill ${p >= 0.4 ? 'strong' : p >= 0.25 ? 'solid' : 'lean'}">${pct(p,0)} to ${lbl}</span>${x.q ? '<span class="pill warn">Questionable</span>' : ''}</div>
     <ul class="wb-pts">
+      ${x.live ? li('Live so far', `${x.live.tds ? `<b>Scored ${x.live.tds} TD${x.live.tds > 1 ? 's' : ''}.</b> ` : ''}${x.live.car} carries and ${x.live.tgt} targets, ${x.live.rz.car} carries and ${x.live.rz.tgt} targets inside the 20 (from the play-by-play). Usage is ${x.live.use >= 1.1 ? 'above' : x.live.use <= 0.9 ? 'below' : 'in line with'} what we expected. ${esc(g[side].short)} have ${R.tdm.live.rzTrips[side]} red-zone trip${R.tdm.live.rzTrips[side] === 1 ? '' : 's'}; ${pct(R.tdm.live.L.LC.rem,0)} of the game is left.`) : ''}
       ${li('Our chance', c ? `We give him <b>${pct(p,0)}</b> to ${lbl} (fair price ${fair}). The best price, ${decToAm(c.dec)} at ${esc(c.book)}, implies ${pct(1/c.dec,0)}, so ${p * c.dec >= 1 ? `<b>the payout beats fair by about ${fmt1((p * c.dec - 1) * 100)}%</b>` : `the price is about ${fmt1((1 - p * c.dec) * 100)}% short of fair. Only bet it at ${fair} or better`}.` : `We give him <b>${pct(p,0)}</b> to ${lbl}. Fair price ${fair}. No book price is posted yet, so take it only at ${fair} or better.`)}
       ${li('Usage', `${fmt1(x.carG)} carries and ${fmt1(x.tgtG)} targets a game over his last ${x.gp} games. That's about ${pct(x.rushSh,0)} of the team's carries and ${pct(x.tgtSh,0)} of its targets once weighted for goal-line and red-zone value (TEs and big backs get more weight).${mates.length ? ` With ${mates.map(o => esc(o.p.name)).join(', ')} out, their work is split among the players still available.` : ''}`)}
       ${li('Red zone, goal line & snaps', 'Inside-the-20/10/5 touches and snap share are not in the free data. The weighting above is the stand-in, so treat this as an estimate.')}
@@ -2891,7 +3086,7 @@ function tdWhy(x, R, k){
 function tdRow(x, R, k, i, ctx){
   const g = R.g, c = x.c[k], p = x.pr[k], id = 'tdw' + hsh('td' + g.id + k + x.id), val = c && p * c.dec >= 1.03;
   return `<div class="br-wrap${state.tdHl === x.id && k === 'any' ? ' hl' : ''}" id="${k === 'any' ? 'td-' + esc(x.id) : ''}"><div class="br"><div class="br-i"><a class="plink" href="${plHref(g.id, x.id)}">${avatar(x.p)}</a></div>
-    <div class="br-t"><div class="br-g">#${i+1} · ${esc(x.p.pos)} · ${esc(g[x.side].abbr)}${x.q ? ' · <span style="color:var(--warn)">questionable</span>' : ''}</div><div><b><a class="plink" href="${plHref(g.id, x.id)}">${esc(x.p.name)}</a></b></div><div class="br-w">${pct(p,0)} chance${val ? ' <span class="tag">Value</span>' : ''}</div></div>
+    <div class="br-t"><div class="br-g">${x.live ? `<span style="color:var(--sun)">live: ${x.live.car} car, ${x.live.tgt} tgt, ${x.live.rz.car + x.live.rz.tgt} inside the 20</span> · ` : ''}#${i+1} · ${esc(x.p.pos)} · ${esc(g[x.side].abbr)}${x.q ? ' · <span style="color:var(--warn)">questionable</span>' : ''}</div><div><b><a class="plink" href="${plHref(g.id, x.id)}">${esc(x.p.name)}</a></b></div><div class="br-w">${pct(p,0)} chance${val ? ' <span class="tag">Value</span>' : ''}</div></div>
     <div class="br-o"><b>${c ? decToAm(c.dec) : decToAm(1 / Math.max(p, 0.01))}</b><span>${c ? esc(c.book) : 'fair price'}</span></div><div class="br-b">${togBtn(id, 'Why?')}</div></div>
     <div class="whybox" id="${id}" hidden>${tdWhy(x, R, k)}</div></div>`;
 }
@@ -2899,10 +3094,13 @@ function tdScorersHtml(R){ return `<div id="tdbox" data-gid="${R.g.id}"><div cla
 function tdListHtml(R, ctx){
   const M = R.tdm; if (!M.rows.length) return '<div class="panel note">No player game logs are available for this game yet.</div>';
   const kinds = [['any','Anytime TD'], ['first','First TD'], ['two','2+ TDs']];
-  const tabs = kinds.map(([k, l]) => { const list = [...M.rows].sort((a,b) => b.pr[k] - a.pr[k]);
-    return [k, l, `<div class="rows">${moreList('tdm' + hsh(ctx + k), list.map((x, i) => tdRow(x, R, k, i, ctx)), 6)}</div>`]; });
+  const LV = M.live, done = x => x.live && ((k => k === 'any' ? x.live.tds > 0 : k === 'two' ? x.live.tds >= 2 : !!LV?.firstTD));
+  const tabs = kinds.map(([k, l]) => { if (LV && k === 'first' && LV.firstTD) return [k, l, `<div class="panel note">First TD already scored: ${esc(LV.firstTD.text)}</div>`];
+    const list = [...M.rows].filter(x => !(LV && done(x)(k))).sort((a,b) => b.pr[k] - a.pr[k]), hit = LV ? M.rows.filter(x => done(x)(k)) : [];
+    return [k, l, `<div class="rows">${moreList('tdm' + hsh(ctx + k), list.map((x, i) => tdRow(x, R, k, i, ctx)), 6)}</div>${hit.length ? `<div class="note">Already cashed: ${hit.map(x => `${esc(x.p.name)} (${x.live.tds} TD)`).join(', ')}</div>` : ''}`]; });
+  const liveNote = LV ? `<div class="panel note"><b>Live.</b> ${esc(scoreTxt(R.g))} · ${esc(R.g.statusText || '')} · Red-zone trips: ${esc(R.g.away.short)} ${LV.rzTrips.away}, ${esc(R.g.home.short)} ${LV.rzTrips.home}. Chances below are for the rest of the game, with live anytime TD odds where books post them.</div>` : '';
   const priced = M.rows.filter(x => x.c.any).length;
-  return `${tabsHtml('tdk', tabs)}<div class="note">Ranked by chance to score: every QB, RB, WR and TE on both rosters (${M.rows.length} players), using usage, TD history, the team totals, weather, script and injuries${priced ? `, blended with ${plural(priced, 'sportsbook price')}` : ''}. "Value" means the best price pays more than our fair price. Expected TDs in this game: ${fmt1(M.allTD)}.</div>`;
+  return `${liveNote}${tabsHtml('tdk', tabs)}<div class="note">Ranked by chance to score: every QB, RB, WR and TE on both rosters (${M.rows.length} players), using usage, TD history, the team totals, weather, script and injuries${priced ? `, blended with ${plural(priced, 'sportsbook price')}` : ''}. "Value" means the best price pays more than our fair price. Expected TDs in this game: ${fmt1(M.allTD)}.</div>`;
 }
 async function fillTD(R, sel, html){
   try { await tdModel(R); } catch(e){ const b = document.querySelector(sel); if (b) b.innerHTML = `<div class="panel note">Couldn't load TD data right now (${esc(e.message)}).</div>`; return; }
@@ -2913,6 +3111,179 @@ async function fillTD(R, sel, html){
 function tdTopHtml(R){
   const M = R.tdm, top = [...M.rows].sort((a,b) => b.pr.any - a.pr.any).slice(0, 4);
   return top.length ? `<div class="rows">${top.map((x, i) => tdRow(x, R, 'any', i, 'gtd' + R.g.id)).join('')}</div><div class="actions">${goLink('All TD scorers', '#r-' + R.g.id, 'data-rtab="td"')}</div>` : '';
+}
+
+/* ============================ LIVE (tab, live game page, tracker, live research) ============================ */
+const liveGamesInView = () => state.allGames().filter(g => g.state === 'in' && sportsInView().includes(g.sport)).sort((a,b) => new Date(a.date) - new Date(b.date));
+const scoreTxt = g => `${g.away.short} ${g.away.score ?? 0} – ${g.home.short} ${g.home.score ?? 0}`;
+const BOX_KEYS = { nfl:[['completions/passingAttempts','C/ATT'],['passingYards','pass yds'],['rushingAttempts','car'],['rushingYards','rush yds'],['receivingTargets','tgt'],['receptions','rec'],['receivingYards','rec yds']],
+  nba:[['minutes','min'],['points','pts'],['rebounds','reb'],['assists','ast'],['fouls','fouls']], mlb:[['atBats','AB'],['hits','H'],['pitches','pitches'],['strikeouts','K']], nhl:[['timeOnIce','TOI'],['shotsTotal','shots'],['goals','G'],['assists','A']], soccer:[] };
+function boxLine(R, pid){ const b = R.D.box?.[pid]; if (!b) return ''; return (BOX_KEYS[R.g.sport] || []).filter(([k]) => b.stats[k] != null).map(([k, l]) => `${k === 'completions/passingAttempts' ? `${b.stats.completions ?? '?'}/${b.stats.passingAttempts ?? '?'}` : fmt1(b.stats[k])} ${l}`).join(', '); }
+function liveSituation(R){ const s = R.D.situation, g = R.g; if (!s) return '';
+  if (g.sport === 'nfl') return [s.possession ? `${g[s.possession].short} ball` : '', s.downDistance, s.redZone ? '<span class="pill bad">Red zone</span>' : ''].filter(Boolean).join(' · ');
+  if (g.sport === 'mlb') return [s.outs != null ? `${s.outs} out${s.outs === 1 ? '' : 's'}` : '', s.balls != null ? `${s.balls}-${s.strikes} count` : '', [s.onFirst && '1st', s.onSecond && '2nd', s.onThird && '3rd'].filter(Boolean).length ? 'On: ' + [s.onFirst && '1st', s.onSecond && '2nd', s.onThird && '3rd'].filter(Boolean).join(', ') : ''].filter(Boolean).join(' · ');
+  return s.lastPlay ? esc(s.lastPlay) : ''; }
+function liveWhyHtml(c, R){
+  const L = R.live, g = R.g, lv = c.live, S = preSnap(g.id), li = (t, b) => `<li><b>${t}.</b> ${b}</li>`;
+  const pace = L.preT ? `Scoring is running ${L.pace >= 1 ? fmt1((L.pace - 1)*100) + '% above' : fmt1((1 - L.pace)*100) + '% below'} the pregame pace (pregame total ${fmt1(L.preT)}).` : '';
+  const preLine = S?.lines?.[c.G?.key], preDec = S?.lines?.[(c.G?.key || '') + '|' + c.side];
+  const move = preLine != null && c.G?.consensusLine != null && preLine !== c.G.consensusLine ? `Line moved from ${preLine} before the game to ${c.G.consensusLine} now.` : preLine != null ? 'The line is back where it was before the game.' : preDec ? `Was ${decToAm(preDec)} before the game; best now ${decToAm(c.dec)}.` : 'No pregame line was saved for comparison (the site wasn\'t open before the game).';
+  const inj = (R.D.plays || []).filter(p => /injur|ruled out|questionable to return|will not return|helped off|carted/i.test(p.text)).slice(-3);
+  const usage = c.playerId ? `${esc(c.player?.name || '')}: ${esc(boxLine(R, c.playerId) || 'no stats yet')}.${lv.exp != null ? ` ${fmt1(lv.cur)} ${esc(lv.unit || '')} so far vs about ${fmt1(lv.exp)} expected by now.` : ''}` : '';
+  return `<ul class="wb-pts live-pts">
+    ${li('What\'s happened', `${esc(scoreTxt(g))} · ${esc(L.LC.label || '')}. ${pace}`)}
+    ${lv.proj != null ? li('Live projection', (c.market === 'ml' || c.market === 'spread') ? `${esc(g[c.side]?.short || '')} projected to finish ${lv.proj >= 0 ? `ahead by ${fmt1(lv.proj)}` : `behind by ${fmt1(-lv.proj)}`}${c.market === 'spread' ? ` vs a spread of ${fmtPt(c.line)}` : ''} (pregame: ${fmt1(c.side === 'home' ? L.preM : -L.preM)}).${lv.overreact ? ' <b>The line has moved past our projection: the market overreacted.</b>' : ''}` : `<b>${fmt1(lv.proj)}</b> vs the line of ${c.line ?? '—'}${lv.pre != null && c.stat !== 'anytime_td' ? ` (pregame projection ${fmt1(c.kind === 'player' ? lv.pre : (c.market === 'total' ? L.preT : lv.pre))})` : ''}.${lv.overreact ? ' <b>The line has moved past our projection: the market overreacted.</b>' : ''}`) : ''}
+    ${usage ? li('Usage so far', usage) : ''}
+    ${li('In-game injuries', inj.length ? inj.map(p => esc(p.text)).join(' · ') : 'None reported in the play-by-play.')}
+    ${li('Line movement', move)}
+    ${li('Price', `Best live price ${decToAm(c.dec)} at ${esc(c.book)}. Good to <b>${decToAm(lv.goodTo)}</b>: don't take it worse than that. Odds ${lv.fresh ? `updated ${agoEl(R.live.oddsAt)}` : '<b>are not fresh</b>'}.`)}
+  </ul>`;
+}
+function liveReason(c, R){
+  const g = R.g, L = R.live, lv = c.live, left = `${pct(L.LC.rem,0)} of the game left`;
+  if (c.market === 'ml' || c.market === 'spread'){ const s = c.side, m = s === 'home' ? L.hs - L.as : L.as - L.hs, pm = s === 'home' ? L.projM : -L.projM, t = g[s].short;
+    return `${t} ${m > 0 ? `lead by ${m}` : m < 0 ? `trail by ${-m}` : 'are tied'} with ${left}; we project ${t} ${pm >= 0 ? `to win by ${fmt1(pm)}` : `to lose by ${fmt1(-pm)}`}.`; }
+  if (c.market === 'total') return `${L.hs + L.as} points with ${left}; live projection ${fmt1(L.projT)} vs the line of ${c.line}.`;
+  if (c.market === 'team_total') return `${g[c.team].short} have ${c.team === 'home' ? L.hs : L.as} with ${left}; projected ${fmt1(lv.proj)}.`;
+  if (c.stat === 'anytime_td') return `No TD yet for ${c.player?.name || 'him'}, with ${left}.`;
+  if (lv.cur != null && lv.proj != null) return `${fmt1(lv.cur)} ${lv.unit || ''} so far; on pace for ${fmt1(lv.proj)} vs the line of ${c.line}.`;
+  return `Live price with ${left}.`;
+}
+function liveBadges(c, R){ if (!c.live) return ''; return `<div class="lv-meta">${c.live.fresh ? '' : '<span class="pill warn">Odds updating</span>'}${c.live.overreact ? '<span class="tag">Overreaction</span>' : ''}<span>Good to <b class="mono">${decToAm(c.live.goodTo)}</b></span><span class="note">Updated ${agoEl(R.live?.oddsAt)}</span></div>`; }
+function liveGameRow(g){
+  return `<div class="gr"><div class="gr-l"><div class="gr-tm">${teamLogo(g.away,'sm')}<span>${esc(g.away.short)} <b class="sc">${esc(g.away.score ?? 0)}</b></span><span class="muted">–</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)} <b class="sc">${esc(g.home.score ?? 0)}</b></span></div>
+    <div class="gr-m"><b style="color:var(--bad)">● ${esc(g.statusText || 'Live')}</b>${g.sport === 'soccer' && g.leagueName ? ' · ' + esc(g.leagueName) : ''}</div></div>${goLink('View live', '#g-' + g.id)}</div>`;
+}
+function liveStrip(){
+  const games = liveGamesInView(); if (!games.length) return '';
+  return `<section class="sec"><div class="sechead"><h3><span class="dot bad"></span>Live now</h3><a class="linkbtn" href="#live">All live bets →</a></div>
+    <div class="lstrip">${games.map(g => `<a class="lchip" href="#g-${g.id}"><b>${esc(scoreTxt(g))}</b><span class="note">${esc(g.statusText || 'Live')}</span></a>`).join('')}</div></section>`;
+}
+function renderLive(){
+  const games = liveGamesInView(), res = games.map(g => CACHE[g.id]).filter(R => R && R.isLive);
+  const seen = new Map(), top = [];
+  for (const x of res.flatMap(R => R.ranked.map(c => ({ c, R }))).sort((a,b) => b.c.quality - a.c.quality)){ if ((seen.get(x.R.g.id) || 0) >= 3) continue; seen.set(x.R.g.id, (seen.get(x.R.g.id) || 0) + 1); top.push(x); if (top.length >= 10) break; }
+  const stale = res.flatMap(R => (R.liveStale || []).map(c => ({ c, R }))), oaOn = Providers.odds[1].enabled();
+  const why = !games.length ? 'No games are live right now. Live picks show up here as soon as a game starts.' : !oaOn ? 'Live odds come from The Odds API. Add your key in Settings to get live picks; scores and research below still update.' : res.length < games.length ? 'Researching live games…' : 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.';
+  const byS = SPORT_KEYS.filter(k => games.some(g => g.sport === k)).map(k => `<details class="grp" open><summary><span>${SPORT[k].icon} ${esc(SPORT[k].label)}</span><span class="note">${plural(games.filter(g => g.sport === k).length, 'game')}</span></summary><div class="grows">${games.filter(g => g.sport === k).map(liveGameRow).join('')}</div></details>`).join('');
+  paint(`<section class="sec"><div class="sechead"><h2>Top live bets</h2><span class="note">Best live price across every book we track · refreshes every 20s</span></div>
+      ${top.length ? `<div class="bets board">${moreList('mlive', top.map((x, i) => betCard(x.c, x.R, 'live', { board:true, top:i === 0, tag:i === 0 ? 'Best live bet' : null })), 6)}</div>` : `<div class="panel note">${esc(why)}</div>`}
+      ${stale.length ? `<details class="acc panel"><summary>Waiting on fresh odds (${stale.length})</summary><div class="rows stale" style="margin-top:8px">${stale.map(x => betRow(x.c, x.R, 'lst', { game:true })).join('')}</div></details>` : ''}</section>
+    <section class="sec"><div class="sechead"><h2>Live games</h2><span class="note">${plural(games.length, 'game')} in progress</span></div>${byS || '<div class="panel note">No games in progress.</div>'}</section>`);
+  headerSync();
+}
+/* ---------- pregame picks tracker ---------- */
+function trackItem(x, R){
+  const g = R.g, D = R.D, L = R.live || liveGame(R), LC = L.LC, fin = g.state === 'post', S = preSnap(g.id), side = x.team;
+  const res = (status, pctv, txt, cls) => ({ status, pct:clamp(pctv, 0, 1), txt, cls });
+  if (x.period && x.period !== 'FG') return res('Not tracked', 0, 'Live tracking covers full-game markets', 'mid');
+  if (x.playerId && x.stat === 'anytime_td'){ const t = liveStat(D, x.playerId, 'tds', 'nfl') || 0; return t > 0 ? res('Hit', 1, `Scored ${t} TD${t > 1 ? 's' : ''}`, 'ok') : fin ? res('Lost', 0, 'No TD', 'no') : res('Needs a TD', LC.el, 'No TD yet', 'mid'); }
+  if (x.playerId){ const cur = liveStat(D, x.playerId, x.stat, g.sport); if (cur == null) return res('Waiting', 0, 'No stats yet', 'mid');
+    const pre = S?.proj?.[x.playerId + '|' + x.stat], unit = statLabel(g.sport, x.stat), proj = pre != null ? cur + pre*LC.rem*clamp(1 + Math.min(0.4, LC.el)*(((cur + 1)/(pre*LC.el + 1)) - 1), 0.6, 1.5) : cur/Math.max(LC.el, 0.05);
+    const t = `${fmt1(cur)} of ${x.line} ${unit}`;
+    if (x.side === 'over'){ if (cur > x.line) return res('Hit', 1, t, 'ok'); if (fin) return res('Lost', cur/x.line, t, 'no'); return proj > x.line ? res('On pace', cur/x.line, `${t} — on pace`, 'ok') : res('Behind pace', cur/x.line, `${t} — behind pace`, 'mid'); }
+    if (cur > x.line) return res('Lost', 1, t, 'no'); if (fin) return res('Hit', cur/x.line, t, 'ok'); return proj < x.line ? res('On track', cur/x.line, `${t} — staying under`, 'ok') : res('Trending over', cur/x.line, `${t} — trending over`, 'mid'); }
+  if (x.market === 'total'){ const cur = L.hs + L.as, t = `${cur} of ${x.line} points`; if (x.side === 'over'){ if (cur > x.line) return res('Hit', 1, t, 'ok'); if (fin) return res('Lost', cur/x.line, t, 'no'); return L.projT > x.line ? res('On pace', cur/x.line, `${t} — on pace (proj. ${fmt1(L.projT)})`, 'ok') : res('Behind pace', cur/x.line, `${t} — behind pace (proj. ${fmt1(L.projT)})`, 'mid'); }
+    if (cur > x.line) return res('Lost', 1, t, 'no'); if (fin) return res('Hit', cur/x.line, t, 'ok'); return L.projT < x.line ? res('On track', cur/x.line, `${t} — staying under (proj. ${fmt1(L.projT)})`, 'ok') : res('Trending over', cur/x.line, `${t} — trending over (proj. ${fmt1(L.projT)})`, 'mid'); }
+  if (x.market === 'spread' || x.market === 'ml' || x.market === 'dnb'){ const s = x.side, m = s === 'home' ? L.hs - L.as : L.as - L.hs, adjm = m + (x.market === 'spread' ? x.line : 0), pm = s === 'home' ? L.projM : -L.projM;
+    const pw = x.market === 'spread' ? nOver(pm, L.sdM, -x.line).over : nOver(pm, L.sdM, 0).over, lead = m > 0 ? `Leading by ${m}` : m < 0 ? `Trailing by ${-m}` : 'Tied';
+    if (fin) return adjm > 0 ? res('Hit', 1, lead, 'ok') : adjm === 0 ? res('Push', 0.5, lead, 'mid') : res('Lost', 0, lead, 'no');
+    return adjm > 0 ? res(x.market === 'spread' ? 'Covering' : 'Winning', pw, `${lead} · ${pct(pw,0)} to cash`, 'ok') : res(x.market === 'spread' ? 'Not covering' : 'Losing', pw, `${lead} · ${pct(pw,0)} to cash`, 'mid'); }
+  if (x.market === 'team_total'){ const cur = side === 'home' ? L.hs : L.as, t = `${cur} of ${x.line}`; if (x.side === 'over') return cur > x.line ? res('Hit', 1, t, 'ok') : fin ? res('Lost', cur/x.line, t, 'no') : res('In play', cur/x.line, t, 'mid');
+    return cur > x.line ? res('Lost', 1, t, 'no') : fin ? res('Hit', cur/x.line, t, 'ok') : res('In play', cur/x.line, t, 'mid'); }
+  return res('Not tracked', 0, 'Live tracking isn\'t available for this market', 'mid');
+}
+function trackerHtml(R){
+  const S = preSnap(R.g.id); if (!S) return '<div class="panel note">Pregame picks weren\'t saved for this game (the site wasn\'t open before it started), so there\'s nothing to track.</div>';
+  const items = [...S.picks.map(x => ({ ...x, src:'Pregame pick' })), ...S.legs.map(x => ({ ...x, src:`${x.parlay} SGP leg` }))];
+  const rows = items.map(x => { const t = trackItem(x, R); return `<div class="trk"><div class="trk-t"><b>${esc(x.label)}</b> <span class="note">${esc(x.src)}${x.price ? ' · ' + esc(x.price) : ''}</span></div><div class="trk-s"><span class="pill ${t.cls === 'ok' ? 'strong' : t.cls === 'no' ? 'bad' : 'lean'}">${esc(t.status)}</span> <span class="note">${esc(t.txt)}</span></div><div class="tbar ${t.cls}"><i style="width:${(t.pct*100).toFixed(0)}%"></i></div></div>`; });
+  return `<div class="rows trkl">${moreList('trk' + R.g.id, rows, 5)}</div>`;
+}
+function liveGameWhy(R){
+  const g = R.g, L = R.live, wp = R.D.winProb || [], scoring = (R.D.plays || []).filter(p => p.scoring).slice(-4);
+  return `<div class="wb"><ul class="wb-pts">
+    <li><b>Score & clock.</b> ${esc(scoreTxt(g))} · ${esc(L.LC.label || '')}. ${pct(L.LC.el,0)} of the game played.</li>
+    <li><b>Pace vs pregame.</b> Pregame total ${fmt1(L.preT)}; live projection ${fmt1(L.projT)}. Pregame ${esc(g.home.short)} ${L.preM >= 0 ? 'by ' + fmt1(L.preM) : '+' + fmt1(-L.preM)}; live projection ${esc(g.home.short)} ${L.projM >= 0 ? 'by ' + fmt1(L.projM) : 'trail by ' + fmt1(-L.projM)}.</li>
+    ${wp.length ? `<li><b>Win probability.</b> ${esc(g.home.short)} ${fmt1(wp[wp.length - 1]*100)}% now (started ${fmt1(wp[0]*100)}%).</li>` : ''}
+    ${scoring.length ? `<li><b>Recent scores.</b> ${scoring.map(p => esc(p.text)).join(' · ')}</li>` : ''}
+    <li><b>Odds.</b> ${R.live.oddsAt ? `Live odds updated ${agoEl(R.live.oddsAt)}; ${plural(Math.round(R.live.budgetLeft), 'credit')} left in this game's budget.` : 'No live odds pulled yet.'}${R.live.suspended.length ? ` Suspended right now: ${R.live.suspended.map(esc).join(', ')}.` : ''}</li>
+  </ul></div>`;
+}
+function renderLiveGame(R){
+  const g = R.g, id = g.id, L = R.live, oaOn = Providers.odds[1].enabled(), ctx = 'lg' + id;
+  const shown = R.best.slice(0, 2), others = R.ranked.filter(c => !shown.includes(c));
+  const propPlayers = [...new Set(R.cands.filter(c => c.playerId).map(c => c.playerId))].map(pid => ({ pid, p:R.idx[pid]?.player, n:R.cands.filter(c => c.playerId === pid).length })).filter(x => x.p).sort((a,b) => b.n - a.n);
+  const cost = 3 + (LIVE_PROPS[g.sport] || []).length;
+  paint(`<a href="#live" class="back">← Live</a>
+    <div class="sb"><div class="sb-t">${teamLogo(g.away,'')}<div><div class="sb-n">${esc(g.away.short)}</div><div class="sb-s">${esc(g.away.score ?? 0)}</div></div></div>
+      <div class="sb-mid"><div class="pill bad">● LIVE</div><div class="sb-clock">${esc(g.statusText || L.LC.label || '')}</div><div class="note">${liveSituation(R)}</div></div>
+      <div class="sb-t r"><div><div class="sb-n">${esc(g.home.short)}</div><div class="sb-s">${esc(g.home.score ?? 0)}</div></div>${teamLogo(g.home,'')}</div></div>
+    <div class="note lv-odds">${L.oddsAt ? `Live odds updated ${agoEl(L.oddsAt)}` : 'No live odds yet'} · ${oaOn ? `${plural(Math.round(L.budgetLeft), 'credit')} left of this game's ${CONFIG.liveBudget}-credit budget` : 'add an odds key in Settings for live prices'}${L.suspended.length ? ` · <b style="color:var(--warn)">Suspended: ${L.suspended.map(esc).join(', ')}</b>` : ''}
+      ${oaOn ? ` · <button class="linkbtn" id="liveRefresh">Refresh live odds (~${cost} credits)</button>` : ''}</div>
+    ${R.changes.length ? `<div class="msg">${R.changes.map(esc).join('<br>')}</div>` : ''}
+    <section class="sec">${shown.length ? `<div class="bets two">${shown.map((c,i) => betCard(c, R, ctx, { top:i === 0, tag:i === 0 ? 'Live best bet' : 'Next best' })).join('')}</div>` : `<div class="panel note">${oaOn ? 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.' : 'Live picks need live odds from The Odds API (add your key in Settings).'}</div>`}</section>
+    ${others.length ? `<section class="sec"><div class="sechead"><h3>Other live bets</h3></div><div class="rows">${moreList('lo' + id, others.map(c => betRow(c, R, ctx)), 4)}</div></section>` : ''}
+    ${R.liveStale?.length ? `<details class="acc panel"><summary>Waiting on fresh odds (${R.liveStale.length})</summary><div class="rows stale" style="margin-top:8px">${R.liveStale.map(c => betRow(c, R, ctx + 's')).join('')}</div></details>` : ''}
+    <section class="sec"><div class="sechead"><h3>Live player props</h3><span class="note">Tap a player for his live market tabs</span></div>${propPlayers.length ? `<div class="pchs">${moreList('lpp' + id, propPlayers.map(x => `<a class="pch" href="${plHref(id, x.pid)}">${avatar(x.p)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(boxLine(R, x.pid) || x.p.pos || '')}</span></span><span class="pill strong">${x.n}</span></a>`), 8)}</div>` : `<div class="panel note">${oaOn ? 'Live player props come in with the next live odds pull for this page (or tap Refresh live odds).' : 'Live props need the odds key.'}</div>`}</section>
+    <section class="sec"><div class="sechead"><h3>Live SGPs</h3></div><div class="panel note">Not shown: the odds feed doesn't say which books offer live same-game parlays or what they pay, so we don't guess.</div></section>
+    <section class="sec"><div class="sechead"><h3>Pregame picks tracker</h3><span class="note">Every pregame pick and SGP leg for this game</span></div>${trackerHtml(R)}</section>
+    <div class="actions">${togBtn('lwhy' + id, 'Why?')}${goLink('Deep research', '#r-' + id)}</div><div class="whybox" id="lwhy${id}" hidden>${liveGameWhy(R)}</div>`);
+  const rb = $('#liveRefresh'); if (rb) rb.onclick = async () => { rb.disabled = true; await liveOddsFetch(g, true); await analyzeGame(g, { force:true }); renderGame(id); };
+  headerSync();
+}
+/* ---------- Deep Research: LIVE tab ---------- */
+function wpSpark(wp){ if (wp.length < 2) return ''; const W = 460, H = 90, xs = i => 6 + i*(W - 12)/(wp.length - 1), ys = v => 6 + (1 - v)*(H - 12);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Home win probability over the game"><line x1="6" x2="${W-6}" y1="${ys(0.5)}" y2="${ys(0.5)}" stroke="#262D5E" stroke-dasharray="4 4"/><polyline fill="none" stroke="#FFD43B" stroke-width="2.5" points="${wp.map((v,i) => `${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).join(' ')}"/></svg>`; }
+function liveResearchHtml(R){
+  const g = R.g, D = R.D, L = R.live || liveGame(R), S = preSnap(g.id), wp = D.winProb || [];
+  const teamStats = ['away','home'].map(s => D.boxStats?.[s] || {}), labels = [...new Set(Object.keys(teamStats[0]).concat(Object.keys(teamStats[1])).filter(k => k.startsWith('L:')))].slice(0, 24);
+  const box = (D.boxPlayers || []).map(b => `<details class="acc"><summary>${esc(g[b.side].short)} · ${esc(b.cat)}</summary><div class="tablewrap" style="margin-top:6px"><table class="sortable"><thead><tr><th>Player</th>${b.labels.map(l => `<th class="num">${esc(l)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r => `<tr${R.idx[r.id] ? ` class="click" data-player="${esc(r.id)}" data-game="${g.id}"` : ''}><td>${esc(r.name)}</td>${r.stats.map(v => `<td class="num">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></details>`).join('');
+  const usage = Object.entries(S?.proj || {}).map(([k, pre]) => { const [pid, st] = k.split('|'), cur = liveStat(D, pid, st, g.sport); if (cur == null) return null; const exp = pre*L.LC.el; return { pid, st, pre, cur, exp, r:(cur + 1)/(exp + 1) }; }).filter(Boolean).sort((a,b) => Math.abs(b.r - 1) - Math.abs(a.r - 1)).slice(0, 25);
+  const fouls = g.sport === 'nba' ? Object.entries(D.box || {}).filter(([, b]) => (b.stats.fouls || 0) >= (L.LC.el < 0.5 ? 3 : 5)).map(([, b]) => `${esc(b.name)} (${b.stats.fouls} fouls)`) : [];
+  const inj = (D.plays || []).filter(p => /injur|ruled out|questionable to return|will not return|helped off|carted/i.test(p.text));
+  const live = R.cands.filter(c => c.live).sort((a,b) => b.ev - a.ev);
+  const proj = [['Total points', L.preT, L.projT], [`${g.home.short} margin`, L.preM, L.projM], [`${g.home.short} points`, S?.tt?.home, L.projH], [`${g.away.short} points`, S?.tt?.away, L.projA]];
+  const plays = (D.plays || []).slice(-30).reverse();
+  return `<div class="stack">
+    <div class="market"><div class="mk"><span class="lbl">Score</span><b>${esc(scoreTxt(g))}</b><div class="mv">${esc(g.statusText || '')}</div></div>
+      <div class="mk"><span class="lbl">Played</span><b>${pct(L.LC.el,0)}</b><div class="mv">${liveSituation(R)}</div></div>
+      ${wp.length ? `<div class="mk"><span class="lbl">${esc(g.home.short)} win probability</span><b>${fmt1(wp[wp.length-1]*100)}%</b><div class="mv">Started at ${fmt1(wp[0]*100)}%</div></div>` : ''}
+      <div class="mk"><span class="lbl">Scoring pace</span><b>${fmt1(L.pace*100)}%</b><div class="mv">of the pregame expectation</div></div>
+      ${R.weather ? `<div class="mk"><span class="lbl">Weather</span><b>${R.weather.temp != null ? Math.round(R.weather.temp) + '°F' : '—'}</b><div class="mv">${R.weather.gust ? `gusts ${Math.round(R.weather.gust)} mph · ` : ''}${R.weather.rain != null ? R.weather.rain + '% rain' : ''}</div></div>` : ''}</div>
+    ${wp.length > 1 ? `<details class="acc panel" open><summary>Win probability through the game</summary>${wpSpark(wp)}</details>` : ''}
+    <details class="acc panel" open><summary>Live projection vs pregame</summary><div class="tablewrap" style="margin-top:6px"><table class="sortable"><thead><tr><th>Market</th><th class="num">Pregame</th><th class="num">Live projection</th></tr></thead><tbody>${proj.map(([l, a, b]) => `<tr><td>${esc(l)}</td><td class="num">${a != null ? fmt1(a) : '—'}</td><td class="num">${fmt1(b)}</td></tr>`).join('')}
+      ${usage.map(u => `<tr><td>${esc(R.idx[u.pid]?.player?.name || u.pid)} · ${esc(statLabel(g.sport, u.st))}</td><td class="num">${fmt1(u.pre)}</td><td class="num">${fmt1(u.cur + u.pre*L.LC.rem*clamp(1 + Math.min(0.4, L.LC.el)*(u.r - 1), 0.6, 1.5))}</td></tr>`).join('')}</tbody></table></div></details>
+    <details class="acc panel"><summary>Usage vs pregame (${usage.length})</summary>${usage.length ? `<div class="tablewrap" style="margin-top:6px"><table class="sortable"><thead><tr><th>Player</th><th>Stat</th><th class="num">So far</th><th class="num">Expected by now</th><th>Role</th></tr></thead><tbody>${usage.map(u => `<tr><td>${esc(R.idx[u.pid]?.player?.name || u.pid)}</td><td>${esc(statLabel(g.sport, u.st))}</td><td class="num">${fmt1(u.cur)}</td><td class="num">${fmt1(u.exp)}</td><td>${u.r >= 1.25 ? '<span class="pill strong">Bigger</span>' : u.r <= 0.75 ? '<span class="pill bad">Smaller</span>' : '<span class="pill">As expected</span>'}</td></tr>`).join('')}</tbody></table></div><div class="note">Snap share, rotation and routes aren't in the free feed; this compares his actual stats to his pregame projection.</div>` : '<div class="note">Needs a pregame snapshot (the site open before the game) to compare against.</div>'}</details>
+    <details class="acc panel"><summary>Pace, possession & efficiency</summary>${labels.length ? `<div class="tablewrap tall" style="margin-top:6px"><table><thead><tr><th>Stat</th><th class="num">${esc(g.away.short)}</th><th class="num">${esc(g.home.short)}</th></tr></thead><tbody>${labels.map(k => `<tr><td>${esc(k.slice(2))}</td><td class="num">${teamStats[0][k] ?? '—'}</td><td class="num">${teamStats[1][k] ?? '—'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="note">Team stats appear once the game is underway.</div>'}
+      ${g.sport === 'nfl' && D.drives?.length ? `<div class="note">Red-zone trips: ${esc(g.away.short)} ${D.drives.filter(d => d.team === 'away' && d.rz).length}, ${esc(g.home.short)} ${D.drives.filter(d => d.team === 'home' && d.rz).length} · Drives: ${D.drives.map(d => `${esc(g[d.team]?.abbr || '')} ${esc(d.result)}`).join(', ')}</div>` : ''}</details>
+    <details class="acc panel"><summary>Box score</summary>${box || '<div class="note">Box score appears once the game is underway.</div>'}<div class="note">Includes pitch counts, ice time and fouls where the sport has them.</div></details>
+    <details class="acc panel"><summary>Play-by-play & key events (${plays.length})</summary><div class="plays">${plays.map(p => `<div class="play${p.scoring ? ' sc' : ''}"><span class="note">${p.period ? 'P' + p.period : ''} ${esc(p.clock)}</span> ${esc(p.text)}</div>`).join('') || '<div class="note">No plays yet.</div>'}</div></details>
+    <details class="acc panel"><summary>In-game injuries, foul trouble & substitutions</summary><ul class="small">${inj.map(p => `<li>${esc(p.text)}</li>`).join('') || '<li>No injuries reported in the play-by-play.</li>'}${fouls.map(f => `<li>Foul trouble: ${f}</li>`).join('')}</ul><div class="note">Bets on players who leave the game are pulled automatically.</div></details>
+    <details class="acc panel"><summary>Live odds comparison</summary>${oddsCompare(R)}${R.live?.suspended?.length ? `<div class="note" style="color:var(--warn)">Suspended right now: ${R.live.suspended.map(esc).join(', ')}</div>` : ''}<div class="note">Full price history is on the Line movement tab.</div></details>
+    <details class="acc panel"><summary>Model calculations (${live.length})</summary><div class="tablewrap tall" style="margin-top:6px"><table class="sortable"><thead><tr><th>Bet</th><th class="num">Live chance</th><th class="num">Price</th><th class="num">Implied</th><th class="num">Edge (EV)</th><th class="num">Good to</th><th>Odds</th></tr></thead><tbody>
+      ${live.map(c => `<tr><td>${esc(c.label)}</td><td class="num">${pct(c.p,0)}</td><td class="num">${decToAm(c.dec)}</td><td class="num">${pct(1/c.dec,0)}</td><td class="num">${c.ev >= 0 ? '+' : ''}${fmt1(c.ev*100)}%</td><td class="num">${decToAm(c.live.goodTo)}</td><td>${c.live.fresh ? '<span class="pill strong">Fresh</span>' : '<span class="pill warn">Updating</span>'}</td></tr>`).join('')}</tbody></table></div></details>
+    <details class="acc panel"><summary>Failure cases</summary><ul class="small">${R.best.slice(0, 3).map(c => `<li><b>${esc(c.label)}:</b> ${failCase(R, c).map(esc).join(' ')} Live lines move fast; only bet it at ${decToAm(c.live?.goodTo || c.dec)} or better.</li>`).join('') || '<li>No live picks right now.</li>'}</ul></details>
+  </div>`;
+}
+/* ---------- live loop: in-progress games only, every 20s, stops when final ---------- */
+const LIVE_LOOP = { timer:null };
+function liveLoop(delay = 20000){
+  clearTimeout(LIVE_LOOP.timer);
+  if (!state.allGames().some(g => g.state === 'in')) return;
+  LIVE_LOOP.timer = setTimeout(async () => {
+    if (!document.hidden){
+      const games = state.allGames().filter(g => g.state === 'in'), h = location.hash, watched = id => h === '#g-' + id || h === '#r-' + id || h.startsWith('#p-' + id + '-');
+      await pool(games, 3, async g => { try { if (liveOddsDue(g, watched(g.id))) await liveOddsFetch(g, watched(g.id)); await analyzeGame(g, { force:true }); jobRun('live', true, g.short); } catch(e){ jobRun('live', false, e.message); } });
+      liveRepaint();
+    }
+    liveLoop();
+  }, delay);
+}
+function liveRepaint(){
+  headerSync(); const h = location.hash;
+  if (h === '#live') renderLive(); else if (isHome()) repaint();
+  else if (h.startsWith('#g-') && gameOf(h.slice(3))?.state !== 'pre') renderGame(h.slice(3));
+  else if (h.startsWith('#r-') && ['live','td'].includes(state.tabs.research) && gameOf(h.slice(3))?.state === 'in') renderResearch(h.slice(3));
 }
 
 /* ============================ FLOW: discover → analyze → monitor → repeat ============================ */
@@ -2952,7 +3323,7 @@ async function reload(force){
   const v = viewGames(), first = [...v.games.filter(g => g.state === 'in'), ...v.games.filter(g => g.state !== 'in')];
   await analyzeList(first, CONFIG.todayCap, force, tok, cur);
   if (!cur(tok)) return;
-  state.busy = false; repaint(); headerSync(); schedule();
+  state.busy = false; repaint(); headerSync(); schedule(); liveLoop(3000);
   if (isWeek()) loadWeek(force);
 }
 async function loadWeek(force){
@@ -2963,7 +3334,7 @@ async function loadWeek(force){
   W.loadedAt = Date.now(); if (isWeek()) renderWeek();
   await analyzeList(weekGames(), CONFIG.weekCap, force, tok, cur);
   if (!cur(tok)) return;
-  W.busy = false; if (isWeek()) renderWeek(); schedule();
+  W.busy = false; if (isWeek()) renderWeek(); schedule(); liveLoop(3000);
 }
 function schedule(){
   clearTimeout(SCHED.timer);
@@ -2979,6 +3350,7 @@ function route(keepDrawer){
   if (!keepDrawer) closePlayer(); const h = location.hash;
   if (!h.startsWith('#r-')) state.tdHl = null;
   if (h.startsWith('#g-')) renderGame(h.slice(3)); else if (h.startsWith('#r-')) renderResearch(h.slice(3)); else if (h === '#health') renderHealth();
+  else if (h === '#live'){ renderLive(); liveLoop(1500); }
   else if (h === '#players'){ renderPlayers(); if (!state.week.busy && !state.week.loadedAt) loadWeek(false); }
   else if (h.startsWith('#p-')){ const s = h.slice(3), i = s.indexOf('-'); renderPlayer(s.slice(0, i), decodeURIComponent(s.slice(i + 1))); }
   else if (h === '#week'){ renderWeek(); if (!state.week.busy && (!state.week.loadedAt || Date.now() - state.week.loadedAt > 20*60000)) loadWeek(false); }
