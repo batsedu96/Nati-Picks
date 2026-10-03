@@ -664,6 +664,107 @@ body{background:radial-gradient(1200px 520px at 80% -200px, rgba(76,107,255,.22)
 @media (max-width:760px){ .mainnav a{font-size:17px;padding:0 6px} .mainnav a[aria-current="true"]::after{left:6px;right:6px} }
 @media (max-width:420px){ .mainnav a{font-size:15px;letter-spacing:0;padding:0 4px} .mainnav a[aria-current="true"]::after{left:4px;right:4px} .daybar h1{font-size:40px} .bc-what{font-size:22px} }
 @media (max-width:360px){ .mainnav a{font-size:13.5px;padding:0 3px} }
+/* ===================== v7: one type scale, one navigation pattern, character on every page ===================== */
+:root{
+  --t-hero:clamp(40px,6.4vw,64px);  /* page titles */
+  --t-h2:30px;                       /* section titles */
+  --t-h3:21px;                       /* sub-sections, card names */
+  --t-lead:24px;                     /* the bet itself */
+  --t-body:15px; --t-small:13.5px; --t-micro:12px;
+}
+@media (max-width:640px){ :root{ --t-h2:25px; --t-h3:19px; --t-lead:21px; --t-body:15px; --t-small:13px } }
+body{font-size:var(--t-body);line-height:1.45}
+.note{font-size:var(--t-micro);line-height:1.4}
+.daybar h1,.ph-n{font-size:var(--t-hero)}
+.sechead h2{font-size:var(--t-h2)}
+#main h3,.sechead h3{font-family:var(--f-display);font-size:var(--t-h3);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:1.05;margin:14px 0 8px}
+#main h3 .note{font-family:var(--f-body);text-transform:none;letter-spacing:0;font-weight:400}
+.bc-what{font-size:var(--t-lead)} .bc-who{font-size:16px} .bc-why,.wb-txt{font-size:var(--t-small)}
+.br-t b{font-size:15px} .br-w{font-family:var(--f-display);font-size:19px;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+.pc-tier{font-size:var(--t-h3)}
+.gr-tm{font-size:15.5px;font-weight:700} .gr-m{font-size:var(--t-micro)}
+.grp>summary{font-size:var(--t-h3)}
+/* breadcrumb + game hub */
+.crumbs{display:flex;gap:8px;align-items:center;font-size:var(--t-micro);color:var(--muted);flex-wrap:wrap}
+.crumbs a{color:var(--muted);text-decoration:none;font-weight:600} .crumbs a:hover{color:var(--ink)}
+.hub{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;border-radius:999px;background:var(--panel);border:1px solid var(--line);align-self:flex-start;max-width:100%}
+.hub::-webkit-scrollbar{display:none}
+.hub a{flex:0 0 auto;font-family:var(--f-display);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;color:var(--muted);text-decoration:none;padding:6px 16px;border-radius:999px}
+.hub a:hover{color:var(--ink)}
+.hub a[aria-current="page"]{color:#0D1330;background:linear-gradient(100deg,var(--ca),var(--ch));text-shadow:0 1px 0 rgba(255,255,255,.25)}
+/* in-page tabs: sticky segmented pills */
+.ptabs{position:sticky;top:var(--hdr-h,118px);z-index:5;background:rgba(13,19,48,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:0;gap:6px;padding:6px 0;margin:0 0 4px}
+.ptab{font-size:17px;padding:7px 15px;border-radius:999px;border:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+.ptab[aria-selected="true"]{background:var(--ink);color:#0D1330;border-color:var(--ink)}
+.tpanel .ptabs{position:static;background:transparent;backdrop-filter:none;padding:2px 0 8px}
+.tpanel .ptab{font-size:15px;padding:5px 12px;background:transparent}
+.tpanel .ptab[aria-selected="true"]{background:var(--sun);border-color:var(--sun);color:#14172E}
+/* tables: sticky first column, quiet rules, data bars on stat columns */
+.tablewrap{border-radius:var(--r-lg);background:var(--panel)}
+table{font-size:var(--t-small)}
+th{font:700 11.5px var(--f-body);text-transform:none;letter-spacing:.01em;color:var(--muted);background:var(--panel2);padding:9px 10px}
+td{padding:9px 10px;border-bottom-color:rgba(41,50,106,.6)}
+tbody tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+tbody tr:hover td{background:rgba(76,107,255,.08)}
+.tablewrap table tr>:first-child{position:sticky;left:0;z-index:1;background:var(--panel)}
+.tablewrap thead tr>:first-child{z-index:2;background:var(--panel2)}
+td.num{font-family:var(--f-display);font-size:16px;font-weight:700;letter-spacing:.01em}
+td.db{background-image:linear-gradient(90deg,transparent calc(100% - var(--v)*100%),color-mix(in srgb,var(--tc,var(--brand)) 26%,transparent) 0)!important;background-repeat:no-repeat}
+td.db.dbmax{color:var(--sun)}
+tr[data-player]{box-shadow:inset 3px 0 0 var(--tc,transparent)}
+.pl{display:flex;align-items:center;gap:10px} .pl .av{width:38px;height:38px} .pl b{font-size:14.5px}
+/* avatars: headshot cutouts on a team-color disc */
+.av{width:46px;height:46px;border:2px solid var(--tc,var(--line));background:radial-gradient(circle at 50% 120%,color-mix(in srgb,var(--tc,#4C6BFF) 70%,#0D1330) 0 55%,var(--panel2) 56%);color:var(--ink);font:800 13px var(--f-display)}
+.av img{object-fit:cover;object-position:50% 12%;background:transparent;transform:scale(1.18) translateY(6%)}
+.av.has-img>span{visibility:hidden}
+.av.lg{width:84px;height:84px;font-size:24px}
+.av.xl{width:132px;height:132px;font-size:40px;border-width:3px}
+.bc-h .av{width:52px;height:52px}
+/* player hero */
+.phero{display:flex;gap:20px;align-items:center;padding:20px;border-radius:var(--r-lg);border:1px solid var(--line);position:relative;overflow:hidden;
+  background:linear-gradient(115deg,color-mix(in srgb,var(--tc) 42%,#0D1330) 0%,#141B40 60%,#0F1535 100%)}
+.phero::after{content:"";position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;border:28px solid color-mix(in srgb,var(--tc) 30%,transparent);pointer-events:none}
+.ph-t{min-width:0;position:relative;z-index:1;display:flex;flex-direction:column;gap:8px}
+.ph-team{display:flex;align-items:center;gap:8px;font-weight:700;font-size:var(--t-small);color:#DDE1FF}
+.ph-n{font-family:var(--f-display);font-weight:900;text-transform:uppercase;line-height:.88;margin:0;letter-spacing:.005em}
+.ph-chips{display:flex;gap:6px;flex-wrap:wrap}
+.ph-chips .pill{background:rgba(13,19,48,.55);border:1px solid rgba(255,255,255,.18);color:var(--ink)}
+.ph-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.ph-stats>div{display:grid;grid-template-columns:auto auto;align-items:end;column-gap:10px;padding:8px 12px;border-radius:var(--r-md);background:rgba(13,19,48,.55);border:1px solid rgba(255,255,255,.12)}
+.ph-stats b{font-family:var(--f-display);font-size:32px;font-weight:900;line-height:.9;grid-row:1} .ph-stats span{font-size:11.5px;color:#C9CDEB;grid-column:1/-1}
+.spk-b{display:flex;align-items:flex-end;gap:2px;height:26px;grid-row:1;grid-column:2} .spk-b i{width:5px;border-radius:2px;background:var(--tc);opacity:.9}
+@media (max-width:640px){ .phero{flex-direction:column;align-items:flex-start;padding:16px} .av.xl{width:104px;height:104px} .ph-stats>div{flex:1 1 40%} }
+/* players: roster columns in team colors, grouped by position */
+.pgrp>summary{background:linear-gradient(90deg,color-mix(in srgb,var(--ca) 18%,transparent),transparent 45%,transparent 55%,color-mix(in srgb,var(--ch) 18%,transparent))}
+.pg-m{display:flex;align-items:center;gap:8px}
+.pcol{border-radius:var(--r-md);padding:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 12%,transparent),transparent 120px)}
+.pcol-h{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:19px;text-transform:uppercase;padding-bottom:6px;border-bottom:2px solid var(--tc);margin-bottom:6px} .pcol-h .note{margin-left:auto;font-family:var(--f-body);text-transform:none}
+.pgame.big{padding:0}
+.posg{margin-top:8px} .posg-h{font:800 13px var(--f-display);letter-spacing:.06em;color:var(--tc);margin:4px 2px}
+.pch{border:1px solid transparent} .pch:hover{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 10%,transparent)} .pch .av{width:40px;height:40px} .pch-t b{font-size:14px}
+.pres{border-left:3px solid var(--tc,transparent)}
+/* game lists: kickoff windows inside each sport */
+.slot{display:flex;justify-content:space-between;align-items:baseline;padding:8px 14px 4px;background:linear-gradient(90deg,rgba(255,212,59,.08),transparent 60%);border-top:1px solid var(--line)}
+.slot b{font:800 15px var(--f-display);letter-spacing:.04em;text-transform:uppercase;color:var(--sun)} .slot span{font-size:var(--t-micro);color:var(--muted)}
+/* research tiles: big display numbers */
+.market{gap:8px} .mk{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 14px;position:relative;overflow:hidden}
+.mk::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,var(--ca,var(--brand)),var(--ch,var(--sun)))}
+.mk b{font-family:var(--f-display);font-size:26px;font-weight:800;line-height:1.05;margin-top:4px}
+.mk .lbl{font-size:var(--t-micro);color:var(--muted)}
+.inj .panel h3{margin-top:0}
+.gh.slim{flex-direction:column;align-items:stretch;gap:8px} .gh.slim .vs{font-size:clamp(24px,4vw,34px);text-transform:uppercase}
+.mr{font-size:var(--t-small)} .mr-m b{font-family:var(--f-display);font-size:18px;text-transform:uppercase;letter-spacing:.01em}
+.mr-o b{font-family:var(--f-display);font-size:18px}
+.chips .chip{font-weight:700} .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#0D1330}
+.psearch input{border-radius:999px;font-size:16px;padding:12px 18px}
+.rsx .inj>.panel:first-child{box-shadow:inset 0 4px 0 var(--ca)} .rsx .inj>.panel:last-child{box-shadow:inset 0 4px 0 var(--ch)}
+.rsx .inj>.panel h3{font-size:var(--t-h3)}
+.ph-stats b{grid-column:1} 
+th.num{font-family:var(--f-body)}
+tr[data-team]{box-shadow:inset 3px 0 0 var(--tc)}
+.ph-stats span.spk-b{grid-column:2;grid-row:1;justify-self:end;align-self:end}
+.ph-stats>div{grid-template-columns:1fr auto}
+@media (max-width:640px){ .hub a{font-size:15px;padding:6px 11px} .hub{gap:2px} .mr-m b{font-size:16px} }
 </style>
 </head>
 <body>
@@ -3042,9 +3143,9 @@ const sizesHtml = (p, dec, cap, priced = true) => !priced ? `<div class="note">N
 const strengthPill = q => { const s = strengthOf(q); return `<span class="pill ${s.toLowerCase()}">${s}</span>`; };
 const riskPill = r => `<span class="pill ${r==='Low'?'strong':r==='Medium'?'solid':'lean'}">${r} risk</span>`;
 const ini = n => esc(String(n||'').split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join(''));
-const avatar = (p, cls='') => `<span class="av ${cls}"><span>${ini(p?.name)}</span>${p?.img?`<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.remove()">`:''}</span>`;
+const avatar = (p, cls='', tc='') => `<span class="av ${cls}"${tc ? ` style="--tc:${tc}"` : ''}><span>${ini(p?.name)}</span>${p?.img?`<img src="${esc(p.img)}" alt="" loading="lazy" onload="this.parentNode.classList.add('has-img')" onerror="this.remove()">`:''}</span>`;
 const teamLogo = (t, cls='') => `<span class="logo ${cls}" title="${esc(t?.name||'')}"><span>${esc(t?.abbr||'')}</span>${t?.logo?`<img src="${esc(t.logo)}" alt="${esc(t?.abbr||'')}" loading="lazy" onload="this.parentNode.classList.add('has-img')" onerror="this.parentNode.classList.remove('has-img');this.remove()">`:''}</span>`;
-const pickIcon = (c, g) => c.player ? (c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}" aria-label="${esc(c.player.name)} player page">${avatar(c.player)}</a>` : avatar(c.player)) : c.team && g[c.team] ? teamLogo(g[c.team]) : (c.market==='spread'||c.market==='ml'||c.market==='dnb') && g[c.side] ? teamLogo(g[c.side]) : `<span class="av">${SPORT[g.sport].icon}</span>`;
+const pickIcon = (c, g) => c.player ? (c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}" aria-label="${esc(c.player.name)} player page">${avatar(c.player, '', c.team && g[c.team] ? teamColor(g[c.team]) : '')}</a>` : avatar(c.player, '', c.team && g[c.team] ? teamColor(g[c.team]) : '')) : c.team && g[c.team] ? teamLogo(g[c.team]) : (c.market==='spread'||c.market==='ml'||c.market==='dnb') && g[c.side] ? teamLogo(g[c.side]) : `<span class="av">${SPORT[g.sport].icon}</span>`;
 const ago = t => { if (!t) return 'never'; const s = Math.max(0, Math.round((Date.now()-t)/1000)); return s < 60 ? `${s}s ago` : s < 3600 ? `${Math.round(s/60)} min ago` : `${Math.round(s/3600)} h ago`; };
 const agoEl = t => `<span data-ago="${t||''}">${ago(t)}</span>`;
 /* Odds are shown only when a sportsbook actually posted them. Otherwise we show our fair price, labeled as ours. */
@@ -3080,6 +3181,33 @@ function teamColor(t, fallback = '#7C8BFF'){
 }
 function tcVars(g){ let a = teamColor(g.away, '#7C8BFF'), h = teamColor(g.home, '#2BD48A'); if (a.toLowerCase() === h.toLowerCase()) a = mixHex(a, '#ffffff', 0.45); return `--ca:${a};--ch:${h}`; }
 const pickColor = (c, g) => { const side = c.team && g[c.team] ? c.team : (['home','away'].includes(c.side) ? c.side : null); return side ? teamColor(g[side]) : null; };
+
+/* ---------- decorate: after every render, give tables and player rows their visual layer (no data changes) ---------- */
+const NOBAR = /odds|price|edge|implied|#|line|book|open|now|high|low|moved|range|consensus|updated|rating|pick|^t$|^gp$/i;
+function decorate(root){
+  // team colors on any row/link that points at a player in a game
+  root.querySelectorAll('[data-player][data-game]').forEach(el => { const R = CACHE[el.dataset.game], side = R?.idx?.[el.dataset.player]?.side; if (side) el.style.setProperty('--tc', teamColor(R.g[side])); });
+  root.querySelectorAll('tr a.plink[href^="#p-"]').forEach(a => { const m = a.getAttribute('href').match(/^#p-([^-]+)-(.+)$/); const R = m && CACHE[m[1]], side = R?.idx?.[decodeURIComponent(m[2])]?.side; if (side){ const tr = a.closest('tr'); tr.style.setProperty('--tc', teamColor(R.g[side])); tr.setAttribute('data-team', side); } });
+  root.querySelectorAll('a.pch[data-tc], .pres[data-tc]').forEach(el => el.style.setProperty('--tc', el.dataset.tc));
+  // data bars: each numeric stat column gets a bar scaled to that column's best value
+  root.querySelectorAll('table.sortable, table.stat').forEach(t => {
+    const heads = [...(t.tHead?.rows?.[0]?.cells || [])]; if (!heads.length) return;
+    heads.forEach((th, i) => {
+      if (!th.classList.contains('num') || NOBAR.test(th.textContent.trim())) return;
+      const cells = [...t.tBodies[0]?.rows || []].map(r => r.cells[i]).filter(Boolean);
+      const vals = cells.map(td => { const s = td.textContent.trim().replace(/%$/, ''); return /^[0-9]+(\.[0-9]+)?$/.test(s) ? +s : null; });
+      const max = Math.max(0, ...vals.filter(v => v != null)); if (!(max > 0) || vals.filter(v => v != null).length < 2) return;
+      cells.forEach((td, k) => { if (vals[k] == null) return; td.classList.add('db'); td.style.setProperty('--v', (vals[k]/max).toFixed(3)); if (vals[k] === max) td.classList.add('dbmax'); });
+    });
+  });
+}
+/* ---------- one way around a game: breadcrumb + hub tabs on every game-level page ---------- */
+function hubNav(g, active){
+  const items = [['picks', 'Picks', '#g-' + g.id], ['research', 'Deep research', '#r-' + g.id], ['players', 'Players', '#gp-' + g.id]];
+  const tab = isLive(g) ? 'Live' : isFinal(g) ? 'Final' : getLocalGameDate(g.date) === todayLocal() ? 'Today' : 'Upcoming', tabHref = isLive(g) ? '#live' : isFinal(g) || getLocalGameDate(g.date) === todayLocal() ? '#' : '#upcoming';
+  return `<nav class="crumbs" aria-label="Breadcrumb"><a href="${tabHref}">${esc(tab)}</a><span>/</span><span>${esc(SPORT[g.sport].label)}</span><span>/</span><a href="#g-${g.id}">${esc(matchup(g))}</a></nav>
+    <nav class="hub" aria-label="This game" style="${tcVars(g)}">${items.map(([k, l, h]) => `<a href="${h}"${k === active ? ' aria-current="page"' : ''}>${esc(l)}</a>`).join('')}${g.sport === 'nfl' ? `<a href="#r-${g.id}" data-rtab="td" data-hl=""${active === 'td' ? ' aria-current="page"' : ''}>TD scorers</a>` : ''}</nav>`;
+}
 /* ---------- one reusable "go deeper" button (the yellow standard) ---------- */
 const QUIPS = ['Reading their playbook…','Shopping every line…','Checking the injury report…','Running the numbers…','Finding where the book slipped…','Crunching game logs…'];
 const quip = () => QUIPS[Math.floor(Date.now()/4000) % QUIPS.length];
@@ -3095,7 +3223,7 @@ function restoreOpen(root = document){
   root.querySelectorAll('[data-tog]').forEach(b => { const id = b.dataset.tog; if (!OPEN.has(id)) return; const t = document.getElementById(id); if (!t) return; t.hidden = false; b.setAttribute('aria-expanded','true'); b.textContent = b.dataset.on; });
 }
 const moreList = (key, items, n) => items.length <= n ? items.join('') : `${items.slice(0,n).join('')}<div id="${key}" class="morebox" hidden>${items.slice(n).join('')}</div><div class="morefoot">${togBtn(key, `Show more (${items.length-n})`, 'Show less')}</div>`;
-function paint(html){ const m = $('#main'); m.innerHTML = html; restoreOpen(m);
+function paint(html){ const m = $('#main'); m.innerHTML = html; restoreOpen(m); decorate(m);
   if (!paint.done && m.querySelector('.wp-b')){ paint.done = true; document.body.classList.add('intro'); setTimeout(() => document.body.classList.remove('intro'), 1600); } }
 
 /* ---------- plain-language pieces ---------- */
@@ -3210,11 +3338,11 @@ const tiersGrid = (lists, ctx, opts = {}) => `<div class="tiers${opts.stack ? ' 
 
 /* ---------- header ---------- */
 function headerSync(){
-  const h = location.hash, week = isWeekish(), cur = h === '#upcoming' ? 'upcoming' : (h === '#parlays' || h === '#week') ? 'parlays' : h === '#live' ? 'live' : (h === '#players' || h.startsWith('#p-')) ? 'players' : /^#(g|r)-|^#health|^#method/.test(h) ? '' : 'today';
+  const h = location.hash, week = isWeekish(), cur = h === '#upcoming' ? 'upcoming' : (h === '#parlays' || h === '#week') ? 'parlays' : h === '#live' ? 'live' : (h === '#players' || h.startsWith('#p-') || h.startsWith('#gp-')) ? 'players' : /^#(g|r)-|^#health|^#method/.test(h) ? '' : 'today';
   const nLive = liveGamesInView().length, lb = $('#liveBadge'); if (lb){ lb.textContent = nLive; lb.hidden = !nLive; }
   const tk = $('#ticker'), allLive = filterLiveGames(state.allGames());
   if (tk){ tk.hidden = !allLive.length; const html = allLive.map(g => `<a class="tkc" href="#g-${g.id}"><span>${esc(SPORT[g.sport].icon)}</span><b>${esc(g.away.abbr)} ${esc(g.away.score ?? 0)}</b><b>${esc(g.home.abbr)} ${esc(g.home.score ?? 0)}</b><span class="note">${esc(g.statusText || '')}</span></a>`).join(''); if (tk.dataset.h !== html){ tk.innerHTML = html; tk.dataset.h = html; } }
-  trkBadge();
+  trkBadge(); const hd = $('#hdr'); if (hd) document.documentElement.style.setProperty('--hdr-h', hd.offsetHeight + 'px');
   document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', String(a.dataset.nav === cur)));
   document.querySelectorAll('#sportSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sport === state.sport)));
   const at = week ? state.week.loadedAt : Math.max(0, ...sportsInView().map(s => state.loadedAt[s] || 0)), live = allLive.length > 0;
@@ -3274,7 +3402,11 @@ function gameRow(g, opts = {}){
 function gamesBySport(list, ctx, opts = {}){
   if (!list.length) return '';
   return SPORT_KEYS.filter(k => list.some(g => g.sport === k)).map(k => { const gs = list.filter(g => g.sport === k), key = 'gm' + hsh(ctx + k);
-    return `<details class="grp sp-${k}" open><summary><span>${esc(SPORT[k].label)}</span><span class="note">${plural(gs.length, k==='soccer' ? 'match' : 'game')}</span></summary><div class="grows">${moreList(key, gs.map(g => gameRow(g, opts)), 8)}</div></details>`; }).join('');
+    const slots = [...new Set(gs.map(g => timeOnly(g.date)))], rows = [];
+    let last = null; for (const g of gs){ const t = isLive(g) ? 'In progress' : isFinal(g) ? 'Final' : STATUS_LABEL[g.status] && g.status !== 'delayed' ? STATUS_LABEL[g.status] : timeOnly(g.date);
+      if (slots.length > 1 && t !== last){ const n = gs.filter(x => (isLive(x) ? 'In progress' : isFinal(x) ? 'Final' : STATUS_LABEL[x.status] && x.status !== 'delayed' ? STATUS_LABEL[x.status] : timeOnly(x.date)) === t).length; rows.push(`<div class="slot"><b>${esc(t)}</b><span>${plural(n, k==='soccer' ? 'match' : 'game')}</span></div>`); last = t; }
+      rows.push(gameRow(g, opts)); }
+    return `<details class="grp sp-${k}" open><summary><span>${esc(SPORT[k].label)}</span><span class="note">${plural(gs.length, k==='soccer' ? 'match' : 'game')}</span></summary><div class="grows">${rows.join('')}</div></details>`; }).join('');
 }
 const fmtDayLong = t => new Date(t).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', timeZone:NP_TZ });
 function dayBar(title, kick, stats){
@@ -3391,7 +3523,7 @@ async function renderGame(id, opts = {}){
     <h3>Game scripts</h3>${scriptsHtml(R)}
     ${RESEARCH_NOTES[id] ? `<details class="acc panel"><summary>Reported news & notes</summary><ul class="small">${RESEARCH_NOTES[id].items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>` : ''}
     <div class="actions">${goLink('Deep research', '#r-' + id)}</div>`;
-  paint(`<a href="#" class="back">← Today</a>
+  paint(`${hubNav(g, 'picks')}
     <div class="gh jumbo" style="${tcVars(g)}"><div class="jb"><div class="jb-t a">${teamLogo(g.away,'')}<div><div class="jb-n">${esc(g.away.name)}</div><div class="jb-r">${esc(g.away.record || '')}</div></div><div class="jb-p">${isLive(g) || isFinal(g) ? esc(g.away.score ?? '') : R.wp ? Math.round(R.wp.away*100) + '<small>%</small>' : ''}</div></div>
       <div class="jb-at">${isLive(g) || isFinal(g) ? '' : '@'}</div>
       <div class="jb-t h"><div class="jb-p">${isLive(g) || isFinal(g) ? esc(g.home.score ?? '') : R.wp ? Math.round(R.wp.home*100) + '<small>%</small>' : ''}</div><div><div class="jb-n">${esc(g.home.name)}</div><div class="jb-r">${esc(g.home.record || '')}</div></div>${teamLogo(g.home,'')}</div></div>
@@ -3499,9 +3631,9 @@ async function renderResearch(id){
       <h3>Data quality</h3><div class="panel"><ul class="dq">${R.dq.map(x=>`<li style="color:${x.lvl==='bad'?'var(--bad)':x.lvl==='warn'?'var(--warn)':'var(--ink)'}">${esc(x.t)}</li>`).join('')}</ul></div>
       <div class="note">Odds sources: ${esc(R.sources.join(' · ') || 'none yet')}.</div>`],
   ];
-  paint(`<a href="#g-${g.id}" class="back">← Back to picks</a>
-    <div class="gh slim" style="${tcVars(g)}"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">Deep research · ${esc(matchup(g))}</div><div class="note">${esc(timeET(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div></div>
-    ${tabsHtml('research', tabs.filter(t => t[0] !== 'td' && t[0] !== 'sources').concat(tabs.filter(t => t[0] === 'td' || t[0] === 'sources')))}`);
+  paint(`${hubNav(g, 'research')}
+    <div class="gh slim" style="${tcVars(g)}"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">${esc(g.away.short)} <span class="muted">@</span> ${esc(g.home.short)}</div><div class="note">Deep research · ${esc(fmtDayLong(g.date))} ${esc(timeOnly(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div>${R.wp ? wpBar(R, { sm:true, label:false }) : ''}</div>
+    <div class="rsx" style="${tcVars(g)}">${tabsHtml('research', tabs.filter(t => t[0] !== 'td' && t[0] !== 'sources').concat(tabs.filter(t => t[0] === 'td' || t[0] === 'sources')))}</div>`);
   if (g.sport === 'nfl'){ const had = !!R.tdm; fillTD(R, '#tdbox', () => tdListHtml(R, 'td' + g.id)).then(() => { if (!had && R.tdm && location.hash === '#r-' + id) renderResearch(id); }); }   // re-render once so every skill player's logs fill the stat tabs
   headerSync();
 }
@@ -3794,6 +3926,18 @@ function sparkChart(vals, line, labels){
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent games vs the line">${v.map((x,i)=>`<rect x="${pad+i*bw+4}" y="${y(x)}" width="${bw-8}" height="${Math.max(1,H-22-y(x))}" rx="3" fill="${x>line?'#2BD48A':'#5A6290'}"/><text x="${pad+i*bw+bw/2}" y="${y(x)-4}" fill="#F1F3FF" font-size="11" text-anchor="middle" font-family="IBM Plex Mono, monospace">${fmt1(x)}</text><text x="${pad+i*bw+bw/2}" y="${H-6}" fill="#9AA1CC" font-size="10" text-anchor="middle">${esc(lb[i]||'')}</text>`).join('')}
     <line x1="${pad}" x2="${W-pad}" y1="${y(line)}" y2="${y(line)}" stroke="#FFD43B" stroke-dasharray="5 4" stroke-width="2"/><text x="${W-pad}" y="${y(line)-5}" fill="#FFD43B" font-size="11" text-anchor="end">Line ${line}</text></svg>`;
 }
+function keyStatsFor(sport, pos){ const role = posRole(pos || '');
+  return sport==='nfl' ? (role==='qb' ? [['pass_yds','Pass yds'],['pass_tds','Pass TD'],['pass_completions','Comp'],['rush_yds','Rush yds']] : role==='rb' ? [['rush_yds','Rush yds'],['rush_attempts','Carries'],['receptions','Rec'],['tds','TD']] : [['reception_yds','Rec yds'],['receptions','Rec'],['targets','Targets'],['tds','TD']])
+    : sport==='nba' ? [['points','Pts'],['rebounds','Reb'],['assists','Ast'],['threes','3PM']] : sport==='mlb' ? (/^(P|SP|RP)$/.test(pos || '') ? [['pitcher_strikeouts','K'],['pitcher_outs','Outs'],['earned_runs','ER'],['hits_allowed','H allowed']] : [['hits','Hits'],['total_bases','TB'],['rbis','RBI'],['home_runs','HR']]) : sport==='nhl' ? [['goals','Goals'],['assists','Assists'],['shots_on_goal','Shots'],['points','Points']] : []; }
+/* player hero: headshot cutout on his team's colors, with his real recent numbers */
+function playerHero(R, p, side, extra = ''){
+  const g = R.g, opp = g[side === 'home' ? 'away' : 'home'], tc = teamColor(g[side]), logs = R.logs[p.id] || [];
+  const ks = keyStatsFor(g.sport, p.pos).map(([st, l]) => { const v5 = logs.slice(0, 5).map(x => logVal(g.sport, x, st)).filter(v => v != null); return v5.length ? [l, avgArr(v5), v5] : null; }).filter(Boolean);
+  const spark = v => { if (v.length < 2) return ''; const mx = Math.max(...v, 1); return `<span class="spk-b">${[...v].reverse().map(x => `<i style="height:${Math.max(8, x/mx*100).toFixed(0)}%"></i>`).join('')}</span>`; };
+  return `<section class="phero" style="--tc:${tc}">${avatar(p, 'xl', tc)}<div class="ph-t"><div class="ph-team">${teamLogo(g[side], 'sm')}<span>${esc(g[side].name)}</span></div><h1 class="ph-n">${esc(p.name)}</h1>
+    <div class="ph-chips">${p.pos ? `<span class="pill">${esc(p.pos)}</span>` : ''}${p.jersey ? `<span class="pill">#${esc(p.jersey)}</span>` : ''}<span class="pill">${side === 'home' ? 'vs' : '@'} ${esc(opp.short)} · ${esc(whenTxt(g))}</span>${extra}</div>
+    ${ks.length ? `<div class="ph-stats">${ks.map(([l, v, arr]) => `<div><b>${fmt1(v)}</b><span>${esc(l)} · last ${arr.length}</span>${spark(arr)}</div>`).join('')}</div>` : ''}</div></section>`;
+}
 function openPlayer(gid, pid){
   const R = CACHE[gid]; if (!R) return; const g = R.g, info = R.idx[pid]; if (!info) return;
   const p = info.player, side = info.side, opp = g[side==='home'?'away':'home'], games = R.logs[pid] || [], sport = g.sport;
@@ -3838,16 +3982,16 @@ function gamePlayers(g){
   return out;
 }
 const plMeta = x => `${x.g[x.side].abbr} · ${x.p.pos || 'pos. unlisted'}`;
-const plChip = x => `<a class="pch" href="${plHref(x.g.id, x.pid)}">${avatar(x.p)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(plMeta(x))}</span></span>${x.has ? '<span class="pill strong">Props</span>' : ''}</a>`;
+const plChip = x => { const tc = teamColor(x.g[x.side]); return `<a class="pch" data-tc="${tc}" href="${plHref(x.g.id, x.pid)}">${avatar(x.p, '', tc)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(plMeta(x))}</span></span>${x.has ? '<span class="pill strong">Props</span>' : ''}</a>`; };
 function renderPlayers(){
   const games = upcomingGames(), all = games.map(g => ({ g, ps:gamePlayers(g) })), pos = state.ppos || '';
   const present = new Set(all.flatMap(x => x.ps.map(p => p.p.pos)).filter(Boolean));
   const order = [...new Set(sportsInView().flatMap(s => POS_ORDER[s] || []))].filter(p => present.has(p));
   const total = all.reduce((t,x) => t + x.ps.length, 0), missing = all.filter(x => !x.ps.length).length;
   const sections = all.map(({ g, ps }) => { const f = pos ? ps.filter(x => x.p.pos === pos) : ps;
-    const col = side => { const l = f.filter(x => x.side === side); return `<div class="pcol"><div class="lbl">${esc(g[side].name)}</div>${l.length ? `<div class="pchs">${moreList('pl' + hsh(g.id + side + pos), l.map(plChip), 16)}</div>` : `<div class="note">${ps.length ? 'No players at this position.' : g.sport === 'soccer' ? 'Lineups are posted about an hour before kickoff.' : 'Roster loads when this game is researched.'}</div>`}</div>`; };
-    return `<details class="grp"><summary><span>${esc(SPORT[g.sport].icon)} ${esc(matchup(g))}</span><span class="note">${esc(whenTxt(g))} · ${plural(f.length, 'player')}</span></summary><div class="pgame">${col('away')}${col('home')}</div></details>`; }).join('');
-  paint(`<div class="sechead"><h2><span class="kick">Scouting report</span>Players</h2><span class="note">${plural(total, 'player')} in ${plural(games.length, 'upcoming game')}${missing ? ` · ${missing} still loading` : ''}</span></div>
+    const col = side => { const l = f.filter(x => x.side === side); return `<div class="pcol" style="--tc:${teamColor(g[side])}"><div class="pcol-h">${teamLogo(g[side],'sm')}<b>${esc(g[side].name)}</b></div>${l.length ? `<div class="pchs">${moreList('pl' + hsh(g.id + side + pos), l.map(plChip), 16)}</div>` : `<div class="note">${ps.length ? 'No players at this position.' : g.sport === 'soccer' ? 'Lineups are posted about an hour before kickoff.' : 'Roster loads when this game is researched.'}</div>`}</div>`; };
+    return `<details class="grp pgrp" style="${tcVars(g)}"><summary><span class="pg-m">${teamLogo(g.away,'sm')}${esc(g.away.short)} <span class="muted">@</span> ${teamLogo(g.home,'sm')}${esc(g.home.short)}</span><span class="note">${esc(whenTxt(g))} · ${plural(f.length, 'player')}</span></summary><div class="pgame">${col('away')}${col('home')}</div></details>`; }).join('');
+  paint(`${dayBar('Players', 'Every rostered player in the games ahead', [[total, 'players'], [games.length, games.length === 1 ? 'game' : 'games']])}${missing ? `<div class="note">${missing} games still loading</div>` : ''}
     <div class="psearch"><input id="psearch" type="search" autocomplete="off" placeholder="Search any player or team" aria-label="Search players" value="${esc(state.pq || '')}"><div id="presults" class="presults" role="listbox"></div></div>
     ${order.length > 1 ? `<div class="chips posrow" role="group" aria-label="Position"><button class="chip" data-pos="" aria-pressed="${!pos}">All</button>${order.map(p => `<button class="chip" data-pos="${esc(p)}" aria-pressed="${pos===p}">${esc(p)}</button>`).join('')}</div>` : ''}
     <section class="sec"><div class="sechead"><h3>Browse by game</h3><span class="note">Tap a game to see everyone on both rosters</span></div>${sections || `<div class="panel note">${state.busy || state.week.busy ? '<span class="loading"><span class="spin"></span>Finding games…</span>' : 'No upcoming games for this filter.'}</div>`}</section>`);
@@ -3862,6 +4006,18 @@ function renderPlayers(){
   show(); if (state.focusSearch){ state.focusSearch = false; inp.focus(); } headerSync();
 }
 
+/* ---------- one game's players: both rosters, grouped by position, from data already collected ---------- */
+async function renderGamePlayers(gid){
+  const g = gameOf(gid); if (!g){ paint('<div class="panel note">That game isn\'t on the current slate. <a href="#players">All players</a></div>'); headerSync(); return; }
+  if (!CACHE[gid]) paint(`${hubNav(g, 'players')}<div class="panel loading"><span class="spin"></span>Loading both rosters…</div>`);
+  try { await analyzeGame(g); } catch(e){}
+  if (location.hash !== '#gp-' + gid) return;
+  const ps = gamePlayers(g), ord = POS_ORDER[g.sport] || [];
+  const col = side => { const l = ps.filter(x => x.side === side), tc = teamColor(g[side]); const groups = [...new Set(l.map(x => x.p.pos || 'Other'))].sort((a, b) => (ord.indexOf(a) < 0 ? 99 : ord.indexOf(a)) - (ord.indexOf(b) < 0 ? 99 : ord.indexOf(b)));
+    return `<div class="pcol" style="--tc:${tc}"><div class="pcol-h">${teamLogo(g[side],'sm')}<b>${esc(g[side].name)}</b><span class="note">${plural(l.length, 'player')}</span></div>${l.length ? groups.map(pos => `<div class="posg"><div class="posg-h">${esc(pos)}</div><div class="pchs">${l.filter(x => (x.p.pos || 'Other') === pos).map(plChip).join('')}</div></div>`).join('') : '<div class="note">Roster not loaded yet.</div>'}</div>`; };
+  paint(`${hubNav(g, 'players')}<div class="pgame big">${col('away')}${col('home')}</div><div class="note">Players with posted lines are marked Props. Tap anyone for his page.</div>`);
+  headerSync();
+}
 /* ---------- player page: best bet first, then market tabs ---------- */
 const MKT_TABS = {
   nfl:[['td','Touchdowns', s => /td/.test(s)], ['pass','Passing', s => /^pass_(?!rush)|longest_completion/.test(s)], ['rush','Rushing', s => /^rush_(?!reception)|longest_rush/.test(s)], ['rec','Receiving', s => /^reception|^receptions|longest_reception/.test(s)], ['combo','Combos', s => /rush_reception|pass_rush/.test(s)]],
@@ -3922,8 +4078,8 @@ async function renderPlayer(gid, pid){
   const used = new Set(defs.flatMap(([,,t]) => rows.filter(r => t(r.stat)))), other = rows.filter(r => !used.has(r));
   if (other.length && tabs.length > 1) tabs.push(['more','More', rowsBlock(other, R, ctx + 'more')]);
   const status = inj ? `<span class="pill warn">${esc(inj.status)}${inj.detail ? ' · ' + esc(inj.detail) : ''}</span>` : g.sport === 'soccer' ? `<span class="pill ${lu==='starter'?'strong':lu==='bench'?'bad':''}">${lu==='starter'?'Starting':lu==='bench'?'Bench':'Lineup TBA'}</span>` : '';
-  paint(`<a href="#players" class="back">← Players</a>
-    <div class="phead">${avatar(p, 'lg')}<div><div class="nm">${esc(p.name)}</div><div class="note">${esc(g[side].name)} · ${esc(p.pos || 'pos. unlisted')} · ${side === 'home' ? 'vs' : '@'} ${esc(opp.name)} · ${esc(whenTxt(g))}</div><div class="row" style="gap:6px;margin-top:6px">${status}<a class="note" href="#g-${gid}">Game page →</a></div>${R.isLive && boxLine(R, pid) ? `<div class="note" style="margin-top:4px"><span class="pill bad">● Live</span> ${esc(boxLine(R, pid))}</div>` : ''}</div></div>
+  paint(`${hubNav(g, 'players')}
+    ${playerHero(R, { ...p, id:pid }, side, status)}${R.isLive && boxLine(R, pid) ? `<div class="note"><span class="pill bad">● Live</span> ${esc(boxLine(R, pid))}</div>` : ''}
     ${liveStatsBar(R, pid, rows)}
     <section class="sec"><div class="sechead"><h3>Best bet for this player</h3></div>${best ? `<div class="bets two">${betCard(best, R, ctx, { top:true, tag:topTag(best, 'Best bet') })}</div>` : `<div class="panel note">No markets available yet. They show up here as soon as books post lines for him.</div>`}</section>
     ${rows.length ? `<section class="sec">${tabsHtml('pl' + gid + pid, tabs)}</section>` : ''}
@@ -4171,7 +4327,7 @@ function renderLiveGame(R){
   const shown = R.best.slice(0, 2), others = R.ranked.filter(c => !shown.includes(c));
   const propPlayers = [...new Set(R.cands.filter(c => c.playerId).map(c => c.playerId))].map(pid => ({ pid, p:R.idx[pid]?.player, n:R.cands.filter(c => c.playerId === pid).length })).filter(x => x.p).sort((a,b) => b.n - a.n);
   const cost = 3 + (LIVE_PROPS[g.sport] || []).length;
-  paint(`<a href="#live" class="back">← Live</a>
+  paint(`${hubNav(g, 'picks')}
     <div class="sb"><div class="sb-t">${teamLogo(g.away,'')}<div><div class="sb-n">${esc(g.away.short)}</div><div class="sb-s">${esc(g.away.score ?? 0)}</div></div></div>
       <div class="sb-mid"><div class="st-live"><span class="pulse"></span>LIVE</div><div class="sb-clock">${esc(g.statusText || L.LC.label || '')}</div><div class="note">${liveSituation(R)}</div></div>
       <div class="sb-t r"><div><div class="sb-n">${esc(g.home.short)}</div><div class="sb-s">${esc(g.home.score ?? 0)}</div></div>${teamLogo(g.home,'')}</div></div>
@@ -4407,6 +4563,7 @@ function route(keepDrawer){
   if (h.startsWith('#g-')) renderGame(h.slice(3)); else if (h.startsWith('#r-')) renderResearch(h.slice(3)); else if (h === '#health') renderHealth();
   else if (h === '#live'){ renderLive(); liveLoop(1500); }
   else if (h === '#players'){ renderPlayers(); if (!state.week.busy && !state.week.loadedAt) loadWeek(false); }
+  else if (h.startsWith('#gp-')) renderGamePlayers(h.slice(4));
   else if (h.startsWith('#p-')){ const s = h.slice(3), i = s.indexOf('-'); renderPlayer(s.slice(0, i), decodeURIComponent(s.slice(i + 1))); }
   else if (h === '#method') renderMethod();
   else if (h === '#week' || h === '#parlays' || h === '#upcoming'){ renderWeekish(); if (!state.week.busy && (!state.week.loadedAt || Date.now() - state.week.loadedAt > 20*60000)) loadWeek(false); }
