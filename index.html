@@ -405,6 +405,33 @@ table.sortable th[data-dir="desc"]::after{content:" ▾";color:var(--sun)} table
 .drawer .pane>*{flex-shrink:0}
 body.noscroll{overflow:hidden}
 .mscripts .script{gap:10px} .ms ol,.ms ul{margin:4px 0 0;padding-left:20px;font-size:13px;display:flex;flex-direction:column;gap:3px} .ms .lbl{color:var(--sun)}
+/* ---------- character ---------- */
+body{background:
+  radial-gradient(900px 420px at 85% -120px, rgba(52,82,255,.28), transparent 70%),
+  radial-gradient(700px 360px at -10% 30%, rgba(255,212,59,.07), transparent 70%),
+  repeating-linear-gradient(90deg, transparent 0 119px, rgba(255,255,255,.025) 119px 120px),
+  var(--bg);background-attachment:fixed}
+.sechead h2,.sechead h3{display:flex;align-items:center;gap:10px}
+.sechead h2::before{content:"";width:9px;height:20px;background:var(--sun);transform:skewX(-18deg);border-radius:2px;flex:0 0 auto}
+.sechead h3::before{content:"";width:6px;height:14px;background:var(--brand);transform:skewX(-18deg);border-radius:2px;flex:0 0 auto}
+.hello{font:600 15px var(--f-body);color:#C9CDEB;padding:2px 0} .hello .hot-t{color:var(--bad)}
+.bc,.pc,.grp,.rows,.panel{transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease}
+@media (hover:hover){ .bc:hover,.pc:hover{transform:translateY(-2px);border-color:#3A4385;box-shadow:0 10px 24px rgba(0,0,0,.35)} }
+.bc{position:relative;background:linear-gradient(160deg,#18204A 0%,var(--panel) 55%)}
+.bc .bc-foot{border-top:1px dashed #303970;padding-top:10px;margin-top:4px}
+.bc.best::after{content:"NP PICK";position:absolute;bottom:20px;right:14px;font:800 11px var(--f-display);letter-spacing:.14em;color:var(--sun);border:2px solid var(--sun);border-radius:5px;padding:2px 7px;transform:rotate(8deg);opacity:.85}
+.bc.best .bc-odds b{color:var(--sun)}
+.pc-tier{display:flex;align-items:center;gap:6px}
+.pc.t4{background:linear-gradient(135deg,rgba(255,107,122,.12),transparent 55%),repeating-linear-gradient(45deg,transparent 0 14px,rgba(255,212,59,.03) 14px 28px),var(--panel)}
+.pc-odds{color:var(--ink)} .pc.t3 .pc-odds,.pc.t4 .pc-odds{color:var(--sun)}
+.tag{box-shadow:2px 2px 0 rgba(0,0,0,.35)}
+.go{box-shadow:0 2px 0 #B8941C} .go:active{box-shadow:none}
+.go[aria-expanded="true"],.go[aria-pressed="true"]{box-shadow:none}
+.dot{animation:pulse 2s ease-in-out infinite} .ltag,.lbadge{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){ .dot,.ltag,.lbadge{animation:none} .bc,.pc{transition:none} }
+.foot{border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
+.foot b{font-family:var(--f-display);font-style:italic;color:var(--sun);letter-spacing:.04em}
 /* tracker + live stats */
 .ticker{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 16px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 .ticker::-webkit-scrollbar{display:none}
@@ -474,7 +501,7 @@ body.noscroll{overflow:hidden}
 <p class="slogan-m">They got our account. We got their playbook.</p>
 <div class="wrap">
   <main id="main" class="stack"></main>
-  <p class="foot">Nati Picks does the research; you make the call. No bet is a lock. Only bet what you can afford to lose. Problem gambling help: 1-800-GAMBLER. · <a href="#health">Data health</a></p>
+  <p class="foot"><b>Nati Picks.</b> We do the homework, you make the call. No bet is a lock, so bet with your head, not over it. Problem gambling help: 1-800-GAMBLER. · <a href="#health">Data health</a></p>
 </div>
 <div class="toast" id="toast" hidden role="status"></div>
 <div class="drawer" id="drawer" hidden><div class="pane" id="pane" role="dialog" aria-modal="true" aria-label="Details"></div></div>
@@ -2545,6 +2572,11 @@ const hsh = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h<<5) 
 setInterval(() => document.querySelectorAll('[data-ago]').forEach(el => { const t = +el.dataset.ago; if (t) el.textContent = ago(t); }), 1000);
 
 /* ---------- one reusable "go deeper" button (the yellow standard) ---------- */
+const QUIPS = ['Reading their playbook…','Shopping every line…','Checking the injury report…','Running the numbers…','Finding where the book slipped…','Crunching game logs…'];
+const quip = () => QUIPS[Math.floor(Date.now()/4000) % QUIPS.length];
+const TIER_ICON = { 1:'🛡️', 2:'⚖️', 3:'🔥', 4:'🎰' };
+function hello(n, live){ const h = new Date().getHours(), part = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening', day = new Date().toLocaleDateString([], { weekday:'long' });
+  return `${part}. ${day}'s board${n ? `: ${plural(n, 'game')}` : ''}${live ? `, <b class="hot-t">${live} live</b>` : ''}. The research is done. Pick your spots.`; }
 const OPEN = new Set();
 const goBtn = (label, attrs = '') => `<button type="button" class="go" ${attrs}>${label}</button>`;
 const goLink = (label, href, attrs = '') => `<a class="go" href="${href}" ${attrs}>${label}</a>`;
@@ -2640,16 +2672,16 @@ function parlayDetail(s, R){
 }
 const TIER_EMPTY = {
   1:'Not enough high-probability legs yet.', 2:'Not enough well-rated legs yet.', 3:'Not enough legs for a bigger payout yet.',
-  4:'Lottery needs five or more plus-money picks with real model support. Plus-money prices usually come with all sportsbooks loaded.' };
+  4:'Lottery needs five or more plus-money picks with real model support. The free feed rarely has enough plus-money prices; it fills in on bigger slates.' };
 /* list = [{ s, R }] ranked best-first for one tier; the first is the recommendation, the rest are OTHER OPTIONS. */
 function tierCard(t, list, ctx, opts = {}){
   const M = TIER_META[t], first = list[0];
-  if (!first) return `<article class="pc ${M.cls} none"><div class="pc-row"><div><div class="pc-tier">${esc(M.name)}</div><div class="pc-sub">${esc(M.risk)}</div></div><div class="pc-odds muted">—</div></div><p class="note" style="margin:0">${esc(opts.busy ? 'Researching…' : opts.weekly && t < 4 ? 'Not enough strong picks from different games yet. This fills in as more games are researched.' : TIER_EMPTY[t])}</p></article>`;
+  if (!first) return `<article class="pc ${M.cls} none"><div class="pc-row"><div><div class="pc-tier">${TIER_ICON[t]} ${esc(M.name)}</div><div class="pc-sub">${esc(M.risk)}</div></div><div class="pc-odds muted">—</div></div><p class="note" style="margin:0">${esc(opts.busy ? 'Researching…' : opts.weekly && t < 4 ? 'Not enough strong picks from different games yet. This fills in as more games are researched.' : TIER_EMPTY[t])}</p></article>`;
   const { s, R } = first, id = 'p' + hsh(ctx + t + s.sig.join()), oid = 'o' + hsh(ctx + 'others' + t);
   const sub = [plural(s.legs.length, 'leg'), s.boost >= 1.1 ? `legs hit together ${fmt1(s.boost)}× more often` : '', s.weekly ? plural(s.games, 'game') : opts.showGame && R ? matchup(R.g) : '', s.weekly || s.name === M.name ? '' : s.name].filter(Boolean).join(' · ');
   const others = list.slice(1, 6);
   return `<article class="pc ${M.cls}">
-    <div class="pc-row"><div><div class="pc-tier">${esc(M.name)}${t === 4 ? ' <span class="pill bad">Highest risk</span>' : ''}</div><div class="pc-sub">${esc(sub)}</div></div><div class="pc-odds">${decToAm(s.estDec)}${s.priced ? '' : '*'}</div></div>
+    <div class="pc-row"><div><div class="pc-tier">${TIER_ICON[t]} ${esc(M.name)}${t === 4 ? ' <span class="pill bad">Highest risk</span>' : ''}</div><div class="pc-sub">${esc(sub)}</div></div><div class="pc-odds">${decToAm(s.estDec)}${s.priced ? '' : '*'}</div></div>
     <div class="actions">${togBtn(id, s.weekly ? 'View parlay' : 'View')}${others.length ? togBtn(oid, `Other options (${others.length})`, 'Hide options') : ''}${trackBtn(trkParlay(s, R))}</div>
     <div id="${id}" hidden>${parlayDetail(s, R && Object.assign(R, { __home: !!opts.showGame }))}</div>
     ${others.length ? `<div id="${oid}" class="others" hidden>${others.map(({ s:o, R:Ro }) => { const pid = 'p' + hsh(ctx + 'alt' + t + o.sig.join());
@@ -2723,13 +2755,14 @@ function renderToday(){
   const top = topBets(res), anyGames = sportsInView().some(s => (state.slates[s] || []).length);
   const tierLists = {}; for (const t of TIERS) tierLists[t] = res.flatMap(R => (R.sgps[t] || []).map(s => ({ s, R }))).sort((a,b)=>b.s.rankScore - a.s.rankScore);
   const researching = state.busy && v.games.some(g => !CACHE[g.id]), nF = Object.values(state.filters).filter(Boolean).length;
-  const empty = !v.games.length ? `<div class="panel note">${state.busy ? '<span class="loading"><span class="spin"></span>Finding games…</span>' : `No ${state.sport === 'all' ? '' : esc(SPORT[state.sport].label) + ' '}games on the schedule in the next few days. <a href="#week">See This week's parlays →</a> or switch sports above.`}</div>` : '';
+  const empty = !v.games.length ? `<div class="panel note">${state.busy ? `<span class="loading"><span class="spin"></span>${quip()}</span>` : `No ${state.sport === 'all' ? '' : esc(SPORT[state.sport].label) + ' '}games on the schedule in the next few days. <a href="#week">See This week's parlays →</a> or switch sports above.`}</div>` : '';
   const notice = v.rolled === 'next' ? `<div class="msg">No games are live right now. Here's what starts next.</div>` : v.rolled ? `<div class="msg">${v.finals.length ? 'Today\'s games are done.' : 'No more games today.'} Here's ${esc(v.title === 'Tomorrow' ? 'tomorrow' : v.title)}: picks are ready now.</div>` : '';
   const finalsHtml = v.finals.length ? `<section class="sec"><div class="sechead"><h2>Final scores</h2><span class="note">Today</span></div><div class="grp"><div class="grows">${moreList('fin' + hsh(state.sport), v.finals.map(g => `<div class="gr"><div class="gr-l"><div class="gr-tm">${teamLogo(g.away,'sm')}<span>${esc(g.away.short)} <b class="sc">${esc(g.away.score ?? '')}</b></span><span class="muted">–</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)} <b class="sc">${esc(g.home.score ?? '')}</b></span></div><div class="gr-m">Final</div></div>${goLink('Recap', '#g-' + g.id)}</div>`), 4)}</div></div></section>` : '';
-  paint(`${notice}<div class="home">
+  const nLiveH = v.games.filter(g => g.state === 'in').length;
+  paint(`${notice}${!v.rolled ? `<div class="hello">${hello(v.games.length, nLiveH)}</div>` : ''}<div class="home">
     <section class="sec col-main" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top">${esc(v.bets)}</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.games.filter(g=>CACHE[g.id]).length} of ${v.games.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Ranked on 8 checks'}</span></div>
       ${top.length ? `<div class="bets board">${moreList('mtop' + hsh(state.sport + state.when), top.map((x, i) => betCard(x.c, x.R, 'top', { board:true, top:i === 0, tag:i === 0 ? 'Best bet' : null })), 6)}</div><div class="swipe-hint note">Swipe for more · ${plural(top.length,'pick')}</div>`
-        : empty || `<div class="panel note">${res.length ? (nF ? 'Nothing matches the advanced filters.' : 'No bets clear our checks yet.') : '<span class="loading"><span class="spin"></span>Researching games…</span>'}</div>`}
+        : empty || `<div class="panel note">${res.length ? (nF ? 'Nothing matches the advanced filters.' : 'Nothing clears our checks yet. We don\'t force picks.') : '<span class="loading"><span class="spin"></span>${quip()}</span>'}</div>`}
       ${liveStrip()}
     </section>
     <aside class="col-side">
@@ -3610,7 +3643,7 @@ function trkToggle(key){
   let list = trkLoad(); const on = list.some(x => x.key === key);
   if (on) list = list.filter(x => x.key !== key); else if (TRK_REG[key]) list.push(TRK_REG[key]);
   trkSave(list); document.querySelectorAll(`[data-track="${CSS.escape(key)}"]`).forEach(b => { b.textContent = on ? 'Track' : 'Tracking ✓'; b.setAttribute('aria-pressed', String(!on)); });
-  trkBadge(); alertPush('ok', on ? 'Removed from My tracker.' : 'Added to My tracker.');
+  trkBadge(); alertPush('ok', on ? 'Off the card. Removed from My tracker.' : 'Locked in. Added to My tracker.');
 }
 const TRK_GROUP = { 'Hit':'Hit', 'Lost':'Lost', 'Push':'Push', 'On pace':'On pace', 'On track':'On pace', 'Covering':'On pace', 'Winning':'On pace', 'Behind pace':'Behind', 'Trending over':'Behind', 'Not covering':'Behind', 'Losing':'Behind', 'Needs a TD':'Behind', 'In play':'Behind' };
 function trkEval(x){
@@ -3624,7 +3657,7 @@ function trkBadge(){ const n = trkLoad().length, b = $('#trkBadge'); if (b){ b.t
 function trkCheck(){
   const list = trkLoad(); let dirty = false;
   const check = (x, parent) => { const t = trkEval(x), prev = x.last?.status;
-    if ((t.status === 'Hit' || t.status === 'Lost') && prev !== t.status) alertPush(t.status === 'Hit' ? 'ok' : 'bad', `${t.status === 'Hit' ? '✓ Hit' : '✗ Lost'}: ${x.label}${parent ? ` (${parent})` : ''}`);
+    if ((t.status === 'Hit' || t.status === 'Lost') && prev !== t.status) alertPush(t.status === 'Hit' ? 'ok' : 'bad', `${t.status === 'Hit' ? '💰 Cashed' : '✗ Burned'}: ${x.label}${parent ? ` (${parent})` : ''}`);
     const R = CACHE[x.gid]; if (x.playerId && R?.isLive && !x.injNote && playerLeft(R, x.playerId)){ x.injNote = true; alertPush('warn', `${x.name || 'A tracked player'} left the game (possible injury). Tracked: ${x.label}`); }
     if (t.status !== 'Waiting' && JSON.stringify(t) !== JSON.stringify(x.last)){ x.last = t; dirty = true; } };
   for (const it of list){ if (it.type === 'parlay') it.legs.forEach(l => check(l, it.name)); else check(it); }
