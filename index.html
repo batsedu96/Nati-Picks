@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23FFD43B%22/%3E%3Cg%20fill%3D%22%2314172E%22%20transform%3D%22translate%283.5%200%29%20skewX%28-9%29%22%3E%3Cpath%20d%3D%22M12%2046V18h6.8l9.6%2015.4V18h6v28h-6.6L18%2030.4V46z%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M38.5%2046V18h10.2c6%200%209.6%203.6%209.6%208.8s-3.6%208.9-9.6%208.9h-4.2V46zM44.5%2023.2v7.3h3.9c2.5%200%203.9-1.4%203.9-3.65s-1.4-3.65-3.9-3.65z%22/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one command center. Header → sport tabs → TODAY (games + today's best bets) → game page (outlook, best bets, SGP tiers, scripts, market, props, players, research, data quality). */
 :root{
@@ -15,7 +15,7 @@
   --brand:#3452FF; --brand-ink:#FFFFFF; --sun:#FFD43B; --sun-ink:#14172E; --blue-soft:#1C2766; --sun-soft:#3A3413;
   --good:#2BD48A; --good-soft:#123A2E; --bad:#FF6B7A; --bad-soft:#3A1826; --warn:#FFC24D; --warn-soft:#3A2E10;
   --hot:#1F6B51; --cold:#5A2335;
-  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-display:"Big Shoulders Display","Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   color-scheme:dark;
@@ -595,6 +595,75 @@ body{background:radial-gradient(1000px 420px at 85% -160px, rgba(52,82,255,.18),
 @media (max-width:760px){ .dstats span{white-space:normal} }
 @media (max-width:420px){ .mainnav a{font-size:14px;letter-spacing:0;padding:0 4px} .mainnav .lbadge{margin-left:3px;min-width:15px;height:15px;font-size:10px;padding:0 3px} .hdr-r1{gap:4px} }
 @media (max-width:360px){ .mainnav a{font-size:12.5px;padding:0 3px} }
+/* ===================== v6: stadium-night identity — team colors carry the character ===================== */
+:root{--bg:#0D1330;--panel:#151C42;--panel2:#1D2552;--line:#29326A;--brand:#4C6BFF;--bad:#FF5A6E;--r-lg:18px;--r-md:12px;--r-sm:8px}
+body{background:radial-gradient(1200px 520px at 80% -200px, rgba(76,107,255,.22), transparent 70%), radial-gradient(900px 500px at -10% 110%, rgba(255,212,59,.06), transparent 70%), var(--bg);background-attachment:fixed;font-feature-settings:"tnum" 1}
+/* type: stadium signage for display, Plex for reading */
+.daybar h1,.sechead h2,.gh .vs,.jb-n,.jb-p,.mainnav a,.ptab,.grp>summary,.bn,.bc-what,.pc-tier,.dstats b{font-family:var(--f-display)}
+.daybar{align-items:flex-end;border-bottom:0;padding:6px 0 2px}
+.daybar h1{font-size:clamp(40px,7vw,64px);font-weight:900;line-height:.86;letter-spacing:.005em;text-transform:uppercase;margin:0}
+.db-k{margin-top:6px;font-size:13.5px;color:var(--muted)}
+.dstats div{border-radius:var(--r-md);background:rgba(21,28,66,.7);backdrop-filter:blur(6px);min-width:84px;padding:8px 12px}
+.dstats b{font-size:30px;font-weight:800;line-height:.95}
+.dstats span{text-transform:none;letter-spacing:0;font-size:12px}
+.kick{text-transform:none;letter-spacing:0;font:600 12.5px var(--f-body);color:var(--sun)}
+.lbl{text-transform:none!important;letter-spacing:0!important}
+.sechead h2{font-size:30px;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+.sechead h2::before{width:6px;height:24px;border-radius:3px;transform:none;background:linear-gradient(var(--sun),#FF9F1C)}
+/* header: glass */
+.hdr{background:rgba(13,19,48,.72);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px)}
+.mainnav a{font-size:21px;font-weight:800;letter-spacing:.02em;border-bottom:0;position:relative}
+.mainnav a[aria-current="true"]::after{content:"";position:absolute;left:10px;right:10px;bottom:4px;height:3px;border-radius:3px;background:var(--sun)}
+.tagline{border-radius:999px;text-transform:none;letter-spacing:0;font-size:11.5px;padding:3px 10px}
+.seg button{border-radius:999px} .go{border-radius:999px;font-weight:800} .pill,.bdg{border-radius:999px}
+/* the signature: team-color slabs */
+.gr.slab{position:relative;padding-left:20px;border-top-color:rgba(41,50,106,.7)}
+.gr.slab::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:linear-gradient(180deg,var(--ca) 0 50%,var(--ch) 50% 100%);clip-path:polygon(0 0,100% 0,55% 100%,0 100%)}
+.gr.slab:hover{background:linear-gradient(90deg,color-mix(in srgb,var(--ca) 10%,transparent),transparent 40%,transparent 60%,color-mix(in srgb,var(--ch) 10%,transparent))}
+.wp-b{height:10px;border-radius:999px;gap:2px;background:transparent}
+.wp-b i{border-radius:999px} .wp-b .a{background:var(--ca,#7C8BFF)} .wp-b .h{background:var(--ch,var(--good))} .wp-b .d{background:#5B6190}
+.wp.sm .wp-b{height:6px}
+.wp-l b{font-family:var(--f-display);font-size:1.25em;font-weight:800}
+.intro .wp-b i{animation:wpIn 1.1s cubic-bezier(.2,.8,.2,1) both}
+.intro .wp-b .h{animation-delay:.08s}
+@keyframes wpIn{from{transform:scaleX(0);opacity:.2}to{transform:scaleX(1);opacity:1}} .wp-b .a{transform-origin:left} .wp-b .h{transform-origin:right}
+@media (prefers-reduced-motion: reduce){ .intro .wp-b i{animation:none} }
+/* game page jumbotron */
+.gh.jumbo{flex-direction:column;align-items:stretch;gap:10px;padding:18px 18px 14px;border-radius:var(--r-lg);border:1px solid var(--line);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--ca) 38%,#0D1330) 0%,#121939 44%,#121939 56%,color-mix(in srgb,var(--ch) 38%,#0D1330) 100%);position:relative;overflow:hidden}
+.gh.jumbo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(255,255,255,.05) calc(10% - 1px) 10%);pointer-events:none}
+.jb{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;position:relative;z-index:1}
+.jb-t{display:flex;align-items:center;gap:12px;min-width:0} .jb-t.h{justify-content:flex-end;text-align:right}
+.jb-t .logo{width:64px;height:64px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.45))}
+.jb-n{font-size:clamp(20px,3.4vw,30px);font-weight:800;text-transform:uppercase;line-height:.95}
+.jb-r{font-size:12px;color:#C9CDEB}
+.jb-p{font-size:clamp(44px,8vw,76px);font-weight:900;line-height:.85;margin:0 4px;text-shadow:0 4px 20px rgba(0,0,0,.4)} .jb-p small{font-size:.38em;font-weight:700;margin-left:2px}
+.jb-t.a .jb-p{margin-left:auto} .jb-t.h .jb-p{margin-right:auto}
+.jb-at{font-family:var(--f-display);font-size:26px;font-weight:800;color:rgba(255,255,255,.5)}
+.gh.jumbo .gh-t{position:relative;z-index:1;justify-content:center;text-align:center}
+.gh.slim{padding:10px 14px;border-radius:var(--r-md);background:linear-gradient(100deg,color-mix(in srgb,var(--ca) 25%,transparent),transparent 45%,transparent 55%,color-mix(in srgb,var(--ch) 25%,transparent))}
+@media (max-width:640px){ .jb{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px} .jb-t{flex-direction:column;gap:4px;text-align:center!important;justify-content:center!important} .jb-t.h{flex-direction:column-reverse} .jb-t .logo{width:48px;height:48px} .jb-t .jb-p{margin:0!important} .jb-n{font-size:17px} .jb-r{display:none} }
+/* bet cards: a team-color spine and a sharper, modern card */
+.bc{border-radius:var(--r-lg);background:linear-gradient(180deg,color-mix(in srgb,var(--tc,var(--spc,#4C6BFF)) 12%,var(--panel)) 0,var(--panel) 120px);border:1px solid var(--line);border-left:0!important;position:relative}
+.bc::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--tc,var(--spc,var(--brand)))}
+.bc.best{border-color:color-mix(in srgb,var(--sun) 60%,var(--line));box-shadow:0 0 0 1px rgba(255,212,59,.25),0 18px 40px -20px rgba(255,212,59,.35)}
+.bc-what{font-size:25px;font-weight:800}
+.bc-odds b{font-size:20px}
+.tag{border-radius:999px;padding:3px 9px;text-transform:none;letter-spacing:0;font-size:11.5px}
+/* groups, panels, parlay tickets */
+.grp,.panel,.pc,.rows{border-radius:var(--r-lg)}
+.grp>summary{font-size:20px;font-weight:800;letter-spacing:.02em}
+.pc{border-left-width:0;position:relative;padding-left:18px}
+.pc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--good)} .pc.t2::before{background:var(--brand)} .pc.t3::before{background:#FF9F1C} .pc.t4::before{background:linear-gradient(var(--bad),#B05CFF)}
+.pc-odds b{font-family:var(--f-display);font-size:34px;font-weight:900}
+.pc-tier{font-size:22px;font-style:normal;font-weight:800;text-transform:uppercase}
+.ptab{font-size:20px;font-weight:800;letter-spacing:.02em}
+.lgbar{height:5px;border-radius:999px} .lgbar i{border-radius:999px;background:linear-gradient(90deg,var(--brand),#8FA2FF)}
+.ticker .tkc{border-radius:999px}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+@media (max-width:760px){ .mainnav a{font-size:17px;padding:0 6px} .mainnav a[aria-current="true"]::after{left:6px;right:6px} }
+@media (max-width:420px){ .mainnav a{font-size:15px;letter-spacing:0;padding:0 4px} .mainnav a[aria-current="true"]::after{left:4px;right:4px} .daybar h1{font-size:40px} .bc-what{font-size:22px} }
+@media (max-width:360px){ .mainnav a{font-size:13.5px;padding:0 3px} }
 </style>
 </head>
 <body>
@@ -1085,6 +1154,7 @@ async function throttle(host){
   return () => { h.active--; const n = h.queue.shift(); if (n) n(); };
 }
 async function fetchJSON(url, { ttl = 0, persist = false, retries = 1, proxy = true, raw = false } = {}){
+  if (NPB.on && NPB.route(url)) return NPB.fetch(url, { ttl, raw });
   const key = 'np_c_' + url;
   const hit = MEM.get(url); if (ttl && hit && Date.now()-hit.at < ttl) return hit.data;
   if (persist && ttl){ const c = store.get(key, null); if (c && Date.now()-c.at < ttl){ MEM.set(url, c); return c.data; } }
@@ -1134,6 +1204,7 @@ const ymd = d => etDate(d).replace(/-/g,'');
 function parseTeam(c){
   const t = c.team || {};
   return { id:t.id, name:t.displayName || t.name, short:t.shortDisplayName || t.name || t.displayName, abbr:t.abbreviation || (t.shortDisplayName||'').slice(0,3).toUpperCase(), logo:t.logo || t.logos?.[0]?.href,
+    color:/^[0-9a-f]{6}$/i.test(t.color || '') ? '#' + t.color : null, alt:/^[0-9a-f]{6}$/i.test(t.alternateColor || '') ? '#' + t.alternateColor : null,
     record:(c.records||[]).find(r=>r.type==='total' || r.name==='overall' || r.type==='ytd')?.summary || '', homeRec:(c.records||[]).find(r=>r.type==='home')?.summary || '', roadRec:(c.records||[]).find(r=>r.type==='road' || r.type==='away')?.summary || '', score:c.score, form:c.form || '' };
 }
 function parseEspnOdds(o, home, away){
@@ -1164,6 +1235,7 @@ function parseEspnLive(o, home, away){
 const LIVE_BOOKS = {};   // gid → book → { sig, confirmed, changedAt }
 registerProvider('sportsData', { name:'ESPN',
   async slate(sport, league, opts = {}){
+    if (NPB.on) return NPB.slate(sport, league, opts.days || (sport === 'soccer' ? 4 : 1));
     const out = [];
     const add = (j, lg, lgName) => { for (const ev of j.events || []){ const c = ev.competitions?.[0]; if (!c) continue;
       const hc = c.competitors.find(x=>x.homeAway==='home'), ac = c.competitors.find(x=>x.homeAway==='away'); if (!hc || !ac) continue;
@@ -1354,7 +1426,7 @@ const ODDS_BOOKS = 'fanduel,draftkings,betmgm,williamhill_us,espnbet,fanatics,be
 const OA_SOCCER = { 'eng.1':'soccer_epl', 'eng.2':'soccer_efl_champ', 'esp.1':'soccer_spain_la_liga', 'ita.1':'soccer_italy_serie_a', 'ger.1':'soccer_germany_bundesliga', 'fra.1':'soccer_france_ligue_one',
   'usa.1':'soccer_usa_mls', 'mex.1':'soccer_mexico_ligamx', 'uefa.champions':'soccer_uefa_champs_league', 'uefa.europa':'soccer_uefa_europa_league', 'uefa.europa.conf':'soccer_uefa_europa_conference_league',
   'eng.fa':'soccer_fa_cup', 'esp.copa_del_rey':'soccer_spain_copa_del_rey', 'ger.dfb_pokal':'soccer_germany_dfb_pokal', 'fifa.world':'soccer_fifa_world_cup', 'ned.1':'soccer_netherlands_eredivisie', 'por.1':'soccer_portugal_primeira_liga' };
-const oaKey = () => store.get('np_oakey', '');
+const oaKey = () => store.get('np_oakey', '') || (NPB.odds ? 'server' : '');
 const OA = { credits: store.get('np_oacredits', null) };
 registerProvider('odds', { name:'The Odds API', free:false, enabled: () => !!oaKey() && store.get('np_useoa', false),
   sportKey(g){ return g.sport === 'soccer' ? OA_SOCCER[g.league] : SPORT[g.sport].oa; },
@@ -2392,6 +2464,61 @@ function NPTests(){
   return R;
 }
 
+/* ============================ NP BACKEND CLIENT (Cloudflare Pages Functions at /api) ============================ */
+/* When the site is served from Cloudflare, every sports-data request goes through NP's own backend, which caches it
+   for every visitor, enforces source limits and keeps the last good copy. Served anywhere else (GitHub Pages, a file),
+   NPB stays off and the site works exactly as before, calling ESPN directly. */
+const NPB = { on:false, odds:false, storage:false, stale:0, inflight:new Map(), sent:{},
+  HOSTS:/^https:\/\/(site\.api\.espn\.com|site\.web\.api\.espn\.com|sports\.core\.api\.espn\.com|api\.open-meteo\.com|geocoding-api\.open-meteo\.com|statsapi\.mlb\.com|api-web\.nhle\.com|api\.the-odds-api\.com)\//,
+  async init(){
+    if (!/^https?:$/.test(location.protocol)) return false;
+    try { const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 2500);
+      const r = await fetch('/api/health', { signal:ctl.signal, cache:'no-store' }); clearTimeout(t);
+      const j = r.ok ? await r.json() : null; if (j?.np){ this.on = true; this.odds = !!j.odds; this.storage = !!j.storage; this.health = j; } } catch(e){}
+    return this.on;
+  },
+  route(url){ return this.HOSTS.test(url) && (!/the-odds-api/.test(url) || this.odds); },
+  async fetch(url, { ttl = 0, raw = false } = {}){
+    const hit = MEM.get(url); if (ttl && hit && Date.now() - hit.at < ttl) return hit.data;
+    if (this.inflight.has(url)) return this.inflight.get(url);
+    const p = (async () => {
+      const clean = url.replace(/([?&])apiKey=[^&]*(&|$)/, (m, a, b) => b ? a : '').replace(/[?&]$/, '');
+      NET.calls++;
+      const r = await fetch('/api/x?u=' + encodeURIComponent(clean));
+      if (!r.ok){ const b = await r.json().catch(() => ({})); const e = new Error(b.error || 'HTTP ' + r.status); e.status = r.status; if ([401,403,404,422].includes(r.status)) e.fatal = true;
+        NET.errors.push(clean.replace(/^https:\/\//, '').slice(0, 100)); throw e; }
+      const data = await r.json(); if (r.headers.get('x-np-stale')) this.stale = Date.now();
+      const out = raw ? { data, headers:r.headers } : data; if (ttl) MEM.set(url, { at:Date.now(), data:out }); return out;
+    })().finally(() => this.inflight.delete(url));
+    this.inflight.set(url, p); return p;
+  },
+  async slate(sport, league, days){
+    const k = `slate|${sport}|${league || ''}|${days || 1}`;
+    if (this.inflight.has(k)) return this.inflight.get(k);
+    const p = (async () => {
+      const r = await fetch(`/api/slate?sport=${encodeURIComponent(sport)}${league ? '&league=' + encodeURIComponent(league) : ''}&days=${days || 1}`);
+      const j = await r.json().catch(() => null); if (!r.ok || !j?.games) throw new Error(j?.error || 'backend slate failed');
+      if (j.stale) this.stale = Date.now();
+      for (const c of j.conflicts || []){ INTEGRITY.conflicts.unshift({ ...c, game:c.gid, sport, at:Date.now() }); }
+      for (const x of j.rejected || []) INTEGRITY.rejected.push({ ...x, sport, source:'NP backend', at:Date.now() });
+      INTEGRITY.conflicts = INTEGRITY.conflicts.slice(0, 100);
+      return canonicalize(j.games, 'ESPN via NP backend');
+    })().finally(() => this.inflight.delete(k));
+    this.inflight.set(k, p); return p;
+  },
+  /* the pregame prediction is stored on the server; the server refuses it once its own schedule says the game started
+     and grades it from its own final score */
+  savePrediction(R, snap){
+    if (!this.on || !this.storage || !snap?.wp) return;
+    const sig = JSON.stringify([snap.wp, snap.mkt, (snap.picks || []).map(x => x.id + x.p.toFixed(3))]), last = this.sent[R.g.id];
+    if (last && last.sig === sig) return; if (last && Date.now() - last.at < 10*60e3) return;
+    this.sent[R.g.id] = { sig, at:Date.now() };
+    fetch('/api/predictions', { method:'POST', headers:{ 'content-type':'application/json' }, body:JSON.stringify({ gid:R.g.id, model:MODEL_VERSION, wp:snap.wp, mkt:snap.mkt, feats:snap.feats, picks:(snap.picks || []).map(x => ({ id:x.id, label:x.label, p:x.p, dec:x.dec })) }) }).catch(() => {});
+  },
+  async metrics(){ if (!this.on) return null; try { const r = await fetch('/api/metrics'); return r.ok ? await r.json() : null; } catch(e){ return null; } },
+  async health(){ if (!this.on) return null; try { const r = await fetch('/api/health', { cache:'no-store' }); return r.ok ? await r.json() : null; } catch(e){ return null; } },
+};
+
 /* ============================ LIVE ENGINE: one live fetch per game → scoreboard, box score, projections, live odds ============================ */
 const LIVE_LEN = { nfl:{ per:4, sec:900, wall:11000 }, nba:{ per:4, sec:720, wall:8400 }, nhl:{ per:3, sec:1200, wall:9000 }, mlb:{ per:9, wall:10800 }, soccer:{ per:2, sec:2700, wall:6600 } };
 const LIVE_SD = { nfl:{ t:13.5, m:13.5 }, nba:{ t:18, m:12.5 }, mlb:{ t:4.4, m:4.2 }, nhl:{ t:2.4, m:2.3 }, soccer:{ t:1.6, m:1.5 } };
@@ -2420,7 +2547,7 @@ function savePreSnap(R){
     if (c.playerId && c.stat === 'anytime_td' && c.side === 'yes' && td[c.playerId] == null) td[c.playerId] = -Math.log(Math.max(0.01, 1 - c.p)); }
   for (const G of R.book.values()){ if (G.consensusLine != null) lines[G.key] = G.consensusLine; for (const L of G.lines.values()) if (L.best && L.line == null) lines[G.key + '|' + L.side] = L.best.dec; }
   const legs = []; for (const t of TIERS){ const s = (R.sgps[t] || [])[0]; if (s) s.legs.forEach(l => legs.push({ ...snapPick(l), tier:t, parlay:TIER_META[t].name })); }
-  store.set('np_pre_' + R.g.id, { at:Date.now(), model:MODEL_VERSION, wp:winProbs(R), mkt:marketWinProbs(R), feats:R.gm.inputs || null, mu:R.gm.mu, muT:R.gm.muT, tt:R.gm.ttMean, picks:R.best.map(snapPick), legs, proj, td, lines });
+  const SNAP = { at:Date.now(), model:MODEL_VERSION, wp:winProbs(R), mkt:marketWinProbs(R), feats:R.gm.inputs || null, mu:R.gm.mu, muT:R.gm.muT, tt:R.gm.ttMean, picks:R.best.map(snapPick), legs, proj, td, lines }; store.set('np_pre_' + R.g.id, SNAP); try { NPB.savePrediction(R, SNAP); } catch(e){}
 }
 function liveGame(R){
   const g = R.g, D = R.D, S = preSnap(g.id), LC = liveClock(g, D), sd = LIVE_SD[g.sport] || LIVE_SD.nfl;
@@ -2929,7 +3056,7 @@ const impStr = c => c.priced ? pct(c.implied, 0) : 'no price';
 const badgeHtml = (c, R) => badgesFor(c, R).map(k => `<span class="bdg bdg-${k}" title="${esc(BADGES[k].rule)}">${esc(BADGES[k].label)}</span>`).join('');
 const wpBar = (R, opts = {}) => { const w = R?.wp; if (!w) return opts.empty ? `<div class="note">${esc(opts.empty)}</div>` : ''; const g = R.g;
   const seg = (k, t, cls) => w[k] > 0.005 ? `<i class="${cls}" style="width:${(w[k]*100).toFixed(1)}%" title="${esc(t)} ${pct(w[k],0)}"></i>` : '';
-  return `<div class="wp${opts.sm ? ' sm' : ''}" aria-label="Model win probability"><div class="wp-l"><span>${esc(g.away.abbr)} <b>${pct(w.away,0)}</b></span>${w.draw != null ? `<span>Draw <b>${pct(w.draw,0)}</b></span>` : ''}<span><b>${pct(w.home,0)}</b> ${esc(g.home.abbr)}</span></div>
+  return `<div class="wp${opts.sm ? ' sm' : ''}" style="${tcVars(g)}" aria-label="Model win probability"><div class="wp-l"><span>${esc(g.away.abbr)} <b>${pct(w.away,0)}</b></span>${w.draw != null ? `<span>Draw <b>${pct(w.draw,0)}</b></span>` : ''}<span><b>${pct(w.home,0)}</b> ${esc(g.home.abbr)}</span></div>
     <div class="wp-b">${seg('away', g.away.short, 'a')}${w.draw != null ? seg('draw', 'Draw', 'd') : ''}${seg('home', g.home.short, 'h')}</div>${opts.label === false ? '' : `<div class="wp-n">Model win probability${R.wpMkt ? ` · market ${esc(g.away.abbr)} ${pct(R.wpMkt.away,0)}${R.wpMkt.draw != null ? ` / draw ${pct(R.wpMkt.draw,0)}` : ''} / ${esc(g.home.abbr)} ${pct(R.wpMkt.home,0)}` : ' · no market price to compare'}</div>`}</div>`; };
 const gameOf = id => state.allGames().find(g => g.id === id);
 const matchup = g => `${g.away.short} @ ${g.home.short}`;
@@ -2943,6 +3070,16 @@ const hsh = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h<<5) 
 setInterval(() => document.querySelectorAll('[data-ago]').forEach(el => { const t = +el.dataset.ago; if (t) el.textContent = ago(t); }), 1000);
 
 const NA = '<span class="na">no data</span>';
+/* ---------- team colors (real ESPN team colors, adjusted so they read on the dark board) ---------- */
+const hexLum = h => { const n = parseInt(h.slice(1), 16), c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v/12.92 : ((v + .055)/1.055) ** 2.4; }); return .2126*c[0] + .7152*c[1] + .0722*c[2]; };
+const mixHex = (h, w, k) => { const a = parseInt(h.slice(1), 16), b = parseInt(w.slice(1), 16), ch = s => Math.round(((a >> s) & 255)*(1 - k) + ((b >> s) & 255)*k); return '#' + [16, 8, 0].map(s => ch(s).toString(16).padStart(2, '0')).join(''); };
+function teamColor(t, fallback = '#7C8BFF'){
+  const cs = [t?.color, t?.alt].filter(c => /^#[0-9a-f]{6}$/i.test(c || '')); if (!cs.length) return fallback;
+  const ok = cs.find(c => hexLum(c) > 0.07 && hexLum(c) < 0.8); if (ok) return ok;
+  const c = cs[0]; return hexLum(c) <= 0.07 ? mixHex(c, '#ffffff', 0.38) : mixHex(c, '#0D1330', 0.25);
+}
+function tcVars(g){ let a = teamColor(g.away, '#7C8BFF'), h = teamColor(g.home, '#2BD48A'); if (a.toLowerCase() === h.toLowerCase()) a = mixHex(a, '#ffffff', 0.45); return `--ca:${a};--ch:${h}`; }
+const pickColor = (c, g) => { const side = c.team && g[c.team] ? c.team : (['home','away'].includes(c.side) ? c.side : null); return side ? teamColor(g[side]) : null; };
 /* ---------- one reusable "go deeper" button (the yellow standard) ---------- */
 const QUIPS = ['Reading their playbook…','Shopping every line…','Checking the injury report…','Running the numbers…','Finding where the book slipped…','Crunching game logs…'];
 const quip = () => QUIPS[Math.floor(Date.now()/4000) % QUIPS.length];
@@ -2958,7 +3095,8 @@ function restoreOpen(root = document){
   root.querySelectorAll('[data-tog]').forEach(b => { const id = b.dataset.tog; if (!OPEN.has(id)) return; const t = document.getElementById(id); if (!t) return; t.hidden = false; b.setAttribute('aria-expanded','true'); b.textContent = b.dataset.on; });
 }
 const moreList = (key, items, n) => items.length <= n ? items.join('') : `${items.slice(0,n).join('')}<div id="${key}" class="morebox" hidden>${items.slice(n).join('')}</div><div class="morefoot">${togBtn(key, `Show more (${items.length-n})`, 'Show less')}</div>`;
-function paint(html){ const m = $('#main'); m.innerHTML = html; restoreOpen(m); }
+function paint(html){ const m = $('#main'); m.innerHTML = html; restoreOpen(m);
+  if (!paint.done && m.querySelector('.wp-b')){ paint.done = true; document.body.classList.add('intro'); setTimeout(() => document.body.classList.remove('intro'), 1600); } }
 
 /* ---------- plain-language pieces ---------- */
 function whoWhat(c, g){
@@ -2999,7 +3137,8 @@ const bestOk = c => c.priced ? c.ev >= 0 : c.p >= 0.524;
 const topTag = (c, label = 'Best Bet') => bestOk(c) ? label : 'Top ranked';
 function betCard(c, R, ctx, opts = {}){
   const g = R.g, { who, what } = whoWhat(c, g), id = 'w' + hsh(ctx + g.id + c.id);
-  return `<article class="bc sp-${g.sport}${opts.top ? ' best' : ''}${c.live && !c.live.fresh ? ' stale' : ''}">
+  const tcol = pickColor(c, g);
+  return `<article class="bc sp-${g.sport}${opts.top ? ' best' : ''}${c.live && !c.live.fresh ? ' stale' : ''}"${tcol ? ` style="--tc:${tcol}"` : ''}>
     <div class="bc-h">${pickIcon(c, g)}<div class="bc-t">${opts.tag || opts.board ? `<div class="bc-ctx">${opts.tag ? `<span class="tag">${esc(opts.tag)}</span>` : ''}${opts.board ? esc(`${SPORT[g.sport].label} · ${matchup(g)} · ${whenTxt(g)}`) : ''}</div>` : ''}<div class="bc-who">${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(who)}</a>` : esc(who)} ${c.playerId ? liveTag(R, c.playerId, c.stat) : ''}</div></div></div>
     <div class="bc-what">${esc(what)}</div>
     <div class="bc-odds"><b>${priceStr(c)}</b><span>${esc(bookStr(c))}</span></div><div class="bc-prob"><b>${pct(c.p,0)}</b> model probability ${badgeHtml(c, R)}</div>${liveBadges(c, R)}
@@ -3080,7 +3219,8 @@ function headerSync(){
   document.querySelectorAll('#sportSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sport === state.sport)));
   const at = week ? state.week.loadedAt : Math.max(0, ...sportsInView().map(s => state.loadedAt[s] || 0)), live = allLive.length > 0;
   const bad = Object.values(HEALTH).filter(x => healthStatus(x) === 'offline').length;
-  $('#upd').innerHTML = `<span class="dot ${bad ? 'warn' : ''}"></span><span>${(week ? state.week.busy : state.busy) ? 'Updating…' : `Updated ${agoEl(at)}`}${live ? ' · live' : ''}</span>`;
+  const staleNow = NPB.stale && Date.now() - NPB.stale < 120e3;
+  $('#upd').innerHTML = `<span class="dot ${bad || staleNow ? 'warn' : ''}"></span>${staleNow ? '<span class="note" title="A source is slow or limited; showing the last good copy">Saved data · </span>' : ''}<span>${(week ? state.week.busy : state.busy) ? 'Updating…' : `Updated ${agoEl(at)}`}${live ? ' · live' : ''}</span>`;
 }
 
 /* ============================ TABS: Today · Live · Upcoming · Parlays ============================ */
@@ -3125,7 +3265,7 @@ function gameRow(g, opts = {}){
   const sc = s => showScore ? `<b class="sc">${esc(g[s].score ?? '')}</b>` : '';
   const pick = opts.pick && R && R.best?.[0] && isPlayable(g) && g.state === 'pre' ? R.best[0] : null;
   const btn = isFinal(g) ? goLink('Recap', '#g-' + g.id) : isLive(g) ? goLink('Live', '#g-' + g.id) : !isPlayable(g) || g.status === 'suspended' ? '' : goLink('Analysis', '#g-' + g.id);
-  return `<div class="gr${isLive(g) ? ' is-live' : ''}"><div class="gr-l"><div class="gr-tm">${opts.sport ? `<span class="spk sp-${g.sport}">${esc(SPORT[g.sport].label)}</span>` : ''}${teamLogo(g.away,'sm')}<span>${esc(g.away.short)}</span>${sc('away')}<span class="muted">@</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)}</span>${sc('home')}</div>
+  return `<div class="gr slab${isLive(g) ? ' is-live' : ''}" style="${tcVars(g)}"><div class="gr-l"><div class="gr-tm">${opts.sport ? `<span class="spk sp-${g.sport}">${esc(SPORT[g.sport].label)}</span>` : ''}${teamLogo(g.away,'sm')}<span>${esc(g.away.short)}</span>${sc('away')}<span class="muted">@</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)}</span>${sc('home')}</div>
     <div class="gr-m">${statusCell(g)}${g.sport==='soccer' && g.leagueName ? ` · ${esc(g.leagueName)}` : ''}${!showScore && isPlayable(g) && g.status !== 'suspended' && (spTxt || tot != null) ? ` · <span class="mono">${esc([spTxt, tot != null ? 'O/U ' + tot : ''].filter(Boolean).join(' · '))}</span>` : ''}${g.verified ? ` · <span class="note" title="Status and score cross-checked with ${esc(g.verified)}">✓ ${esc(g.verified)}</span>` : ''}</div>
     ${R?.wp && !showScore && isPlayable(g) ? wpBar(R, { sm:true, label:false }) : ''}
     ${pick ? `<div class="gr-pick"><span class="lbl">${esc(topTag(pick, 'Top pick'))}</span> ${esc(pick.label)} <span class="note">${pct(pick.p,0)} · ${esc(priceStr(pick))}</span></div>` : ''}</div>
@@ -3138,7 +3278,7 @@ function gamesBySport(list, ctx, opts = {}){
 }
 const fmtDayLong = t => new Date(t).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', timeZone:NP_TZ });
 function dayBar(title, kick, stats){
-  return `<section class="daybar"><div><div class="kick">${esc(kick)}</div><h1>${esc(title)}</h1></div><div class="dstats">${stats.filter(x => x[0] != null).map(([n, l, cls]) => `<div class="${cls || ''}"><b>${n}</b><span>${esc(l)}</span></div>`).join('')}</div></section>`;
+  return `<section class="daybar"><div class="db-t"><h1>${esc(title)}</h1><div class="db-k">${esc(kick)}</div></div><div class="dstats">${stats.filter(x => x[0] != null).map(([n, l, cls]) => `<div class="${cls || ''}"><b>${n}</b><span>${esc(l)}</span></div>`).join('')}</div></section>`;
 }
 function renderToday(){
   const v = viewGames(), res = v.open.map(g => CACHE[g.id]).filter(Boolean);
@@ -3252,8 +3392,11 @@ async function renderGame(id, opts = {}){
     ${RESEARCH_NOTES[id] ? `<details class="acc panel"><summary>Reported news & notes</summary><ul class="small">${RESEARCH_NOTES[id].items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>` : ''}
     <div class="actions">${goLink('Deep research', '#r-' + id)}</div>`;
   paint(`<a href="#" class="back">← Today</a>
-    <div class="gh"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">${esc(g.away.name)} <span class="muted">@</span> ${esc(g.home.name)}${isLive(g) || isFinal(g) ? ` <span class="sc">${esc(g.away.score ?? '')}–${esc(g.home.score ?? '')}</span>` : ''}</div>
-      <div class="note">${g.state==='in' ? `<span class="pill bad">LIVE ${esc(g.statusText)}</span> ` : ''}${!isLive(g) && (isFinal(g) || STATUS_LABEL[g.status]) ? statusCell(g) + ' · ' : ''}${esc(SPORT[g.sport].label)}${g.leagueName && g.sport==='soccer' ? ' · ' + esc(g.leagueName) : ''} · ${esc(fmtDayLong(g.date))} ${esc(timeOnly(g.date))}${g.venue?` · ${esc(g.venue.name)}`:''}${wx?` · ${wx.temp!=null?Math.round(wx.temp)+'°F ':''}${wx.gust?`gusts ${Math.round(wx.gust)} mph `:''}${wx.rain!=null?`${wx.rain}% rain`:''}`:''} · updated ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div>
+    <div class="gh jumbo" style="${tcVars(g)}"><div class="jb"><div class="jb-t a">${teamLogo(g.away,'')}<div><div class="jb-n">${esc(g.away.name)}</div><div class="jb-r">${esc(g.away.record || '')}</div></div><div class="jb-p">${isLive(g) || isFinal(g) ? esc(g.away.score ?? '') : R.wp ? Math.round(R.wp.away*100) + '<small>%</small>' : ''}</div></div>
+      <div class="jb-at">${isLive(g) || isFinal(g) ? '' : '@'}</div>
+      <div class="jb-t h"><div class="jb-p">${isLive(g) || isFinal(g) ? esc(g.home.score ?? '') : R.wp ? Math.round(R.wp.home*100) + '<small>%</small>' : ''}</div><div><div class="jb-n">${esc(g.home.name)}</div><div class="jb-r">${esc(g.home.record || '')}</div></div>${teamLogo(g.home,'')}</div></div>
+      <div class="gh-t"><div class="gh-mid">
+      <div class="note">${g.state==='in' ? `<span class="pill bad">LIVE ${esc(g.statusText)}</span> ` : ''}${!isLive(g) && (isFinal(g) || STATUS_LABEL[g.status]) ? statusCell(g) + ' · ' : ''}${esc(SPORT[g.sport].label)}${g.leagueName && g.sport==='soccer' ? ' · ' + esc(g.leagueName) : ''} · ${esc(fmtDayLong(g.date))} ${esc(timeOnly(g.date))}${g.venue?` · ${esc(g.venue.name)}`:''}${wx?` · ${wx.temp!=null?Math.round(wx.temp)+'°F ':''}${wx.gust?`gusts ${Math.round(wx.gust)} mph `:''}${wx.rain!=null?`${wx.rain}% rain`:''}`:''} · updated ${agoEl(R.at)}${R.wp && !isLive(g) && !isFinal(g) ? ' · big numbers are the model\'s win probability' : ''}</div></div></div>
       ${oaOn ? `<button class="btn sm ghost" id="loadOA">${oaHas ? 'Reload all sportsbooks' : 'Compare all sportsbooks'} <span class="note">(uses ~${Providers.odds[1].marketList(g,'all').length} credits)</span></button>` : ''}</div>
     ${R.changes.length ? `<div class="msg">${R.changes.map(esc).join('<br>')}</div>` : ''}
     ${isFinal(g) ? lineScoreHtml(R) : ''}${contextHtml(R)}
@@ -3357,7 +3500,7 @@ async function renderResearch(id){
       <div class="note">Odds sources: ${esc(R.sources.join(' · ') || 'none yet')}.</div>`],
   ];
   paint(`<a href="#g-${g.id}" class="back">← Back to picks</a>
-    <div class="gh"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">Deep research · ${esc(matchup(g))}</div><div class="note">${esc(timeET(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div></div>
+    <div class="gh slim" style="${tcVars(g)}"><div class="gh-t">${teamLogo(g.away,'')}<div class="gh-mid"><div class="vs">Deep research · ${esc(matchup(g))}</div><div class="note">${esc(timeET(g.date))} · analysis ${agoEl(R.at)}</div></div>${teamLogo(g.home,'')}</div></div>
     ${tabsHtml('research', tabs.filter(t => t[0] !== 'td' && t[0] !== 'sources').concat(tabs.filter(t => t[0] === 'td' || t[0] === 'sources')))}`);
   if (g.sport === 'nfl'){ const had = !!R.tdm; fillTD(R, '#tdbox', () => tdListHtml(R, 'td' + g.id)).then(() => { if (!had && R.tdm && location.hash === '#r-' + id) renderResearch(id); }); }   // re-render once so every skill player's logs fill the stat tabs
   headerSync();
@@ -3566,6 +3709,14 @@ const SOURCES = [
   ['The Odds API', 'Multi-book prices incl. player props', 'Needs your own key; OFF by default', 'Optional'],
   ['corsproxy.io', 'Relay used only when a browser request is blocked', 'Free third-party relay', 'Fallback transport'],
 ];
+async function fillBackendPanels(){
+  const m = $('#srvMetrics'), h = $('#srvHealth');
+  if (!NPB.on){ if (m) m.innerHTML = '<div class="panel note">This copy of the site isn\'t running on the NP backend, so the scorecard below is for this device only.</div>'; if (h) h.innerHTML = ''; return; }
+  const [M, H] = await Promise.all([NPB.metrics(), NPB.health()]);
+  if (m) m.innerHTML = !M ? '<div class="panel note">The server scorecard is unavailable right now.</div>' : !M.configured ? '<div class="panel note">Server storage isn\'t connected yet (add the NP_DB database binding in Cloudflare). Until then the scorecard is per device.</div>'
+    : `<h3>All devices (graded on the server)</h3><div class="market"><div class="mk"><span class="lbl">Games graded</span><b>${M.nGames}</b><div class="mv">${M.pending} waiting for a final</div></div><div class="mk"><span class="lbl">Brier</span><b>${M.brier != null ? M.brier.toFixed(3) : NA}</b><div class="mv">Market ${M.brierMkt != null ? M.brierMkt.toFixed(3) : NA} on ${M.nBaseline} games</div></div><div class="mk"><span class="lbl">Log loss</span><b>${M.logloss != null ? M.logloss.toFixed(3) : NA}</b><div class="mv">Market ${M.llMkt != null ? M.llMkt.toFixed(3) : NA}</div></div></div><div class="note">Predictions are frozen by the server at kickoff and graded from the server's own final scores. ${M.nGames < 200 ? 'Too few games to call it an edge.' : ''}</div>`;
+  if (h && H) h.innerHTML = `<h3>NP backend</h3><div class="market"><div class="mk"><span class="lbl">Status</span><b>Online</b><div class="mv">${esc(H.version)} · storage ${H.storage ? 'connected' : 'not connected'}</div></div><div class="mk"><span class="lbl">Scheduled jobs</span><b>${H.scheduled_jobs}</b><div class="mv">Nothing runs when nobody is on the site</div></div><div class="mk"><span class="lbl">Source requests today</span><b>${(H.upstream_calls_today || []).reduce((t, x) => t + (x.calls || 0), 0)}</b><div class="mv">${(H.upstream_calls_today || []).map(x => `${esc(x.provider)} ${x.calls}`).join(', ') || 'none yet'}</div></div></div>${Object.keys(H.cooling || {}).length ? `<div class="flag">Paused after errors: ${Object.entries(H.cooling).map(([p, t]) => `${esc(p)} until ${esc(new Date(t).toLocaleTimeString('en-US', { timeZone:NP_TZ }))}`).join(', ')}. Showing saved data meanwhile.</div>` : ''}`;
+}
 function renderMethod(){
   paint(`<a href="#" class="back">← Today</a>${dayBar('Methodology', 'How NP turns data into picks', [])}
     ${tabsHtml('method', [
@@ -3579,11 +3730,12 @@ function renderMethod(){
       <p><b>Tabs.</b> All dates are New York time (DST handled). Today = games scheduled today, including live and final ones. Live = games ESPN reports in progress with a score. Upcoming = games after today that are still scheduled. Parlays = model parlays only.</p>
       <p><b>Refresh.</b> Data refreshes while this page is open (every 20 s for live games, a few minutes otherwise). GitHub Pages has no server, so nothing refreshes when the site is closed. A refresh that comes back empty never replaces good data.</p></div>`],
     ['badges','Badges', `<div class="tablewrap"><table><tbody>${Object.values(BADGES).map(b => `<tr><td><b>${esc(b.label)}</b></td><td>${esc(b.rule)}</td></tr>`).join('')}</tbody></table></div><div class="note">There is no "lock". Every bet can lose.</div>`],
-    ['perf','Model performance', metricsHtml() + `<h3>Self-calibration by bet type</h3>${calSummaryHtml()}`],
-    ['data','Data integrity', integrityHtml()],
+    ['perf','Model performance', `<div id="srvMetrics"></div><h3>This device</h3>${metricsHtml()}<h3>Self-calibration by bet type</h3>${calSummaryHtml()}`],
+    ['data','Data integrity', `<div id="srvHealth"></div>${integrityHtml()}`],
     ['sources','Sources', `<div class="tablewrap"><table><thead><tr><th>Source</th><th>What it supplies</th><th>Access</th><th>Role</th></tr></thead><tbody>${SOURCES.map(r => `<tr>${r.map((x, i) => `<td${i ? ' class="small"' : ''}>${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`],
     ['tests','Self-tests', selfTestHtml()],
   ])}`);
+  fillBackendPanels();
   headerSync();
 }
 
@@ -4080,7 +4232,9 @@ function liveLoop(delay = 20000){
   if (!state.allGames().some(g => g.state === 'in')) return;
   LIVE_LOOP.timer = setTimeout(async () => {
     if (!document.hidden){
-      const games = state.allGames().filter(g => g.state === 'in'), h = location.hash, watched = id => h === '#g-' + id || h === '#r-' + id || h.startsWith('#p-' + id + '-');
+      const h = location.hash, watched = id => h === '#g-' + id || h === '#r-' + id || h.startsWith('#p-' + id + '-');
+      // on demand: only the live game being viewed, or the live games in view on the Live tab
+      const games = state.allGames().filter(g => g.state === 'in' && (watched(g.id) || (h === '#live' && sportsInView().includes(g.sport))));
       await pool(games, 3, async g => { try { if (liveOddsDue(g, watched(g.id))) await liveOddsFetch(g, watched(g.id)); await analyzeGame(g, { force:true }); jobRun('live', true, g.short); } catch(e){ jobRun('live', false, e.message); } });
       liveRepaint();
     }
@@ -4212,7 +4366,7 @@ async function loadSlate(sport, target, opts){
 }
 async function analyzeList(games, cap, force, tok, isCurrent){
   const list = games.filter(g => g.state !== 'post').slice(0, cap);
-  await pool(list, 2, async g => { if (!isCurrent(tok)) return; try { await analyzeGame(g, { force }); jobRun('analyze', true); } catch(e){ jobRun('analyze', false, e.message); } if (isCurrent(tok)) repaint(); });
+  await pool(list, 2, async g => { if (!isCurrent(tok)) return; try { await analyzeGame(g, { force: force === 'auto' ? isLive(g) && location.hash === '#live' : !!force });  jobRun('analyze', true); } catch(e){ jobRun('analyze', false, e.message); } if (isCurrent(tok)) repaint(); });
 }
 async function reload(force){
   const tok = ++state.loadTok, cur = t => t === state.loadTok;
@@ -4240,7 +4394,7 @@ async function loadWeek(force){
 function schedule(){
   clearTimeout(SCHED.timer);
   const ms = nextInterval(isWeekish() ? weekGames() : viewGames().all); SCHED.next = Date.now() + ms;
-  SCHED.timer = setTimeout(async () => { if (document.hidden){ schedule(); return; } MEM.clear(); if (isWeekish()) await loadWeek(true); else await reload(true); const h = location.hash; if (h.startsWith('#g-') || h.startsWith('#r-')) route(); }, ms);
+  SCHED.timer = setTimeout(async () => { if (document.hidden){ schedule(); return; } if (!NPB.on) MEM.clear(); if (isWeekish()) await loadWeek('auto'); else await reload('auto'); const h = location.hash; if (h.startsWith('#g-') || h.startsWith('#r-')) route(); }, ms);
 }
 async function refresh(kind){
   MEM.clear();
@@ -4293,10 +4447,10 @@ document.addEventListener('click', e => {
   if (e.target.id === 'drawer') closePlayer();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); });
-document.addEventListener('visibilitychange', () => { if (!document.hidden && SCHED.next && Date.now() > SCHED.next){ if (isWeekish()) loadWeek(true); else reload(true); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && SCHED.next && Date.now() > SCHED.next){ if (isWeekish()) loadWeek('auto'); else reload('auto'); } });
 CONFIG.sgpPerTier = store.get('np_sgpN', CONFIG.sgpPerTier);
 setInterval(maintenance, 30*60000); setTimeout(maintenance, 20000);
-headerSync(); route(); reload(false);
+headerSync(); NPB.init().finally(() => { route(); reload(false); });
 
 </script>
 </body>
