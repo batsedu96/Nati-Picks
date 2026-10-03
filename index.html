@@ -432,6 +432,59 @@ body{background:
 @media (prefers-reduced-motion: reduce){ .dot,.ltag,.lbadge{animation:none} .bc,.pc{transition:none} }
 .foot{border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
 .foot b{font-family:var(--f-display);font-style:italic;color:var(--sun);letter-spacing:.04em}
+/* ---------- character, turned up ---------- */
+body{background:
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E"),
+  radial-gradient(900px 420px at 85% -120px, rgba(52,82,255,.32), transparent 70%),
+  radial-gradient(700px 360px at -10% 30%, rgba(255,212,59,.08), transparent 70%),
+  repeating-linear-gradient(90deg, transparent 0 119px, rgba(255,255,255,.028) 119px 120px),
+  var(--bg);background-attachment:fixed}
+.kick{display:block;font:700 11px var(--f-body);letter-spacing:.22em;color:var(--sun);text-transform:uppercase;margin-bottom:2px;font-style:normal}
+.sechead h2{flex-wrap:wrap;font-style:italic;font-size:26px;line-height:1}
+.sechead h2 .kick{flex-basis:100%;order:-1}
+.sechead h2::before{align-self:flex-end;margin-bottom:3px}
+.bn{text-shadow:3px 3px 0 rgba(52,82,255,.55)}
+/* hero: the playbook */
+.hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 20px;border-radius:16px;border:1px solid #2E3878;
+  background:linear-gradient(115deg,#1B2560 0%,#141939 55%,#1E1A10 100%)}
+.hero::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-55deg,transparent 0 22px,rgba(255,212,59,.035) 22px 24px);pointer-events:none}
+.chalk{position:absolute;right:170px;top:50%;transform:translateY(-50%);width:420px;max-width:60%;opacity:.9;pointer-events:none}
+.chalk .route{stroke-dashoffset:300;animation:draw 2.2s ease-out forwards}
+@keyframes draw{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+.hero-t{position:relative;z-index:1;min-width:0}
+.hero-k{font:700 11px var(--f-body);letter-spacing:.24em;text-transform:uppercase;color:var(--sun)}
+.hero-h{font-family:var(--f-display);font-weight:800;font-style:italic;font-size:clamp(26px,4.4vw,40px);line-height:1;text-transform:uppercase;letter-spacing:.01em;text-shadow:3px 3px 0 rgba(0,0,0,.35);margin:4px 0}
+.hero-s{font-size:13.5px;color:#C9CDEB} .hero-s .hot-t{color:var(--bad)}
+.hero-n{position:relative;z-index:1;display:flex;gap:6px}
+.hero-n div{display:flex;flex-direction:column;align-items:center;min-width:76px;padding:8px 10px;border-radius:12px;background:rgba(11,14,35,.65);border:1px solid #2E3878}
+.hero-n b{font:800 28px/1 var(--f-display);font-style:italic;color:var(--sun)} .hero-n span{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.hero-n .on{border-color:var(--bad)} .hero-n .on b{color:var(--bad)}
+/* sport colors */
+.sp-nfl{--spc:#2BD48A} .sp-nba{--spc:#FF8A3D} .sp-mlb{--spc:#FF6B7A} .sp-nhl{--spc:#7FD3FF} .sp-soccer{--spc:#B78CFF}
+.bc[class*="sp-"]{border-left:3px solid var(--spc,var(--line))}
+.bc.best{border-left-color:var(--sun)}
+/* ticket stub notches at the tear line */
+.bc{overflow:hidden}
+.bc .bc-foot{position:relative}
+.bc .bc-foot::before,.bc .bc-foot::after{content:"";position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.bc .bc-foot::before{left:-25px} .bc .bc-foot::after{right:-24px}
+.bc.best::after{animation:stamp .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes stamp{from{transform:rotate(8deg) scale(2.2);opacity:0}to{transform:rotate(8deg) scale(1);opacity:.9}}
+/* tier stamps */
+.pc{position:relative;overflow:hidden}
+.pc::after{content:attr(data-stamp);position:absolute;right:-30px;bottom:14px;transform:rotate(-30deg);font:800 10px var(--f-body);letter-spacing:.14em;padding:3px 36px;background:rgba(255,212,59,.12);color:var(--sun);pointer-events:none}
+.pc.t1::after{background:rgba(43,212,138,.14);color:var(--good)} .pc.t4::after{background:rgba(255,107,122,.16);color:var(--bad)}
+.pc-tier{font-style:italic}
+/* toasts as ticket slips */
+.toast{font-weight:600;border-left-width:6px;background:linear-gradient(90deg,#232A5E,#1A2048);box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,212,59,.08)}
+/* cash confetti */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:8px;height:14px;border-radius:2px;animation:fall 2.2s cubic-bezier(.3,.6,.5,1) forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+/* section empty states feel intentional */
+.panel.note{border-style:dashed}
+@media (max-width:760px){ .hero{padding:12px 14px} .chalk{right:-60px;width:320px;max-width:none;opacity:.55} .hero-n{width:100%} .hero-n div{flex:1;min-width:0} .hero-n b{font-size:22px} .sechead h2{font-size:22px} }
+@media (prefers-reduced-motion: reduce){ .chalk .route{animation:none;stroke-dashoffset:0} .bc.best::after{animation:none} }
 /* tracker + live stats */
 .ticker{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 16px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 .ticker::-webkit-scrollbar{display:none}
@@ -2577,6 +2630,21 @@ const quip = () => QUIPS[Math.floor(Date.now()/4000) % QUIPS.length];
 const TIER_ICON = { 1:'🛡️', 2:'⚖️', 3:'🔥', 4:'🎰' };
 function hello(n, live){ const h = new Date().getHours(), part = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening', day = new Date().toLocaleDateString([], { weekday:'long' });
   return `${part}. ${day}'s board${n ? `: ${plural(n, 'game')}` : ''}${live ? `, <b class="hot-t">${live} live</b>` : ''}. The research is done. Pick your spots.`; }
+const TAGLINES = ['Books set the lines. We read them.','Their algorithm. Our edge.','Sharp money doesn\'t sleep.','Every line has a tell.','We did the homework. You take the shot.','Find the slip. Cash the ticket.'];
+const CHALK = `<svg class="chalk" viewBox="0 0 520 160" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <g stroke="rgba(255,255,255,.16)" stroke-width="3"><circle cx="60" cy="110" r="11"/><circle cx="110" cy="110" r="11"/><circle cx="160" cy="110" r="11"/><circle cx="210" cy="110" r="11"/><circle cx="260" cy="110" r="11"/>
+  <path d="M330 52l16 16M346 52l-16 16M392 34l16 16M408 34l-16 16M452 70l16 16M468 70l-16 16"/></g>
+  <path class="route" d="M110 98 C110 60 150 40 210 36 S330 30 380 18" stroke="#FFD43B" stroke-width="3" stroke-dasharray="7 7"/>
+  <path class="route" d="M210 98 C230 70 290 76 330 92 S420 110 470 112" stroke="rgba(255,255,255,.35)" stroke-width="2.5" stroke-dasharray="6 8"/>
+  <path d="M374 12l10 6-11 4" stroke="#FFD43B" stroke-width="3"/><path d="M464 106l10 6-11 5" stroke="rgba(255,255,255,.35)" stroke-width="2.5"/></g></svg>`;
+function heroHtml(v, picks, live){
+  const tag = TAGLINES[new Date().getDate() % TAGLINES.length], d = new Date().toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+  return `<section class="hero">${CHALK}<div class="hero-t"><div class="hero-k">The playbook · ${esc(d)}</div><div class="hero-h">${esc(tag)}</div><div class="hero-s">${hello(v.games.length, live)}</div></div>
+    <div class="hero-n"><div><b>${v.games.length}</b><span>on the board</span></div><div><b>${picks}</b><span>plays cleared</span></div><div class="${live ? 'on' : ''}"><b>${live}</b><span>live now</span></div></div></section>`;
+}
+function confetti(){ if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const box = document.createElement('div'); box.className = 'confetti';
+  for (let i = 0; i < 46; i++){ const s = document.createElement('i'); s.style.left = Math.random()*100 + 'vw'; s.style.background = ['#FFD43B','#2BD48A','#3452FF','#FF6B7A','#fff'][i % 5]; s.style.animationDelay = (Math.random()*0.4) + 's'; s.style.transform = `rotate(${Math.random()*360}deg)`; box.appendChild(s); }
+  document.body.appendChild(box); setTimeout(() => box.remove(), 2600); }
 const OPEN = new Set();
 const goBtn = (label, attrs = '') => `<button type="button" class="go" ${attrs}>${label}</button>`;
 const goLink = (label, href, attrs = '') => `<a class="go" href="${href}" ${attrs}>${label}</a>`;
@@ -2623,7 +2691,7 @@ function whyBox(c, R){
 /* ---------- Level 1: bet card ---------- */
 function betCard(c, R, ctx, opts = {}){
   const g = R.g, { who, what } = whoWhat(c, g), id = 'w' + hsh(ctx + g.id + c.id);
-  return `<article class="bc${opts.top ? ' best' : ''}${c.live && !c.live.fresh ? ' stale' : ''}">
+  return `<article class="bc sp-${g.sport}${opts.top ? ' best' : ''}${c.live && !c.live.fresh ? ' stale' : ''}">
     <div class="bc-h">${pickIcon(c, g)}<div class="bc-t">${opts.tag || opts.board ? `<div class="bc-ctx">${opts.tag ? `<span class="tag">${esc(opts.tag)}</span>` : ''}${opts.board ? esc(`${SPORT[g.sport].label} · ${matchup(g)} · ${whenTxt(g)}`) : ''}</div>` : ''}<div class="bc-who">${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${esc(who)}</a>` : esc(who)} ${c.playerId ? liveTag(R, c.playerId, c.stat) : ''}</div></div></div>
     <div class="bc-what">${esc(what)}</div>
     <div class="bc-odds"><b>${priceStr(c)}</b><span>${esc(c.book || '')}</span></div>${liveBadges(c, R)}
@@ -2680,7 +2748,7 @@ function tierCard(t, list, ctx, opts = {}){
   const { s, R } = first, id = 'p' + hsh(ctx + t + s.sig.join()), oid = 'o' + hsh(ctx + 'others' + t);
   const sub = [plural(s.legs.length, 'leg'), s.boost >= 1.1 ? `legs hit together ${fmt1(s.boost)}× more often` : '', s.weekly ? plural(s.games, 'game') : opts.showGame && R ? matchup(R.g) : '', s.weekly || s.name === M.name ? '' : s.name].filter(Boolean).join(' · ');
   const others = list.slice(1, 6);
-  return `<article class="pc ${M.cls}">
+  return `<article class="pc ${M.cls}" data-stamp="${({1:'STEADY',2:'SWEET SPOT',3:'LET IT RIDE',4:'MOONSHOT'})[t]}">
     <div class="pc-row"><div><div class="pc-tier">${TIER_ICON[t]} ${esc(M.name)}${t === 4 ? ' <span class="pill bad">Highest risk</span>' : ''}</div><div class="pc-sub">${esc(sub)}</div></div><div class="pc-odds">${decToAm(s.estDec)}${s.priced ? '' : '*'}</div></div>
     <div class="actions">${togBtn(id, s.weekly ? 'View parlay' : 'View')}${others.length ? togBtn(oid, `Other options (${others.length})`, 'Hide options') : ''}${trackBtn(trkParlay(s, R))}</div>
     <div id="${id}" hidden>${parlayDetail(s, R && Object.assign(R, { __home: !!opts.showGame }))}</div>
@@ -2759,15 +2827,15 @@ function renderToday(){
   const notice = v.rolled === 'next' ? `<div class="msg">No games are live right now. Here's what starts next.</div>` : v.rolled ? `<div class="msg">${v.finals.length ? 'Today\'s games are done.' : 'No more games today.'} Here's ${esc(v.title === 'Tomorrow' ? 'tomorrow' : v.title)}: picks are ready now.</div>` : '';
   const finalsHtml = v.finals.length ? `<section class="sec"><div class="sechead"><h2>Final scores</h2><span class="note">Today</span></div><div class="grp"><div class="grows">${moreList('fin' + hsh(state.sport), v.finals.map(g => `<div class="gr"><div class="gr-l"><div class="gr-tm">${teamLogo(g.away,'sm')}<span>${esc(g.away.short)} <b class="sc">${esc(g.away.score ?? '')}</b></span><span class="muted">–</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)} <b class="sc">${esc(g.home.score ?? '')}</b></span></div><div class="gr-m">Final</div></div>${goLink('Recap', '#g-' + g.id)}</div>`), 4)}</div></div></section>` : '';
   const nLiveH = v.games.filter(g => g.state === 'in').length;
-  paint(`${notice}${!v.rolled ? `<div class="hello">${hello(v.games.length, nLiveH)}</div>` : ''}<div class="home">
-    <section class="sec col-main" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top">${esc(v.bets)}</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.games.filter(g=>CACHE[g.id]).length} of ${v.games.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Ranked on 8 checks'}</span></div>
+  paint(`${notice}${heroHtml(v, top.length, nLiveH)}<div class="home">
+    <section class="sec col-main" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top"><span class="kick">The plays</span>${esc(v.bets)}</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.games.filter(g=>CACHE[g.id]).length} of ${v.games.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Ranked on 8 checks'}</span></div>
       ${top.length ? `<div class="bets board">${moreList('mtop' + hsh(state.sport + state.when), top.map((x, i) => betCard(x.c, x.R, 'top', { board:true, top:i === 0, tag:i === 0 ? 'Best bet' : null })), 6)}</div><div class="swipe-hint note">Swipe for more · ${plural(top.length,'pick')}</div>`
-        : empty || `<div class="panel note">${res.length ? (nF ? 'Nothing matches the advanced filters.' : 'Nothing clears our checks yet. We don\'t force picks.') : '<span class="loading"><span class="spin"></span>${quip()}</span>'}</div>`}
+        : empty || `<div class="panel note">${res.length ? (nF ? 'Nothing matches the advanced filters.' : '🧊 Nothing clears our checks yet. We don\'t force picks. Patience is a play too.') : '<span class="loading"><span class="spin"></span>${quip()}</span>'}</div>`}
       ${liveStrip()}
     </section>
     <aside class="col-side">
-      <section class="sec" aria-labelledby="h-sgp"><div class="sechead"><h2 id="h-sgp">Top SGPs</h2><span class="note">Best same-game parlay per tier · * price assumed</span></div>${tiersGrid(tierLists, 'home', { showGame:true, stack:true, busy:researching })}</section>
-      <section class="sec" aria-labelledby="h-games"><div class="sechead"><h2 id="h-games">${esc(v.gamesH)}</h2></div>${gamesBySport(v.games, 'home') || empty}
+      <section class="sec" aria-labelledby="h-sgp"><div class="sechead"><h2 id="h-sgp"><span class="kick">The stacks</span>Top SGPs</h2><span class="note">Best same-game parlay per tier · * price assumed</span></div>${tiersGrid(tierLists, 'home', { showGame:true, stack:true, busy:researching })}</section>
+      <section class="sec" aria-labelledby="h-games"><div class="sechead"><h2 id="h-games"><span class="kick">On the board</span>${esc(v.gamesH)}</h2></div>${gamesBySport(v.games, 'home') || empty}
         <a class="linkbtn" href="#week">Upcoming games are on This week's parlays →</a></section>${finalsHtml}
     </aside></div>`);
   headerSync();
@@ -2794,7 +2862,7 @@ function renderWeek(){
   const first = new Date(), last = new Date(Date.now() + 6*864e5), fmtD = d => d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
   const done = games.filter(g => CACHE[g.id]).length, todo = Math.min(games.filter(g => g.state !== 'post').length, CONFIG.weekCap);
   paint(`<div class="week">
-    <div class="sechead"><h2>This week's parlays</h2><span class="note">${fmtD(first)} – ${fmtD(last)} · ${state.sport === 'all' ? 'all sports' : esc(SPORT[state.sport].label)}${W.busy ? ` · <span class="spin sm"></span> researching ${done} of ${todo} games` : ` · ${plural(res.length, 'game')} researched`}</span></div>
+    <div class="sechead"><h2><span class="kick">The weekly heist</span>This week's parlays</h2><span class="note">${fmtD(first)} – ${fmtD(last)} · ${state.sport === 'all' ? 'all sports' : esc(SPORT[state.sport].label)}${W.busy ? ` · <span class="spin sm"></span> researching ${done} of ${todo} games` : ` · ${plural(res.length, 'game')} researched`}</span></div>
     <section class="sec" aria-labelledby="h-wp"><div class="sechead"><h3 id="h-wp">Best picks this week</h3><span class="note">The top pick from each game after today</span></div>
       ${picks.length ? `<div class="rows">${moreList('mwk' + hsh(state.sport), rows, 7)}</div>` : `<div class="panel note">${W.busy || !W.loadedAt ? '<span class="loading"><span class="spin"></span>Researching this week\'s games…</span>' : 'No games found this week for this filter.'}</div>`}</section>
     <section class="sec" aria-labelledby="h-wt"><div class="sechead"><h3 id="h-wt">Parlays by risk</h3><span class="note">Built from the best picks across the week, including tonight's games that haven't started · started games are locked out · * price assumed</span></div>
@@ -3227,7 +3295,7 @@ function renderPlayers(){
   const sections = all.map(({ g, ps }) => { const f = pos ? ps.filter(x => x.p.pos === pos) : ps;
     const col = side => { const l = f.filter(x => x.side === side); return `<div class="pcol"><div class="lbl">${esc(g[side].name)}</div>${l.length ? `<div class="pchs">${moreList('pl' + hsh(g.id + side + pos), l.map(plChip), 16)}</div>` : `<div class="note">${ps.length ? 'No players at this position.' : g.sport === 'soccer' ? 'Lineups are posted about an hour before kickoff.' : 'Roster loads when this game is researched.'}</div>`}</div>`; };
     return `<details class="grp"><summary><span>${esc(SPORT[g.sport].icon)} ${esc(matchup(g))}</span><span class="note">${esc(whenTxt(g))} · ${plural(f.length, 'player')}</span></summary><div class="pgame">${col('away')}${col('home')}</div></details>`; }).join('');
-  paint(`<div class="sechead"><h2>Players</h2><span class="note">${plural(total, 'player')} in ${plural(games.length, 'upcoming game')}${missing ? ` · ${missing} still loading` : ''}</span></div>
+  paint(`<div class="sechead"><h2><span class="kick">Scouting report</span>Players</h2><span class="note">${plural(total, 'player')} in ${plural(games.length, 'upcoming game')}${missing ? ` · ${missing} still loading` : ''}</span></div>
     <div class="psearch"><input id="psearch" type="search" autocomplete="off" placeholder="Search any player or team" aria-label="Search players" value="${esc(state.pq || '')}"><div id="presults" class="presults" role="listbox"></div></div>
     ${order.length > 1 ? `<div class="chips posrow" role="group" aria-label="Position"><button class="chip" data-pos="" aria-pressed="${!pos}">All</button>${order.map(p => `<button class="chip" data-pos="${esc(p)}" aria-pressed="${pos===p}">${esc(p)}</button>`).join('')}</div>` : ''}
     <section class="sec"><div class="sechead"><h3>Browse by game</h3><span class="note">Tap a game to see everyone on both rosters</span></div>${sections || `<div class="panel note">${state.busy || state.week.busy ? '<span class="loading"><span class="spin"></span>Finding games…</span>' : 'No upcoming games for this filter.'}</div>`}</section>`);
@@ -3508,10 +3576,10 @@ function renderLive(){
       <section class="sec"><div class="sechead"><h2>Starting next</h2></div>${next.length ? `<div class="grp"><div class="grows">${moreList('nx', next.map(g => gameRow(g, true)), 5)}</div></div>` : '<div class="panel note">No games on the schedule yet for this filter. <a href="#week">See This week\'s parlays →</a></div>'}</section>
       ${recent.length ? `<section class="sec"><div class="sechead"><h2>Recent final scores</h2></div><div class="lstrip">${recent.map(g => `<a class="lchip" href="#g-${g.id}"><b>${esc(scoreTxt(g))}</b><span class="note">Final</span></a>`).join('')}</div></section>` : ''}`);
     headerSync(); return; }
-  paint(`<section class="sec"><div class="sechead"><h2>Top live bets</h2><span class="note">Best live price across every book we track · refreshes every 20s</span></div>
+  paint(`<section class="sec"><div class="sechead"><h2><span class="kick">In play</span>Top live bets</h2><span class="note">Best live price across every book we track · refreshes every 20s</span></div>
       ${top.length ? `<div class="bets board">${moreList('mlive', top.map((x, i) => betCard(x.c, x.R, 'live', { board:true, top:i === 0, tag:i === 0 ? 'Best live bet' : null })), 6)}</div>` : `<div class="panel note">${esc(why)}</div>`}
       ${stale.length ? `<details class="acc panel"><summary>Waiting on fresh odds (${stale.length})</summary><div class="rows stale" style="margin-top:8px">${stale.map(x => betRow(x.c, x.R, 'lst', { game:true })).join('')}</div></details>` : ''}</section>
-    <section class="sec"><div class="sechead"><h2>Live games</h2><span class="note">${plural(games.length, 'game')} in progress</span></div>${byS || '<div class="panel note">No games in progress.</div>'}</section>`);
+    <section class="sec"><div class="sechead"><h2><span class="kick">Under the lights</span>Live games</h2><span class="note">${plural(games.length, 'game')} in progress</span></div>${byS || '<div class="panel note">No games in progress.</div>'}</section>`);
   headerSync();
 }
 /* ---------- pregame picks tracker ---------- */
@@ -3657,7 +3725,7 @@ function trkBadge(){ const n = trkLoad().length, b = $('#trkBadge'); if (b){ b.t
 function trkCheck(){
   const list = trkLoad(); let dirty = false;
   const check = (x, parent) => { const t = trkEval(x), prev = x.last?.status;
-    if ((t.status === 'Hit' || t.status === 'Lost') && prev !== t.status) alertPush(t.status === 'Hit' ? 'ok' : 'bad', `${t.status === 'Hit' ? '💰 Cashed' : '✗ Burned'}: ${x.label}${parent ? ` (${parent})` : ''}`);
+    if ((t.status === 'Hit' || t.status === 'Lost') && prev !== t.status && (t.status !== 'Hit' || (confetti(), true))) alertPush(t.status === 'Hit' ? 'ok' : 'bad', `${t.status === 'Hit' ? '💰 Cashed' : '✗ Burned'}: ${x.label}${parent ? ` (${parent})` : ''}`);
     const R = CACHE[x.gid]; if (x.playerId && R?.isLive && !x.injNote && playerLeft(R, x.playerId)){ x.injNote = true; alertPush('warn', `${x.name || 'A tracked player'} left the game (possible injury). Tracked: ${x.label}`); }
     if (t.status !== 'Waiting' && JSON.stringify(t) !== JSON.stringify(x.last)){ x.last = t; dirty = true; } };
   for (const it of list){ if (it.type === 'parlay') it.legs.forEach(l => check(l, it.name)); else check(it); }
