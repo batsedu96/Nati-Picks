@@ -1,0 +1,6 @@
+worker
+functions
+wrangler.jsonc
+.assetsignore
+.git
+README.md

@@ -1,0 +1,11 @@
+{
+  // NP on Cloudflare Workers: the static site plus the on-demand backend at /api.
+  "name": "nati-picks",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-09-01",
+  "assets": { "directory": ".", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  // NP's database. Wrangler creates it on the first deploy if it doesn't exist yet.
+  "d1_databases": [ { "binding": "NP_DB", "database_name": "np-db" } ],
+  "observability": { "enabled": true }
+  // No "triggers": NP never runs on a schedule.
+}

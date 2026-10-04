@@ -170,10 +170,22 @@ async function upstream(env, rule, url){
 }
 
 /* ---------------- cache: Cache API (edge, all visitors) + D1 last-good copy ---------------- */
+/* Three cache layers, fastest first: this server instance's memory → Cloudflare's edge cache (custom domains only;
+   on *.workers.dev it is a no-op) → the D1 database (shared by every instance). */
 const cacheKey = url => new Request('https://np-cache.internal/v1?u=' + encodeURIComponent(url));
-async function cacheGet(url){ try { const r = await caches.default.match(cacheKey(url)); if (!r) return null; return { body:await r.json(), at:+r.headers.get('x-np-at'), ttl:+r.headers.get('x-np-ttl') }; } catch(e){ return null; } }
+const L0 = new Map();
+const CENV = { db:null };
+export function resetMemoryCache(){ L0.clear(); }   // used by the offline test harness to simulate a cold instance
+async function cacheGet(url){
+  const m = L0.get(url); if (m) return m;
+  try { const r = await caches.default.match(cacheKey(url)); if (r) return { body:await r.json(), at:+r.headers.get('x-np-at'), ttl:+r.headers.get('x-np-ttl') }; } catch(e){}
+  if (CENV.db) try { const r = await CENV.db.prepare('SELECT body, fetched_at, ttl_ms FROM cache WHERE key = ?1').bind(url).first(); if (r){ const v = { body:JSON.parse(r.body), at:r.fetched_at, ttl:r.ttl_ms }; L0.set(url, v); return v; } } catch(e){}
+  return null;
+}
 async function cachePut(url, body, at, ttl){
+  L0.set(url, { body, at, ttl }); if (L0.size > 400) L0.delete(L0.keys().next().value);
   try { await caches.default.put(cacheKey(url), new Response(JSON.stringify(body), { headers:{ 'content-type':'application/json', 'cache-control':`max-age=${Math.max(60, Math.ceil(ttl/1000) * 20)}`, 'x-np-at':String(at), 'x-np-ttl':String(ttl) } })); } catch(e){}
+  if (CENV.db) try { const s = JSON.stringify(body); if (s.length < 900000) await CENV.db.prepare('INSERT INTO cache (key, fetched_at, ttl_ms, body) VALUES (?1,?2,?3,?4) ON CONFLICT(key) DO UPDATE SET fetched_at=?2, ttl_ms=?3, body=?4').bind(url, at, ttl, s).run(); } catch(e){}
 }
 async function lastGood(env, key){ if (!env.NP_DB) return null; try { const r = await env.NP_DB.prepare('SELECT body, fetched_at, ttl_ms FROM datasets WHERE key = ?1 AND valid = 1').bind(key).first(); return r ? { body:JSON.parse(r.body), at:r.fetched_at, ttl:r.ttl_ms } : null; } catch(e){ return null; } }
 async function saveGood(env, key, type, meta, body, at, ttl){
@@ -273,6 +285,7 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS games (id TEXT PRIMARY KEY, sport TEXT, league TEXT, start TEXT, local_date TEXT, status TEXT, home_id TEXT, away_id TEXT, home TEXT, away TEXT, home_score TEXT, away_score TEXT, source TEXT, verified TEXT, updated_at INTEGER)`,
   `CREATE TABLE IF NOT EXISTS teams (key TEXT PRIMARY KEY, sport TEXT, id TEXT, name TEXT, abbr TEXT, color TEXT, alt_color TEXT, logo TEXT, updated_at INTEGER)`,
   `CREATE TABLE IF NOT EXISTS predictions (gid TEXT, model TEXT, made_at INTEGER, start TEXT, sport TEXT, wp TEXT, mkt TEXT, feats TEXT, picks TEXT, outcome TEXT, graded_at INTEGER, PRIMARY KEY (gid, model))`,
+  `CREATE TABLE IF NOT EXISTS cache (key TEXT PRIMARY KEY, fetched_at INTEGER, ttl_ms INTEGER, body TEXT)`,
   `CREATE TABLE IF NOT EXISTS provider_stats (provider TEXT, day TEXT, calls INTEGER, errors INTEGER, PRIMARY KEY (provider, day))`,
 ];
 let schemaReady = false;
@@ -318,9 +331,10 @@ async function metrics(env){
 /* ---------------- router ---------------- */
 const json = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers:{ 'content-type':'application/json; charset=utf-8', 'cache-control':'no-store', 'x-content-type-options':'nosniff', ...extra } });
 export async function onRequest(ctx){
-  const { request:req, env } = ctx, u = new URL(req.url), path = u.pathname.replace(/^\/api\/?/, '');
+  const { request:req, env } = ctx, u = new URL(req.url), path = u.pathname.replace(/^\/api\/?/, ''); CENV.db = env.NP_DB || null;
   try {
     await ensureSchema(env);
+    if (env.NP_DB && Math.random() < 0.02) ctx.waitUntil(env.NP_DB.prepare('DELETE FROM cache WHERE fetched_at < ?1').bind(Date.now() - 3*864e5).run().catch(() => {}));   // tidy old cache rows now and then
     if (req.method === 'GET' && path === 'health'){
       const stats = env.NP_DB ? ((await env.NP_DB.prepare('SELECT provider, calls, errors FROM provider_stats WHERE day = ?1').bind(day()).all()).results || []) : Object.entries(MEM.calls).filter(([k]) => k.endsWith(day())).map(([k, v]) => ({ provider:k.split('|')[0], calls:v }));
       return json({ np:true, version:NP_VERSION, storage:!!env.NP_DB, odds:!!env.ODDS_API_KEY, scheduled_jobs:0, today:day(), upstream_calls_today:stats, cooling:Object.fromEntries(Object.entries(MEM.cool).filter(([, c]) => c.until > Date.now()).map(([p, c]) => [p, new Date(c.until).toISOString()])) });

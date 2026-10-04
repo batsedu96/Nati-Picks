@@ -934,6 +934,65 @@ td.num{font:600 14.5px var(--f-body);font-feature-settings:"tnum" 1;letter-spaci
 .ov-score{grid-template-columns:1fr minmax(90px,auto) 1fr}
 .lc-v b{font-size:22px;white-space:nowrap} .lc-v{flex-wrap:wrap}
 @media (max-width:640px){ .tot-h .tt b{font-size:15px} .tot-title{font-size:10px;letter-spacing:.06em;text-align:center} .tr{grid-template-columns:1fr minmax(92px,auto) 1fr;padding:8px 10px} .tv b{font-size:19px} }
+/* ===================== v10: live + leftovers ===================== */
+/* live jumbotron */
+.lhero{border-radius:var(--r-lg);border:1px solid var(--line);padding:16px 18px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;
+  background:linear-gradient(100deg,color-mix(in srgb,var(--ca) 40%,#0D1330) 0%,#121939 42%,#121939 58%,color-mix(in srgb,var(--ch) 40%,#0D1330) 100%)}
+.lhero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 160px at 50% -40px,rgba(255,255,255,.08),transparent);pointer-events:none}
+.lh-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;position:relative;z-index:1}
+.lh-t{display:flex;align-items:center;gap:12px;min-width:0} .lh-t.h{flex-direction:row-reverse;text-align:right}
+.lh-t .logo{width:60px;height:60px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
+.lh-n{display:flex;flex-direction:column;min-width:0} .lh-n b{font:800 22px/1 var(--f-display);text-transform:uppercase} .lh-n span{font-size:12px;color:var(--soft)}
+.lh-s{font:900 clamp(52px,9vw,88px)/.85 var(--f-display);margin-left:auto;position:relative;text-shadow:0 4px 18px rgba(0,0,0,.45)} .lh-t.h .lh-s{margin-left:0;margin-right:auto}
+.lh-s.poss::after{content:"";position:absolute;bottom:-10px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--sun);box-shadow:0 0 12px var(--sun)}
+.lh-mid{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:110px}
+.lh-clock{font:800 20px var(--f-display);letter-spacing:.04em} .lh-sit{font-size:12px;color:var(--soft);max-width:220px}
+.lh-wp{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;font:700 13px var(--f-body);position:relative;z-index:1}
+.lh-wpb{height:10px;border-radius:999px;background:var(--ch);overflow:hidden} .lh-wpb i{display:block;height:100%;background:var(--ca);transition:width .6s ease}
+.lh-wpn{font-size:11.5px;color:var(--soft);text-align:center;position:relative;z-index:1}
+.lhero .ls{position:relative;z-index:1;background:rgba(13,19,48,.55);border-color:rgba(255,255,255,.1)}
+@media (max-width:640px){ .lh-t{flex-direction:column;gap:4px;text-align:center} .lh-t.h{flex-direction:column;text-align:center} .lh-s{margin:0!important;font-size:48px} .lh-t .logo{width:42px;height:42px} .lh-n b{font-size:16px} .lh-mid{min-width:80px} }
+/* live leaders */
+.lleaders{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.ll{border-radius:var(--r-lg);border:1px solid var(--line);background:var(--panel);overflow:hidden}
+.ll-h{font:800 14px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--sun);padding:9px 14px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,color-mix(in srgb,var(--ca) 18%,transparent),transparent 50%,color-mix(in srgb,var(--ch) 18%,transparent))}
+.ll-p{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 14px;color:var(--ink);text-decoration:none;box-shadow:inset 3px 0 0 var(--tc)} .ll-p+.ll-p{border-top:1px solid rgba(41,50,106,.6)} .ll-p:hover{background:color-mix(in srgb,var(--tc) 10%,transparent)}
+.ll-p.empty{min-height:20px;box-shadow:none}
+.ll-p .av{width:42px;height:42px} .ll-p>div{display:flex;flex-direction:column;min-width:0} .ll-p b{font-size:14.5px;font-weight:700} .ll-p small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ll-p em{font:900 30px/1 var(--f-display);font-style:normal;text-align:right;display:flex;flex-direction:column;align-items:flex-end} .ll-p em span{font:700 10.5px var(--f-body);color:var(--muted)}
+.live2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start} @media (max-width:900px){ .live2{grid-template-columns:minmax(0,1fr)} }
+/* play timeline */
+.tline{border-radius:var(--r-lg);border:1px solid var(--line);background:var(--panel);padding:6px 0}
+.tl-i{display:grid;grid-template-columns:64px 34px minmax(0,1fr);gap:8px;padding:9px 14px;position:relative}
+.tl-i::before{content:"";position:absolute;left:94px;top:0;bottom:0;width:2px;background:var(--line)}
+.tl-when{display:flex;flex-direction:column;align-items:flex-end} .tl-when b{font:800 15px var(--f-display);color:var(--soft)} .tl-when span{font-size:11.5px;color:var(--muted)}
+.tl-dot{position:relative;z-index:1;display:flex;justify-content:center} .tl-dot .logo{width:30px;height:30px;background:var(--bg);border-radius:50%;box-shadow:0 0 0 3px var(--panel)}
+.tl-txt{font-size:13.5px;line-height:1.45;color:var(--soft)} .tl-i.sc .tl-txt{color:var(--ink)} .tl-i.sc{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 14%,transparent),transparent 70%)}
+.tl-tag{display:inline-block;font:800 10.5px var(--f-body);letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--sun);color:#14172E;margin-right:6px}
+.tl-score{font:800 14px var(--f-display);color:var(--sun);margin-top:2px}
+/* player live stats */
+.lsbar2{border-radius:var(--r-lg);border:1px solid color-mix(in srgb,var(--bad) 45%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 16%,var(--panel)),var(--panel));padding:14px;display:flex;flex-direction:column;gap:12px}
+.ls-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px} .ls-h b{font-size:15px}
+.ls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ls-c{border-radius:var(--r-md);padding:10px 12px;background:rgba(13,19,48,.5);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.ls-c.ok{border-color:rgba(43,212,138,.5)} .ls-c.no{border-color:rgba(255,90,110,.5)}
+.ls-l{font:700 12px var(--f-body);color:var(--soft)} .ls-v{display:flex;align-items:baseline;gap:6px} .ls-v b{font:900 38px/1 var(--f-display)} .ls-v span{font:700 16px var(--f-display);color:var(--muted)}
+.ls-s{display:flex;gap:6px;align-items:center;flex-wrap:wrap} .ls-s .note{font-size:11.5px}
+.tbar{height:8px} .ls-c .tbar{height:8px}
+/* tracker rows */
+.trk{border-radius:var(--r-md);background:var(--panel2);border:1px solid var(--line);margin:6px 8px;border-bottom:1px solid var(--line)!important}
+.trk-t b{font-size:14.5px}
+/* number tiles everywhere (model tab, parlay numbers, player drawer) */
+.nums{gap:8px} .nums div{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px} .nums b{font:800 24px/1.05 var(--f-display)} .nums span{font-size:11.5px;color:var(--muted)}
+.panel.stack.small{border-left:4px solid var(--brand)}
+/* accordions */
+details.acc>summary{font:700 15px var(--f-body);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+details.acc>summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--sun);border-bottom:2px solid var(--sun);transform:rotate(-45deg);transition:transform .15s ease;flex:0 0 auto}
+details.acc[open]>summary::before{transform:rotate(45deg)}
+details.acc>summary::-webkit-details-marker{display:none}
+.chart{width:100%;height:auto}
+.wb-pts li{display:block;padding:10px 14px;border-left:3px solid var(--sun)}
+.wb-pts li>b:first-child{display:block;margin-bottom:3px;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -3446,7 +3505,7 @@ function whyBox(c, R){
     <div class="wb-top">${c.live ? '<span class="pill bad">● Live</span>' : ''}${strengthPill(c.quality)}${riskPill(c.risk)}${badgeHtml(c, R)}${move}<span class="note">${esc(c.type)}</span></div>
     ${c.live && R.live ? liveWhyHtml(c, R) : ''}
     ${nums}${meter}${ev}
-    <div class="sr-cols"><div class="sr-for"><div class="sr-h">Our read</div>${c.live && R.live ? '' : `<p>${esc(whyText(R, c))}</p>`}${m?.kind === 'dist' && m.last3 != null && !ev ? `<p>Last 3 games: ${fmt1(m.last3)} a game against a line of ${c.line}.</p>` : ''}</div>
+    <div class="sr-cols"><div class="sr-for"><div class="sr-h">Our read</div>${c.live && R.live ? `<p>${esc(liveReason(c, R))}</p>` : `<p>${esc(whyText(R, c))}</p>`}${m?.kind === 'dist' && m.last3 != null && !ev ? `<p>Last 3 games: ${fmt1(m.last3)} a game against a line of ${c.line}.</p>` : ''}</div>
       <div class="sr-against"><div class="sr-h">What kills it</div><ul>${failCase(R, c).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>
     <div class="sr-score"><div class="sr-h">Scorecard <span>${passed} of ${total} checks clear</span></div><div class="chks">${checks.map(([v, t, long]) => { const [k, sy] = ic(v); return `<span class="chk ${k}" title="${esc(long)}"><b>${sy}</b>${esc(t)}</span>`; }).join('')}<span class="chk ${c.flags?.length ? 'mid' : 'ok'}" title="Specific risks for this bet"><b>${c.flags?.length ? '~' : '✓'}</b>Failure case</span></div></div>
     ${c.flags?.length ? `<div class="flag">${c.flags.map(esc).join('<br>')}</div>` : ''}
@@ -4613,10 +4672,7 @@ function liveReason(c, R){
   return `Live price with ${left}.`;
 }
 function liveBadges(c, R){ if (!c.live) return ''; return `<div class="lv-meta">${c.live.fresh ? '' : '<span class="pill warn">Odds updating</span>'}${c.live.overreact ? '<span class="tag">Overreaction</span>' : ''}<span>Good to <b class="mono">${decToAm(c.live.goodTo)}</b></span><span class="note">Updated ${agoEl(R.live?.oddsAt)}</span></div>`; }
-function liveGameRow(g){
-  return `<div class="gr"><div class="gr-l"><div class="gr-tm">${teamLogo(g.away,'sm')}<span>${esc(g.away.short)} <b class="sc">${esc(g.away.score ?? 0)}</b></span><span class="muted">–</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)} <b class="sc">${esc(g.home.score ?? 0)}</b></span></div>
-    <div class="gr-m">${statusCell(g)}${g.sport === 'soccer' && g.leagueName ? ' · ' + esc(g.leagueName) : ''}</div></div>${goLink('View live', '#g-' + g.id)}</div>`;
-}
+function liveGameRow(g){ return gameRow(g); }
 function liveStrip(){
   const games = liveGamesInView(); if (!games.length) return '';
   return `<section class="sec"><div class="sechead"><h3><span class="dot bad"></span>Live now</h3><a class="linkbtn" href="#live">All live bets →</a></div>
@@ -4682,18 +4738,17 @@ function renderLiveGame(R){
   const propPlayers = [...new Set(R.cands.filter(c => c.playerId).map(c => c.playerId))].map(pid => ({ pid, p:R.idx[pid]?.player, n:R.cands.filter(c => c.playerId === pid).length })).filter(x => x.p).sort((a,b) => b.n - a.n);
   const cost = 3 + (LIVE_PROPS[g.sport] || []).length;
   paint(`${hubNav(g, 'picks')}
-    <div class="sb"><div class="sb-t">${teamLogo(g.away,'')}<div><div class="sb-n">${esc(g.away.short)}</div><div class="sb-s">${esc(g.away.score ?? 0)}</div></div></div>
-      <div class="sb-mid"><div class="st-live"><span class="pulse"></span>LIVE</div><div class="sb-clock">${esc(g.statusText || L.LC.label || '')}</div><div class="note">${liveSituation(R)}</div></div>
-      <div class="sb-t r"><div><div class="sb-n">${esc(g.home.short)}</div><div class="sb-s">${esc(g.home.score ?? 0)}</div></div>${teamLogo(g.home,'')}</div></div>
-    ${lineScoreHtml(R)}
+    ${liveHero(R)}
     <div class="note lv-odds">${L.oddsAt ? `Live odds from ${esc((L.books || []).join(', ') || 'ESPN')} · updated ${agoEl(L.oddsAt)}` : 'Waiting for ESPN to post live odds for this game'}${oaOn ? ` · ${plural(Math.round(L.budgetLeft), 'credit')} left of this game's ${CONFIG.liveBudget}-credit budget` : ''}${L.suspended.length ? ` · <b style="color:var(--warn)">Suspended: ${L.suspended.map(esc).join(', ')}</b>` : ''}
       ${oaOn ? ` · <button class="linkbtn" id="liveRefresh">Refresh live odds (~${cost} credits)</button>` : ''}</div>
     ${R.changes.length ? `<div class="msg">${R.changes.map(esc).join('<br>')}</div>` : ''}
     <section class="sec">${shown.length ? `<div class="bets two">${shown.map((c,i) => betCard(c, R, ctx, { top:i === 0, tag:i === 0 ? topTag(c, 'Live best bet') : 'Next best' })).join('')}</div>` : `<div class="panel note">${L.oddsAt ? 'No live bet has a real edge right now. Nothing is forced; this refreshes on its own.' : 'No live prices yet: ESPN hasn\'t posted live odds for this game (or they still match the pregame numbers). The tracker and research below still update.'}</div>`}</section>
     ${others.length ? `<section class="sec"><div class="sechead"><h3>Other live bets</h3></div><div class="rows">${moreList('lo' + id, others.map(c => betRow(c, R, ctx)), 4)}</div></section>` : ''}
     ${R.liveStale?.length ? `<details class="acc panel"><summary>Waiting on fresh odds (${R.liveStale.length})</summary><div class="rows stale" style="margin-top:8px">${R.liveStale.map(c => betRow(c, R, ctx + 's')).join('')}</div></details>` : ''}
-    <section class="sec"><div class="sechead"><h3>Live box score</h3><span class="note">Tap a column to sort · tap a player for his live page</span></div>${liveBoxHtml(R)}</section>
-    <section class="sec"><div class="sechead"><h3>Key plays</h3><span class="note">Newest first</span></div>${keyPlaysHtml(R)}</section>
+    <section class="sec"><div class="sechead"><h2><span class="kick">Who's cooking</span>Live leaders</h2><span class="note">Updated ${agoEl(R.at)} · tap a player for his live page</span></div>${liveLeaders(R) || '<div class="panel note">Player stats appear once the game is underway.</div>'}</section>
+    <div class="live2"><section class="sec"><div class="sechead"><h2><span class="kick">Newest first</span>Key plays</h2></div>${playTimeline(R)}</section>
+      <section class="sec"><div class="sechead"><h2><span class="kick">Head to head</span>Team stats</h2></div>${teamDuel(R) || '<div class="panel note">Team stats appear once the game is underway.</div>'}</section></div>
+    <section class="sec"><details class="acc panel"><summary>Full box score</summary>${liveBoxHtml(R)}</details></section>
     <section class="sec"><div class="sechead"><h3>Live player props</h3><span class="note">Tap a player for his live market tabs</span></div>${propPlayers.length ? `<div class="pchs">${moreList('lpp' + id, propPlayers.map(x => `<a class="pch" href="${plHref(id, x.pid)}">${avatar(x.p)}<span class="pch-t"><b>${esc(x.p.name)}</b><span class="note">${esc(boxLine(R, x.pid) || x.p.pos || '')}</span></span><span class="pill strong">${x.n}</span></a>`), 8)}</div>` : `<div class="panel note">${oaOn ? 'Live player props come in with the next live odds pull for this page (or tap Refresh live odds).' : 'Live player prop prices aren\'t in the free ESPN feed. Each player\'s live stats and on-pace projection update on his page and in the tracker below.'}</div>`}</section>
     <section class="sec"><div class="sechead"><h3>Live SGPs</h3></div><div class="panel note">Not shown: the odds feed doesn't say which books offer live same-game parlays or what they pay, so we don't guess.</div></section>
     <section class="sec"><div class="sechead"><h3>Pregame picks tracker</h3><span class="note">Every pregame pick and SGP leg for this game</span></div>${trackerHtml(R)}</section>
@@ -4714,7 +4769,7 @@ function liveResearchHtml(R){
   const live = R.cands.filter(c => c.live).sort((a,b) => b.ev - a.ev);
   const proj = [['Total points', L.preT, L.projT], [`${g.home.short} margin`, L.preM, L.projM], [`${g.home.short} points`, S?.tt?.home, L.projH], [`${g.away.short} points`, S?.tt?.away, L.projA]];
   const plays = (D.plays || []).slice(-30).reverse();
-  return `<div class="stack">
+  return `<div class="stack">${liveHero(R)}${liveLeaders(R)}${teamDuel(R)}
     <div class="market"><div class="mk"><span class="lbl">Score</span><b>${esc(scoreTxt(g))}</b><div class="mv">${esc(g.statusText || '')}</div></div>
       <div class="mk"><span class="lbl">Played</span><b>${pct(L.LC.el,0)}</b><div class="mv">${liveSituation(R)}</div></div>
       ${wp.length ? `<div class="mk"><span class="lbl">${esc(g.home.short)} win probability</span><b>${fmt1(wp[wp.length-1]*100)}%</b><div class="mv">Started at ${fmt1(wp[0]*100)}%</div></div>` : ''}
@@ -4758,6 +4813,8 @@ function liveRepaint(){
   if (h === '#live') renderLive(); else if (isHome()) repaint();
   else if (h.startsWith('#g-') && gameOf(h.slice(3))?.state !== 'pre') renderGame(h.slice(3));
   else if (h.startsWith('#r-') && ['live','td'].includes(state.tabs.research) && gameOf(h.slice(3))?.state === 'in') renderResearch(h.slice(3));
+  else if (h.startsWith('#p-')){ const s2 = h.slice(3), i = s2.indexOf('-'), gid = s2.slice(0, i); if (gameOf(gid)?.state !== 'pre') renderPlayer(gid, decodeURIComponent(s2.slice(i + 1))); }
+  if (!$('#drawer').hidden && $('#pane').getAttribute('aria-label') === 'My tracker') openTracker(true);
 }
 
 /* ============================ LIVE STAT TRACKING + MY TRACKER (saved on this device) ============================ */
@@ -4840,8 +4897,48 @@ function liveStatsBar(R, pid, rows){
   let items = rows.filter(r => !r.alt && r.G.period === 'FG').map(r => ({ x:{ playerId:pid, stat:r.stat, market:r.stat, side:r.pick?.side || (r.line == null ? 'yes' : 'over'), line:r.line, period:'FG', team:R.idx[pid]?.side }, r:{ stat:r.stat, line:r.line } }));
   if (!items.length){ const S = preSnap(g.id); items = Object.entries(S?.lines || {}).filter(([k]) => k.startsWith('player|FG|') && k.endsWith('|' + pid)).map(([k, line]) => { const stat = k.split('|')[2];   // pregame prop lines when live props aren't posted
     return { x:{ playerId:pid, stat, market:stat, side:'over', line, period:'FG', team:R.idx[pid]?.side }, r:{ stat, line } }; }); }
-  return `<div class="panel lsbar"><div class="row" style="gap:8px"><span class="ltag">${g.state === 'in' ? 'LIVE' : 'FINAL'}</span><b>${esc(boxLine(R, pid) || 'No stats yet')}</b></div>
-    ${items.length ? `<div class="lsrows">${items.map(({ x, r }) => { const t = trackItem(x, R); return `<div class="lsr"><div class="row" style="justify-content:space-between"><span>${esc(statLabel(g.sport, r.stat))}${r.line != null ? '' : ''}</span><span class="note">${esc(t.txt)}${t.status && !t.txt.includes(t.status.toLowerCase()) ? ' — ' + esc(t.status.toLowerCase()) : ''}</span></div><div class="tbar ${t.cls}"><i style="width:${(clamp(t.pct,0,1)*100).toFixed(0)}%"></i></div></div>`; }).join('')}</div>` : ''}</div>`;
+  const side = R.idx[pid]?.side, tc = side ? teamColor(g[side]) : 'var(--brand)';
+  return `<section class="lsbar2" style="--tc:${tc}"><div class="ls-h"><span class="st-live">${g.state === 'in' ? '<span class="pulse"></span>Live' : 'Final'}</span><b>${esc(boxLine(R, pid) || 'No stats yet')}</b><span class="note">${esc(scoreTxt(g))} · ${esc(g.statusText || '')} · updated ${agoEl(R.at)}</span></div>
+    ${items.length ? `<div class="ls-grid">${items.map(({ x, r }) => { const t = trackItem(x, R), cur = liveStat(R.D, pid, r.stat, g.sport);
+      return `<div class="ls-c ${t.cls}"><div class="ls-l">${esc(statLabel(g.sport, r.stat))}</div><div class="ls-v"><b>${cur != null ? fmt1(cur) : '0'}</b>${r.line != null ? `<span>/ ${r.line}</span>` : ''}</div><div class="tbar ${t.cls}"><i style="width:${(clamp(t.pct,0,1)*100).toFixed(0)}%"></i></div><div class="ls-s"><span class="pill ${t.cls === 'ok' ? 'strong' : t.cls === 'no' ? 'bad' : 'lean'}">${esc(t.status)}</span><span class="note">${esc(t.txt)}</span></div></div>`; }).join('')}</div>` : ''}</section>`;
+}
+
+
+/* ============================ v10 LIVE: jumbotron scoreboard, leaders, team-stat duel, play timeline ============================ */
+function liveHero(R){
+  const g = R.g, L = R.live || liveGame(R), wp = R.D.winProb || [], last = wp.length ? wp[wp.length - 1] : null, pos = R.D.situation?.possession;
+  const side = s => `<div class="lh-t ${s === 'home' ? 'h' : 'a'}">${teamLogo(g[s],'')}<div class="lh-n"><b>${esc(g[s].short)}</b><span>${esc(g[s].record || '')}</span></div><div class="lh-s${pos === s ? ' poss' : ''}">${esc(g[s].score ?? 0)}</div></div>`;
+  return `<section class="lhero" style="${tcVars(g)}">
+    <div class="lh-row">${side('away')}<div class="lh-mid"><div class="st-live"><span class="pulse"></span>${isLive(g) ? 'Live' : isFinal(g) ? 'Final' : ''}</div><div class="lh-clock">${esc(g.statusText || L.LC?.label || '')}</div><div class="lh-sit">${liveSituation(R)}</div></div>${side('home')}</div>
+    ${last != null ? `<div class="lh-wp"><span>${esc(g.away.abbr)} ${pct(1 - last, 0)}</span><div class="lh-wpb"><i style="width:${((1 - last)*100).toFixed(1)}%"></i></div><span>${pct(last, 0)} ${esc(g.home.abbr)}</span></div><div class="lh-wpn">ESPN live win probability · ${pct(L.LC?.el || 0, 0)} of the game played</div>` : `<div class="lh-wpn">${pct(L.LC?.el || 0, 0)} of the game played</div>`}
+    ${lineScoreHtml(R)}
+  </section>`;
+}
+const LEAD_COL = ['YDS','PTS','K','G','H','SOG','REC','TOT','R','SV'];
+function liveLeaders(R){
+  const g = R.g, cats = (R.D.boxPlayers || []); if (!cats.length) return '';
+  const names = [...new Set(cats.map(c => c.cat))].slice(0, 6);
+  const cards = names.map(cat => { const cell = s => { const b = cats.find(c => c.cat === cat && c.side === s); if (!b?.rows?.length) return '<div class="ll-p empty"></div>';
+      let ci = b.labels.findIndex(l => LEAD_COL.includes(String(l).toUpperCase())); if (ci < 0) ci = 1 < b.labels.length ? 1 : 0;
+      const nv = r => parseFloat(String(r.stats[ci]).replace(/[^0-9.-]/g, '')) || 0, top = [...b.rows].sort((x, y) => nv(y) - nv(x))[0], p = R.idx[top.id]?.player || { name:top.name, img:headshotFor(g.sport, top.id) }, tc = teamColor(g[s]);
+      return `<a class="ll-p" href="${plHref(g.id, top.id)}" style="--tc:${tc}">${avatar(p, '', tc)}<div><b>${esc(top.name)}</b><small>${b.labels.map((l, i) => `${esc(top.stats[i])} ${esc(l)}`).slice(0, 4).join(' · ')}</small></div><em>${esc(top.stats[ci])}<span>${esc(b.labels[ci])}</span></em></a>`; };
+    return `<div class="ll"><div class="ll-h">${esc(cat)}</div>${cell('away')}${cell('home')}</div>`; }).join('');
+  return `<div class="lleaders" style="${tcVars(g)}">${cards}</div>`;
+}
+function teamDuel(R){
+  const g = R.g, ts = ['away','home'].map(s => R.D.boxStats?.[s] || {}), labels = [...new Set(Object.keys(ts[0]).concat(Object.keys(ts[1])).filter(k => k.startsWith('L:')))].slice(0, 16);
+  if (!labels.length) return '';
+  const n = v => { const x = parseFloat(String(v ?? '').replace(/[^0-9.-]/g, '')); return isFinite(x) ? x : null; };
+  return `<section class="tot duel" style="${tcVars(g)}"><div class="tot-h"><div class="tt a">${teamLogo(g.away,'sm')}<b>${esc(g.away.short)}</b></div><div class="tot-title">Team stats</div><div class="tt h"><b>${esc(g.home.short)}</b>${teamLogo(g.home,'sm')}</div></div>
+    ${labels.map(k => { const a = ts[0][k], h = ts[1][k], na = n(a), nh = n(h), sum = (na || 0) + (nh || 0) || 1;
+      return `<div class="tr${na != null && nh != null && na !== nh ? (na > nh ? ' best-a' : ' best-h') : ''}"><div class="tv a"><b>${a ?? NA}</b>${na != null ? `<i class="tb" style="width:${((na || 0)/sum*100).toFixed(1)}%"></i>` : ''}</div><div class="tl">${esc(k.slice(2))}</div><div class="tv h">${nh != null ? `<i class="tb" style="width:${((nh || 0)/sum*100).toFixed(1)}%"></i>` : ''}<b>${h ?? NA}</b></div></div>`; }).join('')}</section>`;
+}
+function playTimeline(R, n = 12){
+  const g = R.g, plays = (R.D.plays || []).filter(p => p.scoring || BIG_PLAY.test(p.text)).reverse();
+  if (!plays.length) return '<div class="panel note">Scoring plays and big moments show up here as they happen.</div>';
+  const per = p => p.period ? (g.sport === 'mlb' ? 'Inn ' : g.sport === 'nhl' ? 'P' : g.sport === 'soccer' ? '' : 'Q') + p.period : '';
+  const team = p => p.team && g[p.team] ? p.team : null;
+  return `<div class="tline">${moreList('kp' + g.id, plays.map(p => { const t = team(p); return `<div class="tl-i${p.scoring ? ' sc' : ''}" style="--tc:${t ? teamColor(g[t]) : 'var(--muted)'}"><div class="tl-when"><b>${esc(per(p))}</b><span>${esc(p.clock || '')}</span></div><div class="tl-dot">${t ? teamLogo(g[t],'sm') : ''}</div><div class="tl-txt">${p.scoring ? '<span class="tl-tag">Score</span>' : ''}${esc(p.text)}${p.score ? `<div class="tl-score">${esc(p.score)}</div>` : ''}</div></div>`; }), n)}</div>`;
 }
 
 /* ============================ FLOW: discover → analyze → monitor → repeat ============================ */
