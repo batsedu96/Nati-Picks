@@ -1115,6 +1115,128 @@ body{padding-bottom:84px}
 .fd-sum b{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-size:1.05rem;color:#FF8A98}
 .fd-sum span{font-size:.78rem;color:var(--muted,#9AA1CC)}
 .pbg-c .fades{padding:6px 8px 8px}
+
+/* ===== v13 · NP Pick cards, the tug of war, model lab, ticket take ===== */
+.col-main{display:flex;flex-direction:column;gap:18px;min-width:0}
+.npcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.npc{position:relative;display:flex;flex-direction:column;gap:10px;padding:14px 16px 12px;border-radius:var(--r-lg);overflow:hidden;
+  background:radial-gradient(420px 160px at 0% 0%,color-mix(in srgb,var(--pc) 26%,transparent),transparent 70%),linear-gradient(180deg,rgba(29,37,82,.92),rgba(21,28,66,.96));
+  border:1px solid color-mix(in srgb,var(--pc) 38%,var(--line));box-shadow:0 10px 30px -18px color-mix(in srgb,var(--pc) 80%,transparent);transition:transform .18s ease,box-shadow .18s ease}
+.npc::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--pc)}
+.npc:hover{transform:translateY(-2px);box-shadow:0 16px 36px -18px color-mix(in srgb,var(--pc) 90%,transparent)}
+.npc-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.npc-k{font:800 12px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:#0D1330;background:var(--sun,#FFD43B);padding:5px 8px 4px;border-radius:6px}
+.npc-g{font-size:var(--t-micro);color:var(--muted);text-decoration:none;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 120px}
+.npc-g:hover{color:var(--ink)}
+.npc-rec{font:700 11.5px/1 var(--f-body);padding:5px 9px;border-radius:999px;white-space:nowrap}
+.r-bet{background:rgba(43,212,138,.16);color:#47E3A0}.r-lean{background:rgba(143,162,255,.16);color:#AFC0FF}.r-price{background:rgba(255,170,60,.15);color:#FFC36B}
+.r-pass{background:rgba(154,161,204,.14);color:#C3C8EA}.r-noprice{background:rgba(255,255,255,.07);color:var(--soft)}
+.npc-grade{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:38px;height:38px;border-radius:10px;font:900 22px/1 var(--f-display);border:2px solid currentColor}
+.npc-grade small{font:600 9.5px/1 'IBM Plex Mono',monospace;opacity:.75;margin-top:1px}
+.g-A .npc-grade,.npl-g.g-A{color:#47E3A0}.g-B .npc-grade,.npl-g.g-B{color:#8FD0FF}.g-C .npc-grade,.npl-g.g-C{color:#FFC36B}.g-D .npc-grade,.npl-g.g-D{color:#9AA3CF}
+.npc-main{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.npc-main .logo{width:52px;height:52px}
+.npc-draw{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:50%;background:rgba(143,162,255,.18);font:900 26px var(--f-display);color:#AFC0FF}
+.npc-draw.sm{width:24px;height:24px;font-size:14px}
+.npc-t{display:flex;flex-direction:column;gap:3px;min-width:0}
+.npc-pick{font:900 clamp(24px,3.4vw,32px)/.95 var(--f-display);text-transform:uppercase;letter-spacing:.01em;color:var(--ink)}
+.npc-sub{font-size:var(--t-small);color:var(--soft);line-height:1.3}
+.npc-prob{text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+.npc-prob b{font:800 30px/1 var(--f-display);color:var(--ink)}
+.npc-prob small{font-size:11.5px;color:var(--muted)}
+.npc-prob em{font-style:normal;font:600 11px 'IBM Plex Mono',monospace;margin-left:4px}.npc-prob em.up{color:#47E3A0}.npc-prob em.down{color:#FF8A98}
+.npc-score{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.npc-score b{font:800 20px/1 var(--f-display);letter-spacing:.02em}
+.npc-score i{font-style:normal;color:var(--muted)}
+.npc-score small{margin-left:auto;color:var(--muted);font-size:11.5px}
+.npc-why{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.npc-why li{position:relative;padding-left:18px;font-size:var(--t-small);line-height:1.4;color:var(--soft)}
+.npc-why li::before{content:"";position:absolute;left:2px;top:.45em;width:8px;height:8px;border-radius:2px;background:var(--pc);transform:rotate(45deg)}
+.npc.compact .npc-why li{font-size:13px}
+.npm-chips{display:flex;flex-wrap:wrap;gap:6px}
+.npm-c{display:inline-flex;align-items:center;gap:6px;padding:4px 9px 4px 5px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--soft)}
+.npm-c i{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;font-style:normal;font-size:10px;background:rgba(43,212,138,.2);color:#47E3A0}
+.npm-c.no i{background:rgba(255,90,110,.2);color:#FF8A98}
+.npm-c b{font-family:'IBM Plex Mono',monospace;color:var(--ink);font-weight:600}
+.npm-c.mkt{border-style:dashed}
+.npp{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 10px;border-radius:10px;font-size:12.5px;color:var(--soft);background:rgba(255,255,255,.035)}
+.npp b{margin-left:auto;font:700 13px 'IBM Plex Mono',monospace}.npp.good b{color:#47E3A0}.npp.bad b{color:#FF8A98}
+.npp em{font-style:normal;font-family:'IBM Plex Mono',monospace;color:var(--ink)}
+.npc-verdict{margin:0;font-size:13px;line-height:1.4;padding:8px 10px;border-radius:10px;border-left:3px solid currentColor;background:rgba(255,255,255,.03)}
+.npc-r1{font-size:12px;color:#FFC36B}
+.npc-risk,.npc-dq{font-size:13px;color:var(--soft)}
+.npc-risk summary,.npc-dq summary{cursor:pointer;color:var(--muted);font-size:12.5px;list-style:none}
+.npc-risk summary::-webkit-details-marker,.npc-dq summary::-webkit-details-marker{display:none}
+.npc-risk summary{color:#FFC36B}
+.npc-risk ul,.npc-dq ul{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.npc-f{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.npc-f a{margin-left:auto;color:var(--sun,#FFD43B);text-decoration:none;font-weight:600}
+.dqm{position:relative;width:46px;height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;flex:0 0 auto}
+.dqm i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#FF8A98,#FFC36B 50%,#47E3A0);border-radius:3px}
+/* tug of war */
+.tug{display:flex;flex-direction:column;gap:5px;padding:10px;border-radius:12px;background:rgba(13,19,48,.55);border:1px solid rgba(255,255,255,.06)}
+.tug-h{display:flex;justify-content:space-between;font:700 12px var(--f-body);color:var(--soft)}
+.tug-h span{display:inline-flex;align-items:center;gap:6px}
+.tug-r{display:grid;grid-template-columns:minmax(90px,30%) minmax(0,1fr) 48px;gap:8px;align-items:center;font-size:12px}
+.tug-l{color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tug-b{position:relative;height:10px;border-radius:5px;background:rgba(255,255,255,.05)}
+.tug-b::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:rgba(255,255,255,.25)}
+.tug-b i{position:absolute;top:0;bottom:0;border-radius:5px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.tug-b i.home{left:50%;background:linear-gradient(90deg,color-mix(in srgb,var(--ch,#4C6BFF) 60%,transparent),var(--ch,#4C6BFF))}
+.tug-b i.away{right:50%;background:linear-gradient(270deg,color-mix(in srgb,var(--ca,#FF5A6E) 60%,transparent),var(--ca,#FF5A6E))}
+.tug-v{font:600 12px 'IBM Plex Mono',monospace;text-align:right;color:var(--ink)}
+/* compact NP line in game rows */
+.gr-np{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;margin-top:6px;color:var(--soft)}
+.npl-k{font:800 10.5px/1 var(--f-display);letter-spacing:.12em;padding:3px 6px 2px;border-radius:5px;background:var(--sun,#FFD43B);color:#0D1330}
+.gr-np b{color:var(--ink);font-weight:700}
+.npl-g{font:900 14px/1 var(--f-display);border:1.5px solid currentColor;border-radius:6px;padding:2px 5px 1px}
+.npl-r{font-size:11px;padding:3px 7px;border-radius:999px}
+.nprest{margin-top:10px}
+.nprow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:4px 10px;align-items:center;padding:9px 12px;border-radius:12px;text-decoration:none;color:var(--ink);background:rgba(21,28,66,.7);border:1px solid var(--line);margin-bottom:6px;transition:background .15s}
+.nprow:hover{background:rgba(29,37,82,.95)}
+.nprow .note{grid-column:2;grid-row:2}
+.nprow>b{font-weight:700}
+@media (max-width:560px){ .nprow{grid-template-columns:auto minmax(0,1fr) auto} .nprow .npl-r{display:none} .npc-main .logo{width:42px;height:42px} .npc-prob b{font-size:26px} .tug-r{grid-template-columns:84px minmax(0,1fr) 40px} }
+/* model lab */
+.lab{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px;margin-top:12px}
+.lab-c{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:var(--r-lg);background:var(--panel);border:1px solid var(--line)}
+.lab-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.lab-h b{font:800 20px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.lab-t{width:100%;border-collapse:collapse;font-size:13px}
+.lab-t th{text-align:left;font-weight:600;color:var(--muted);font-size:11.5px;padding:4px 6px;border-bottom:1px solid var(--line)}
+.lab-t td{padding:6px;border-bottom:1px solid rgba(255,255,255,.04);font-family:'IBM Plex Mono',monospace}
+.lab-t td:first-child{font-family:var(--f-body)}
+.lab-t tr.me td{color:var(--ink);font-weight:700;background:rgba(255,212,59,.06)}
+.lab-f{display:flex;flex-wrap:wrap;gap:6px}
+.lab-x{font-size:11.5px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--soft)}
+.lab-x b{font-weight:700;margin-left:3px}
+.lab-x.v-helps{background:rgba(43,212,138,.13)}.lab-x.v-helps b{color:#47E3A0}
+.lab-x.v-hurts{background:rgba(255,90,110,.12)}.lab-x.v-hurts b{color:#FF8A98}
+.lab-x.v-nodata{opacity:.55}
+.lab-cal{display:flex;gap:6px;align-items:flex-end;height:110px;padding:8px 4px 0;border-bottom:1px solid var(--line)}
+.lab-cb{position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.lab-cb i{display:block;width:70%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#8FA2FF,#4C6BFF)}
+.lab-cb em{position:absolute;left:8%;right:8%;height:2px;background:var(--sun,#FFD43B)}
+.lab-cb span{position:absolute;top:-2px;font-size:10px;color:var(--muted)}
+.lab-cb small{position:absolute;bottom:-17px;font:600 10px 'IBM Plex Mono',monospace;color:var(--soft)}
+.lab-c .note:last-child{margin-top:12px}
+/* NP's take on the ticket */
+.take{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:linear-gradient(135deg,rgba(255,212,59,.09),rgba(76,107,255,.06));border:1px solid rgba(255,212,59,.25)}
+.take-h{display:flex;align-items:center;justify-content:space-between}
+.take-k{font:800 13px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--sun,#FFD43B)}
+.risk{font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px}
+.risk.r-low{background:rgba(43,212,138,.16);color:#47E3A0}.risk.r-mid{background:rgba(143,162,255,.16);color:#AFC0FF}.risk.r-high{background:rgba(255,170,60,.15);color:#FFC36B}.risk.r-lotto{background:rgba(255,90,110,.15);color:#FF8A98}
+.take-v{margin:0;font:600 14.5px/1.35 var(--f-body);color:var(--ink)}
+.take-sw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tk{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:rgba(13,19,48,.5);border-left:3px solid currentColor;min-width:0}
+.tk.good{color:#47E3A0}.tk.bad{color:#FF8A98}
+.tk small{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em}
+.tk b{color:var(--ink);font-size:13px;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
+.tk span{font:700 13px 'IBM Plex Mono',monospace}
+.take-n{margin:0;padding-left:18px;font-size:12.5px;color:var(--soft);display:flex;flex-direction:column;gap:4px}
+.take-n li.warn{color:#FFC36B}
+@media (prefers-reduced-motion:reduce){ .npc,.tug-b i{transition:none} .npc:hover{transform:none} }
+.npp-bn{cursor:help}.npp-bn em{font-family:'IBM Plex Mono',monospace;font-style:normal;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -1694,7 +1816,7 @@ registerProvider('sportsData', { name:'ESPN',
       const home = parseTeam(hc), away = parseTeam(ac), st = ev.status || c.status || {};
       out.push({ id:ev.id, sport, league:lg || null, leagueName:lgName || j.leagues?.[0]?.name || '', leagueLogo:httpsRef(j.leagues?.[0]?.logos?.[0]?.href || '') || null, date:ev.date, name:ev.name, short:ev.shortName,
         state:st.type?.state, status:normalizeGameStatus(st.type?.name, st.type?.state), statusName:st.type?.name || '', statusText:st.type?.shortDetail || '', clock:st.displayClock, period:st.period,
-        venue:c.venue ? { name:c.venue.fullName, city:c.venue.address?.city, state:c.venue.address?.state, country:c.venue.address?.country, indoor:!!c.venue.indoor } : null,
+        venue:c.venue ? { name:c.venue.fullName, city:c.venue.address?.city, state:c.venue.address?.state, country:c.venue.address?.country, indoor:!!c.venue.indoor } : null, neutral:!!c.neutralSite,
         broadcast:(c.broadcasts||[]).flatMap(b=>b.names||[]).join(', '), home, away, espnOdds:parseEspnOdds(c.odds?.[0], home, away) }); } };
     if (sport === 'soccer'){
       const nd = opts.days || 4, lgName = SOCCER_LEAGUES.find(l=>l[0]===league)?.[1];
@@ -2090,15 +2212,18 @@ function gameModel(g, D, book, ctx){
   let wForm = 0, wPred = 0, formMargin = null, predMu = null;
   if (hDiff != null && aDiff != null && lf.home.length >= 3 && lf.away.length >= 3){ formMargin = (hDiff - aDiff)/2 + SPORT[sport].hfa; wForm = 0.12; }
   if (D.predictor && D.predictor.home > 0.02 && D.predictor.home < 0.98){ predMu = fitMu(M.margin, 0, D.predictor.home); wPred = 0.12; }
+  const npf = ctx.npf && isFinite(ctx.npf.mu) ? ctx.npf : null;   // NP's multi-factor model (history-based), replaces the raw last-5 margin
+  if (npf){ formMargin = npf.mu; if (parts.length) wForm = 0.28*(npf.q ?? 1); else { wForm = predMu != null ? 0.85 : 1; wPred = predMu != null ? 0.15 : 0; } }
   const wMkt = parts.length ? 1 - wForm - wPred : 0, wSum = wMkt + wForm + wPred;
   const mu = wSum ? (muMkt*wMkt + (formMargin ?? 0)*wForm + (predMu ?? 0)*wPred)/wSum : 0;
   const insufficient = !parts.length && formMargin == null && predMu == null;
   const hT0 = avg(lf.home, e=>e.pf+e.pa), aT0 = avg(lf.away, e=>e.pf+e.pa);
   const T = C.total ?? (hT0 != null && aT0 != null ? (hT0 + aT0)/2 : ({ nfl:44, nba:226, mlb:8.5, nhl:6 })[sport]);
-  const totalSource = C.total != null ? 'market' : hT0 != null && aT0 != null ? 'recent scoring' : 'league average';
+  const totalSource = C.total != null ? 'market' : ctx.npf?.totOk ? 'NP model' : hT0 != null && aT0 != null ? 'recent scoring' : 'league average';
   let muT = C.total != null ? fitMu(M.total, C.total, C.pOver ?? 0.5) : T;
   const hT = avg(lf.home, e=>e.pf+e.pa), aT = avg(lf.away, e=>e.pf+e.pa); let formTotal = null;
-  if (hT != null && aT != null && C.total != null){ formTotal = (hT + aT)/2; muT = 0.85*muT + 0.15*formTotal; }
+  if (npf && npf.totOk){ formTotal = npf.total; muT = C.total != null ? 0.85*muT + 0.15*formTotal : formTotal; }
+  else if (hT != null && aT != null && C.total != null){ formTotal = (hT + aT)/2; muT = 0.85*muT + 0.15*formTotal; }
   let wx = ctx.weather || null, wxAdj = 0;
   if (wx && SPORT[sport].outdoor && !(g.venue && g.venue.indoor)){
     if (sport === 'nfl'){ if (wx.gust >= 15 || wx.wind >= 15) wxAdj -= (wx.gust >= 25 || wx.wind >= 20) ? 2.5 : 1.2; if (wx.rain >= 40) wxAdj -= 0.6; }
@@ -2113,7 +2238,7 @@ function gameModel(g, D, book, ctx){
   const ttMean = { home:(muT+mu)/2, away:(muT-mu)/2 };
   const ttModel = M.tt || { fam:'normal', sd:()=>9.6, min:0 };
   const tt = { home:buildDist(ttModel, Math.max(0.3, ttMean.home)), away:buildDist(ttModel, Math.max(0.3, ttMean.away)) };
-  return { sport, C, mu, muMkt, muT, formMargin, formTotal, predMu, insufficient, totalSource, inputs:{ market:!!parts.length, form:formMargin != null, predictor:predMu != null, total:totalSource }, margin, total, halfMargin, halfTotal, tt, ttMean, favSide, dogSide: favSide==='home'?'away':'home', scripts:sc, implied:ttMean, wx, wxAdj };
+  return { sport, C, mu, muMkt, muT, formMargin, formTotal, predMu, npf, weights:{ market:wMkt/(wSum || 1), np:wForm/(wSum || 1), predictor:wPred/(wSum || 1) }, insufficient, totalSource, inputs:{ market:!!parts.length, form:formMargin != null, predictor:predMu != null, np:!!npf, total:totalSource }, margin, total, halfMargin, halfTotal, tt, ttMean, favSide, dogSide: favSide==='home'?'away':'home', scripts:sc, implied:ttMean, wx, wxAdj };
 }
 /* Soccer: goals model from 1X2 + total, with live match state when the game is on. */
 function soccerModel(g, D, book, ctx){
@@ -2124,7 +2249,9 @@ function soccerModel(g, D, book, ctx){
   else if (SC.form && SC.form.home && SC.form.away){ // no prices: use recent goals for/against
     const fh = SC.form.home, fa = SC.form.away; lh = clamp((fh.gf + fa.ga)/2 * 1.08, 0.3, 3.5); la = clamp((fa.gf + fh.ga)/2 * 0.94, 0.2, 3.2); }
   // blend with recent form (light), never letting old results dominate
-  const sInsufficient = !priced && !(SC.form && SC.form.home && SC.form.away);
+  const npS = ctx.npf && ctx.npf.p && ctx.npf.p.lh ? ctx.npf : null;
+  if (npS){ const w = priced ? 0.25*(npS.q ?? 1) : 0.85; if (!priced && !(SC.form && SC.form.home && SC.form.away)){ lh = npS.p.lh; la = npS.p.la; } else { lh = (1 - w)*lh + w*npS.p.lh; la = (1 - w)*la + w*npS.p.la; } }
+  const sInsufficient = !priced && !(SC.form && SC.form.home && SC.form.away) && !npS;
   if (priced && SC.form && SC.form.home && SC.form.away){ const fh = SC.form.home, fa = SC.form.away; lh = 0.85*lh + 0.15*clamp((fh.gf + fa.ga)/2, 0.3, 3.5); la = 0.85*la + 0.15*clamp((fa.gf + fh.ga)/2, 0.2, 3.2); }
   // live state
   let live = null;
@@ -2152,7 +2279,7 @@ function soccerModel(g, D, book, ctx){
   const cc = SC.corners, cd = SC.cards;
   const corners = cc ? { home:cc.home, away:cc.away, total:buildDist({ fam:'nb', vr:1.25 }, cc.home + cc.away), th:buildDist({ fam:'nb', vr:1.3 }, cc.home), ta:buildDist({ fam:'nb', vr:1.3 }, cc.away) } : null;
   const cards = cd ? { total:buildDist({ fam:'nb', vr:1.35 }, cd.home + cd.away), home:cd.home, away:cd.away } : null;
-  return { sport:'soccer', insufficient:sInsufficient, inputs:{ market:priced, form:!!(SC.form && SC.form.home && SC.form.away), predictor:false, total:priced ? 'market' : 'recent goals' }, C, mu:lh-la, muMkt:lh-la, muT:lh+la, lh, la, priced, live, M, margin, total, halfMargin:finishPmf(-(N-1), hm), halfTotal:finishPmf(0, ht),
+  return { sport:'soccer', npf:npS, insufficient:sInsufficient, inputs:{ market:priced, form:!!(SC.form && SC.form.home && SC.form.away), predictor:false, np:!!npS, total:priced ? 'market' : npS ? 'NP model' : 'recent goals' }, C, mu:lh-la, muMkt:lh-la, muT:lh+la, lh, la, priced, live, M, margin, total, halfMargin:finishPmf(-(N-1), hm), halfTotal:finishPmf(0, ht),
     tt:{ home:finishPmf(0, th), away:finishPmf(0, ta) }, ttMean:{ home:lh, away:la }, btts, favSide, dogSide:favSide==='home'?'away':'home', scripts:sc, scenarios, implied:{ home:lh, away:la }, corners, cards, wx:ctx.weather || null, wxAdj:0 };
 }
 function shiftMatrix(M, hs, as){ const N = M.length, out = Array.from({length:N}, () => new Float64Array(N));
@@ -3158,6 +3285,322 @@ function calSummaryHtml(){
     ${rows.map(([k, s]) => { const f = calFactor(k); return `<tr><td>${esc(CAL_LABEL[k] || k)}</td><td class="num">${s.hits}/${s.n} (${pct(s.hits/s.n,0)})</td><td class="num">${pct(s.sumP/s.n,0)}</td><td>${f === 1 ? '<span class="note">Not enough results yet</span>' : f < 1 ? `<span class="pill bad">Lowered ${Math.round((1-f)*100)}%</span>` : `<span class="pill strong">Raised ${Math.round((f-1)*100)}%</span>`}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 
+/* ============================ NP MODEL · multi-factor, walk-forward, backtested ============================
+   Shared by the browser and the backend (the compact/timezone helpers are extracted into the worker at build time).
+   Inputs: completed games only (scores, dates, home/away, neutral site, venue) from the free ESPN scoreboard.
+   Every feature for a game is computed from games played BEFORE it, so nothing from the future leaks in.
+   Sub-models (each one produces points toward one side, so the final number can always be explained):
+     strength  · online opponent-adjusted rating (points), regressed toward average between seasons
+     form      · last-5 results versus what the ratings expected (so 4-1 against bad teams counts for little)
+     rest / back-to-back / travel (time zones) / schedule load / long road trips
+     head-to-head · recent meetings versus expectation, older meetings fade (rosters change)
+     home-road splits · time-of-day splits · all shrunk toward zero until the sample is big enough
+   Weights are fitted by ridge regression toward a neutral prior, refitted month by month in the backtest, and
+   any factor that makes out-of-sample predictions worse is switched off. */
+const NPM_VERSION = 'npm-1.0';
+const NPM_SPORT = {
+  nfl:{ cap:24, K:0.085, Kt:0.06, hfa:1.8, tot:44, chunk:14, back:770, months:[1,2,9,10,11,12], restCap:14, b2b:false, newSeason:100, unit:'points' },
+  nba:{ cap:25, K:0.045, Kt:0.03, hfa:2.4, tot:228, chunk:7, back:400, months:[1,2,3,4,5,6,10,11,12], restCap:4, b2b:true, newSeason:60, unit:'points' },
+  nhl:{ cap:4, K:0.035, Kt:0.025, hfa:0.22, tot:6.1, chunk:7, back:400, months:[1,2,3,4,5,6,10,11,12], restCap:4, b2b:true, newSeason:60, unit:'goals' },
+  mlb:{ cap:7, K:0.018, Kt:0.012, hfa:0.15, tot:8.8, chunk:7, back:400, months:[3,4,5,6,7,8,9,10,11], restCap:3, b2b:false, newSeason:60, unit:'runs' },
+  soccer:{ cap:3, K:0.06, Kt:0.04, hfa:0.3, tot:2.7, chunk:14, back:400, months:null, restCap:7, b2b:false, newSeason:45, unit:'goals', soccer:true },
+};
+const NPM_FEATS = [
+  ['hfa', 'Home field'], ['rating', 'Team strength'], ['form', 'Recent form'], ['rest', 'Rest'], ['b2b', 'Back-to-back'],
+  ['travel', 'Travel & time zones'], ['load', 'Schedule load'], ['h2h', 'Head-to-head'], ['venue', 'Home/road splits'], ['slot', 'Time-of-day splits'], ['trip', 'Road trip'],
+];
+/* standard-time UTC offset of a venue, from its address (US states, Canadian provinces, countries) */
+function npmTzTable(){
+  if (npmTzTable.m) return npmTzTable.m; const m = {}, set = (o, s) => s.split('|').forEach(k => m[k.toLowerCase()] = o);
+  set(-5, 'CT|DE|DC|FL|GA|IN|KY|ME|MD|MA|MI|NH|NJ|NY|NC|OH|PA|RI|SC|VT|VA|WV|ON|QC|NS|NB|PE|NL|Connecticut|Delaware|District of Columbia|Florida|Georgia|Indiana|Kentucky|Maine|Maryland|Massachusetts|Michigan|New Hampshire|New Jersey|New York|North Carolina|Ohio|Pennsylvania|Rhode Island|South Carolina|Vermont|Virginia|West Virginia|Ontario|Quebec|Nova Scotia|New Brunswick|Canada:Toronto|Canada:Montreal|Canada:Ottawa');
+  set(-6, 'AL|AR|IL|IA|KS|LA|MN|MS|MO|NE|ND|OK|SD|TN|TX|WI|MB|SK|Alabama|Arkansas|Illinois|Iowa|Kansas|Louisiana|Minnesota|Mississippi|Missouri|Nebraska|North Dakota|Oklahoma|South Dakota|Tennessee|Texas|Wisconsin|Manitoba|Saskatchewan|Canada:Winnipeg|Mexico');
+  set(-7, 'AZ|CO|ID|MT|NM|UT|WY|AB|Arizona|Colorado|Idaho|Montana|New Mexico|Utah|Wyoming|Alberta|Canada:Calgary|Canada:Edmonton');
+  set(-8, 'CA|NV|OR|WA|BC|California|Nevada|Oregon|Washington|British Columbia|Canada:Vancouver');
+  set(-9, 'AK|Alaska'); set(-10, 'HI|Hawaii');
+  set(0, 'England|Scotland|Wales|Northern Ireland|Ireland|Republic of Ireland|Portugal|United Kingdom|UK|Iceland');
+  set(1, 'Spain|France|Germany|Italy|Netherlands|Belgium|Austria|Switzerland|Czechia|Czech Republic|Denmark|Sweden|Norway|Poland|Croatia|Serbia|Hungary|Slovakia|Slovenia|Bosnia and Herzegovina|Albania|Montenegro|North Macedonia|Kosovo|Luxembourg|Malta|Morocco|Nigeria|Algeria|Tunisia');
+  set(2, 'Greece|Ukraine|Romania|Bulgaria|Finland|Cyprus|Israel|Egypt|South Africa|Estonia|Latvia|Lithuania|Moldova');
+  set(3, 'Turkey|Türkiye|Russia|Saudi Arabia|Qatar'); set(-3, 'Brazil|Argentina|Uruguay');
+  set(-5, 'Colombia|Peru|Ecuador|Panama|Jamaica'); set(-4, 'Venezuela|Bolivia|Chile|Paraguay|Puerto Rico|Dominican Republic'); set(-6, 'Costa Rica|Honduras|El Salvador|Guatemala');
+  set(9, 'Japan|South Korea|Korea Republic'); set(8, 'China|Australia:Perth'); set(10, 'Australia');
+  return (npmTzTable.m = m);
+}
+function npmTz(ad){
+  if (!ad) return null; const T = npmTzTable(), st = String(ad.state || '').trim(), co = String(ad.country || '').trim();
+  if (st && T[st.toLowerCase()] != null && (!co || /^(usa|united states|us|canada)$/i.test(co) || st.length === 2)) return T[st.toLowerCase()];
+  if (/canada/i.test(co) && ad.city && T['canada:' + String(ad.city).toLowerCase()] != null) return T['canada:' + String(ad.city).toLowerCase()];
+  if (co && T[co.toLowerCase()] != null) return T[co.toLowerCase()];
+  if (st && T[st.toLowerCase()] != null) return T[st.toLowerCase()];
+  return null;
+}
+/* one ESPN scoreboard response → tiny records of completed games */
+function npmCompact(j){
+  const out = [];
+  for (const ev of (j && j.events) || []){ const c = ev.competitions && ev.competitions[0]; if (!c) continue;
+    const st = ((ev.status || c.status) || {}).type || {}; if (!(st.completed || st.state === 'post')) continue;
+    if (/postpon|cancel|suspend|forfeit|abandon/i.test(st.name || '')) continue;
+    const ty = ev.season && ev.season.type; if (ty === 1) continue;     // preseason
+    const H = (c.competitors || []).find(x => x.homeAway === 'home'), A = (c.competitors || []).find(x => x.homeAway === 'away'); if (!H || !A) continue;
+    const sc = x => { const v = x.score && typeof x.score === 'object' ? x.score.value : x.score; return v === '' || v == null ? NaN : +v; };
+    const hs = sc(H), as = sc(A), t = Date.parse(ev.date); if (!isFinite(hs) || !isFinite(as) || !isFinite(t)) continue;
+    out.push({ id:String(ev.id), t, ty:ty || 2, h:String((H.team && H.team.id) || H.id), a:String((A.team && A.team.id) || A.id), ha:(H.team && H.team.abbreviation) || '', aa:(A.team && A.team.abbreviation) || '', hs, as, n:c.neutralSite ? 1 : 0, tz:npmTz(c.venue && c.venue.address) });
+  }
+  return out;
+}
+
+/* ---------- math helpers ---------- */
+const npmPhi = z => { const t = 1/(1 + 0.2316419*Math.abs(z)), d = 0.3989423*Math.exp(-z*z/2), p = d*t*(0.3193815 + t*(-0.3565638 + t*(1.781478 + t*(-1.821256 + t*1.330274)))); return z > 0 ? 1 - p : p; };
+function npmSolve(A, b){   // Gaussian elimination with partial pivoting (small dense systems)
+  const n = b.length, M = A.map((r, i) => [...r, b[i]]);
+  for (let c = 0; c < n; c++){ let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r; [M[c], M[p]] = [M[p], M[c]];
+    const v = M[c][c]; if (Math.abs(v) < 1e-12) return null; for (let r = 0; r < n; r++){ if (r === c) continue; const f = M[r][c]/v; if (f) for (let k = c; k <= n; k++) M[r][k] -= f*M[c][k]; } }
+  return M.map((r, i) => r[n]/r[i]);
+}
+function npmSoccer3(mu, T){
+  const lh = Math.max(0.12, (T + mu)/2), la = Math.max(0.12, (T - mu)/2), ph = [], pa = []; let a = Math.exp(-lh), b = Math.exp(-la);
+  for (let i = 0; i <= 10; i++){ ph.push(a); pa.push(b); a *= lh/(i + 1); b *= la/(i + 1); }
+  let H = 0, D = 0, A = 0; for (let i = 0; i <= 10; i++) for (let j = 0; j <= 10; j++){ const v = ph[i]*pa[j]; if (i > j) H += v; else if (i === j) D += v; else A += v; }
+  const s = H + D + A; return { home:H/s, draw:D/s, away:A/s, lh, la };
+}
+const npmSlot = (t, sport) => { const d = new Date(t), m = d.getUTCMonth() + 1, h = (d.getUTCHours() + 24 - (m >= 3 && m <= 10 ? 4 : 5)) % 24;
+  return sport === 'nfl' ? (h >= 20 ? 'prime' : h >= 16 ? 'late' : 'early') : h < 17 ? 'day' : 'night'; };
+const NPM_SLOT_NAME = { prime:'prime-time', late:'late-afternoon', early:'early', day:'day', night:'night' };
+const npmShr = (arr, k) => arr.length ? arr.reduce((s, x) => s + x, 0)/(arr.length + k) : 0;
+
+/* ---------- the walk: ratings + features, strictly in time order ---------- */
+function npmTeam(){ return { r:0, o:0, d:0, last:null, hist:[], road:0, times:[], seasonStart:null, n:0 }; }
+function npmFresh(st, t, S){   // new season: pull ratings a third of the way back to average
+  if (st.last && (t - st.last.t) > S.newSeason*864e5){ st.r *= 0.67; st.o *= 0.67; st.d *= 0.67; st.seasonStart = t; st.road = 0; }
+  if (st.seasonStart == null) st.seasonStart = t;
+}
+function npmFeatures(H, A, gm, S, sport, hid, aid){
+  const t = gm.t, hrs = st => st.last ? (t - st.last.t)/36e5 : 1e9;
+  const restD = st => Math.min(S.restCap, Math.max(0, Math.floor(hrs(st)/24)));
+  const L5 = st => st.hist.slice(-5).map(r => r.res);
+  const shift = st => st.last && st.last.tz != null && gm.tz != null ? Math.abs(gm.tz - st.last.tz) : 0;
+  const g7 = st => st.times.filter(x => x > t - 7*864e5).length;
+  const h2hRecs = H.hist.filter(r => r.opp === aid && t - r.t < 3*365*864e5).slice(-5);
+  let hw = 0, hs = 0; for (const r of h2hRecs){ const w = Math.pow(0.5, (t - r.t)/(365*864e5)); hw += w; hs += w*r.res; }
+  const slot = npmSlot(t, sport);
+  const sp = (st, f, k) => npmShr(st.hist.filter(f).slice(-20).map(r => r.res), k);
+  const x = [
+    gm.n ? 0 : 1,
+    H.r - A.r,
+    npmShr(L5(H), 2) - npmShr(L5(A), 2),
+    restD(H) - restD(A),
+    S.b2b ? (hrs(A) < 30 ? 1 : 0) - (hrs(H) < 30 ? 1 : 0) : 0,
+    shift(A) - shift(H),
+    sport === 'nfl' ? 0 : g7(A) - g7(H),
+    hw ? hs/(hw + 1.5) : 0,
+    gm.n ? 0 : sp(H, r => r.home, 6) - sp(A, r => !r.home && !r.n, 6),
+    sp(H, r => r.slot === slot, 8) - sp(A, r => r.slot === slot, 8),
+    S.soccer || sport === 'nfl' ? 0 : Math.max(0, (A.road + 1) - 3),
+  ];
+  const tf = npmShr(H.hist.slice(-5).map(r => r.tres), 2) + npmShr(A.hist.slice(-5).map(r => r.tres), 2);
+  return { x, tf, slot, h2h:h2hRecs };
+}
+function npmWalk(games, S, sport, km, collect){
+  const T = {}, team = id => T[id] || (T[id] = npmTeam()), rows = [];
+  let hN = 0, hSum = 0, tN = 0, tSum = 0, se = 0, sn = 0;
+  for (const gm of games){
+    const H = team(gm.h), A = team(gm.a); npmFresh(H, gm.t, S); npmFresh(A, gm.t, S);
+    const hfa = (S.hfa*20 + hSum)/(20 + hN), avgT = (S.tot*20 + tSum)/(20 + tN), hh = gm.n ? 0 : hfa;
+    const E = H.r - A.r + hh, ET = avgT + H.o + A.o + H.d + A.d, y = gm.hs - gm.as, yt = gm.hs + gm.as;
+    const yc = Math.max(-S.cap, Math.min(S.cap, y));
+    if (H.n >= 3 && A.n >= 3){ se += (yc - E)**2; sn++; }
+    if (collect){ const F = npmFeatures(H, A, gm, S, sport, gm.h, gm.a); if (H.n >= 2 && A.n >= 2) rows.push({ t:gm.t, id:gm.id, x:F.x, tf:F.tf, y, yt, ET, n:gm.n }); }
+    const slot = npmSlot(gm.t, sport);
+    // update ratings
+    const err = yc - E; H.r += S.K*km*err; A.r -= S.K*km*err;
+    const capT = S.cap*1.5, eh = Math.max(-capT, Math.min(capT, gm.hs - (avgT/2 + hh/2 + H.o + A.d))), ea = Math.max(-capT, Math.min(capT, gm.as - (avgT/2 - hh/2 + A.o + H.d)));
+    const oppRH = A.r, oppRA = H.r;
+    H.o += S.Kt*km*eh; A.d += S.Kt*km*eh; A.o += S.Kt*km*ea; H.d += S.Kt*km*ea;
+    const tres = yt - ET, base = { t:gm.t, slot, tres, n:gm.n, id:gm.id, tz:gm.tz };
+    H.hist.push({ ...base, opp:gm.a, oppAb:gm.aa, home:true, res:yc - E, pf:gm.hs, pa:gm.as, oppR:oppRH, ss:H.seasonStart });
+    A.hist.push({ ...base, opp:gm.h, oppAb:gm.ha, home:false, res:E - yc, pf:gm.as, pa:gm.hs, oppR:oppRA, ss:A.seasonStart });
+    if (H.hist.length > 140) H.hist.splice(0, H.hist.length - 140); if (A.hist.length > 140) A.hist.splice(0, A.hist.length - 140);
+    H.road = 0; A.road = gm.n ? 0 : A.road + 1;
+    for (const st of [H, A]){ st.times.push(gm.t); if (st.times.length > 12) st.times.shift(); st.n++; st.last = { t:gm.t, tz:gm.tz }; }
+    if (!gm.n){ hN++; hSum += y; } tN++; tSum += yt;
+  }
+  return { T, rows, mse:sn ? se/sn : Infinity, hfa:(S.hfa*20 + hSum)/(20 + hN), avgT:(S.tot*20 + tSum)/(20 + tN), homeN:hN, homeSum:hSum };
+}
+
+/* ---------- ridge regression from running sums (so walk-forward refits are cheap) ---------- */
+function npmAcc(k){ return { n:0, XtX:Array.from({ length:k }, () => new Float64Array(k)), Xty:new Float64Array(k), yy:0, sx:new Float64Array(k), sxx:new Float64Array(k) }; }
+function npmAdd(acc, x, y){ const k = x.length; acc.n++; acc.yy += y*y; for (let i = 0; i < k; i++){ const xi = x[i]; if (!xi) continue; acc.Xty[i] += xi*y; acc.sx[i] += xi; acc.sxx[i] += xi*xi; const R = acc.XtX[i]; for (let j = 0; j < k; j++) if (x[j]) R[j] += xi*x[j]; } }
+function npmFit(acc, use, prior, L){
+  const idx = use.map((u, i) => u ? i : -1).filter(i => i >= 0), n = Math.max(acc.n, 1);
+  const A = idx.map(i => idx.map(j => acc.XtX[i][j])), b = idx.map(i => acc.Xty[i]);
+  idx.forEach((i, a) => { const v = Math.max(acc.sxx[i]/n - (acc.sx[i]/n)**2, 1e-6), lam = (L[i] ?? 40)*v; A[a][a] += lam; b[a] += lam*(prior[i] || 0); });
+  const s = npmSolve(A, b); if (!s) return null;
+  const beta = new Array(use.length).fill(0); idx.forEach((i, a) => beta[i] = s[a]);
+  let sse = acc.yy; for (const i of idx){ sse -= 2*beta[i]*acc.Xty[i]; for (const j of idx) sse += beta[i]*beta[j]*acc.XtX[i][j]; }
+  return { beta, sigma:Math.sqrt(Math.max(sse, 1e-9)/n) };
+}
+const npmDot = (b, x) => b.reduce((s, v, i) => s + v*x[i], 0);
+
+/* ---------- build: tune, backtest out of sample, select factors, final fit ---------- */
+function npmBuild(raw, sport, opts = {}){
+  const S = NPM_SPORT[sport]; if (!S) return { ok:false, why:'unsupported sport' };
+  const seen = new Set(), games = (raw || []).filter(g => g && isFinite(g.t) && !seen.has(g.id) && seen.add(g.id)).sort((a, b) => a.t - b.t);
+  if (games.length < 80) return { ok:false, n:games.length, why:`only ${games.length} completed games in the history so far` };
+  const half = games.slice(0, Math.floor(games.length/2)); let km = 1, bestE = Infinity;
+  for (const m of [0.6, 1, 1.6]){ const e = npmWalk(half, S, sport, m, false).mse; if (e < bestE){ bestE = e; km = m; } }
+  const W = npmWalk(games, S, sport, km, true), rows = W.rows, k = NPM_FEATS.length;
+  if (rows.length < 60) return { ok:false, n:games.length, why:'not enough games with history on both teams yet' };
+  const prior = [S.hfa, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], L = [0.5, 25, 40, 40, 40, 40, 40, 40, 40, 40, 40];
+  const priorT = [0, 0], LT = [5, 40];
+  const all = new Array(k).fill(true); for (let i = 0; i < k; i++){ const v = rows.some(r => r.x[i]); if (!v) all[i] = false; }
+  const variants = { full:all, base:all.map((u, i) => u && i <= 1) }; for (let j = 2; j < k; j++) if (all[j]) variants['drop' + j] = all.map((u, i) => u && i !== j);
+  // walk-forward: refit every 30 days on everything before the block, predict the block
+  const t0 = rows[0].t, span = rows[rows.length - 1].t - t0, evalFrom = Math.max(rows[Math.min(rows.length - 1, 150)].t, t0 + 0.35*span);
+  const acc = npmAcc(k), accT = npmAcc(2), BT = {}; for (const v of Object.keys(variants)) BT[v] = { n:0, br:0, ll:0, acc:0, mae:0 };
+  const bh = { n:0, br:0, ll:0, acc:0 }, cal = {}, tot = { n:0, mae:0, maeNaive:0 };
+  let hw = 0, hn = 0, draws = 0, i = 0, blockEnd = evalFrom;
+  const score = (o, p3, out) => { // p3 = {home, away, draw?}; out = 'H'|'A'|'D'|'T'(tie, non-soccer)
+    const ph = Math.min(0.985, Math.max(0.015, p3.home)), pa = Math.min(0.985, Math.max(0.015, p3.away));
+    if (S.soccer){ const pd = Math.max(0.015, p3.draw || 0), s = ph + pa + pd, P = { H:ph/s, A:pa/s, D:pd/s };
+      o.br += ['H','D','A'].reduce((t, kk) => t + ((out === kk ? 1 : 0) - P[kk])**2, 0)/2; o.ll += -Math.log(P[out]); o.acc += (Object.entries(P).sort((a, b) => b[1] - a[1])[0][0] === out) ? 1 : 0; }
+    else { const y = out === 'H' ? 1 : out === 'A' ? 0 : 0.5; o.br += (ph - y)**2; o.ll += -(y*Math.log(ph) + (1 - y)*Math.log(1 - ph)); o.acc += out === 'T' ? 0.5 : (ph >= 0.5) === (out === 'H') ? 1 : 0; }
+    o.n++; };
+  while (i < rows.length){
+    if (rows[i].t < evalFrom){ const r = rows[i]; npmAdd(acc, r.x, r.y); npmAdd(accT, [1, r.tf], r.yt - r.ET); if (!r.n){ hn++; hw += r.y > 0 ? 1 : r.y === 0 ? 0.5 : 0; } if (r.y === 0) draws++; i++; continue; }
+    blockEnd = rows[i].t + 30*864e5; const fits = {}; for (const [v, use] of Object.entries(variants)) fits[v] = npmFit(acc, use, prior, L);
+    const fT = npmFit(accT, [true, true], priorT, LT), hr = hn ? hw/hn : 0.55, dr = acc.n ? draws/acc.n : 0.25;
+    const block = []; while (i < rows.length && rows[i].t < blockEnd) block.push(rows[i++]);
+    for (const r of block){
+      const out = r.y > 0 ? 'H' : r.y < 0 ? 'A' : S.soccer ? 'D' : 'T', Tm = r.ET + (fT ? npmDot(fT.beta, [1, r.tf]) : 0);
+      for (const [v, f] of Object.entries(fits)){ if (!f) continue; const mu = npmDot(f.beta, r.x);
+        const p3 = S.soccer ? npmSoccer3(mu, Tm) : { home:npmPhi(mu/Math.max(f.sigma, 0.5)) }; if (!S.soccer) p3.away = 1 - p3.home;
+        score(BT[v], p3, out); BT[v].mae += Math.abs(r.y - mu);
+        if (v === 'full'){ const fav = S.soccer ? Math.max(p3.home, p3.away) : Math.max(p3.home, p3.away), favWon = p3.home >= p3.away ? out === 'H' : out === 'A';
+          const b = fav >= 0.8 ? '80+' : fav >= 0.7 ? '70-80' : fav >= 0.65 ? '65-70' : fav >= 0.6 ? '60-65' : fav >= 0.55 ? '55-60' : fav >= 0.5 ? '50-55' : '<50';
+          const c = cal[b] || (cal[b] = { n:0, p:0, w:0 }); c.n++; c.p += fav; c.w += favWon ? 1 : out === 'T' ? 0.5 : 0; } }
+      const p0 = S.soccer ? { home:(1 - dr)*(r.n ? 0.5 : hr), away:(1 - dr)*(1 - (r.n ? 0.5 : hr)), draw:dr } : { home:r.n ? 0.5 : hr, away:1 - (r.n ? 0.5 : hr) };
+      score(bh, p0, out); tot.n++; tot.mae += Math.abs(r.yt - Tm); tot.maeNaive += Math.abs(r.yt - (W.avgT));
+    }
+    for (const r of block){ npmAdd(acc, r.x, r.y); npmAdd(accT, [1, r.tf], r.yt - r.ET); if (!r.n){ hn++; hw += r.y > 0 ? 1 : r.y === 0 ? 0.5 : 0; } if (r.y === 0) draws++; }
+  }
+  const fin = o => o.n ? { n:o.n, brier:o.br/o.n, logloss:o.ll/o.n, acc:o.acc/o.n, mae:o.mae != null ? o.mae/o.n : null } : null;
+  const bt = { full:fin(BT.full), base:fin(BT.base), home:fin(bh), totals:tot.n ? { n:tot.n, mae:tot.mae/tot.n, maeNaive:tot.maeNaive/tot.n } : null,
+    calibration:Object.entries(cal).map(([b, c]) => ({ bucket:b, n:c.n, predicted:c.p/c.n, actual:c.w/c.n })).sort((a, b) => a.bucket.localeCompare(b.bucket)), factors:[] };
+  const keep = [...all];
+  for (let j = 2; j < k; j++){ if (!all[j]) { bt.factors.push({ key:NPM_FEATS[j][0], label:NPM_FEATS[j][1], verdict:'no data' }); continue; }
+    const d = fin(BT['drop' + j]); const gain = d && bt.full ? d.logloss - bt.full.logloss : 0;   // > 0: the factor helps
+    const verdict = gain > 0.0004 ? 'helps' : gain < -0.0004 ? 'hurts' : 'neutral'; if (verdict === 'hurts') keep[j] = false;
+    bt.factors.push({ key:NPM_FEATS[j][0], label:NPM_FEATS[j][1], gain, verdict }); }
+  // final fit on everything, with the factors that earned their place
+  const accF = npmAcc(k), accTF = npmAcc(2); for (const r of rows){ npmAdd(accF, r.x, r.y); npmAdd(accTF, [1, r.tf], r.yt - r.ET); }
+  const F = npmFit(accF, keep, prior, L), FT = npmFit(accTF, [true, true], priorT, LT);
+  if (!F) return { ok:false, n:games.length, why:'the model could not be fitted' };
+  const skill = bt.full && bt.home ? bt.home.logloss - bt.full.logloss : null;
+  return { ok:true, version:NPM_VERSION, sport, km, n:games.length, rows:rows.length, beta:F.beta, sigma:F.sigma, betaT:FT ? FT.beta : [0, 0], sigmaT:FT ? FT.sigma : null, keep, T:W.T, hfa:W.hfa, avgT:W.avgT,
+    backtest:bt, skill, from:games[0].t, to:games[games.length - 1].t, builtAt:Date.now() };
+}
+
+/* ---------- predict one upcoming game, with every factor's contribution and the evidence behind it ---------- */
+function npmTeamFacts(st, t, M, id){
+  const ss = st.seasonStart != null && st.last && (t - st.last.t) <= NPM_SPORT[M.sport].newSeason*864e5 ? st.seasonStart : t;
+  const season = st.hist.filter(r => r.t >= ss), rec = l => ({ w:l.filter(r => r.pf > r.pa).length, l:l.filter(r => r.pf < r.pa).length, d:l.filter(r => r.pf === r.pa).length });
+  const avg = (l, f) => l.length ? l.reduce((s, r) => s + f(r), 0)/l.length : null;
+  const L5 = st.hist.slice(-5), L10 = st.hist.slice(-10);
+  let streak = 0; for (let i = st.hist.length - 1; i >= 0; i--){ const r = st.hist[i], w = r.pf > r.pa ? 1 : r.pf < r.pa ? -1 : 0; if (!w) break; if (!streak) streak = w; else if (Math.sign(streak) === w) streak += w; else break; }
+  const ranks = Object.entries(M.T).filter(([k, x]) => k !== id && x.last && t - x.last.t < 400*864e5).map(([, x]) => x.r);
+  const resSeason = avg(season, r => r.res), resL5 = avg(L5, r => r.res);
+  return { r:st.r, rank:1 + ranks.filter(r => r > st.r).length, of:ranks.length + 1, season:rec(season), seasonN:season.length, L5:rec(L5), L10:rec(L10), L5m:avg(L5, r => r.pf - r.pa), L5pf:avg(L5, r => r.pf), L5pa:avg(L5, r => r.pa),
+    spf:avg(season, r => r.pf), spa:avg(season, r => r.pa), home5:rec(st.hist.filter(r => r.home).slice(-5)), road5:rec(st.hist.filter(r => !r.home && !r.n).slice(-5)), streak,
+    sos:avg(season, r => r.oppR), resL5, resSeason, trend:resL5 != null && resSeason != null && L5.length >= 4 && season.length >= 8 ? resL5 - resSeason : null,
+    vsGood:rec(season.filter(r => r.oppR > 0)), vsBad:rec(season.filter(r => r.oppR <= 0)), last:L5.slice().reverse().map(r => ({ opp:r.oppAb, home:r.home, pf:r.pf, pa:r.pa, oppR:r.oppR, res:r.res })),
+    sd:L10.length >= 6 ? Math.sqrt(avg(L10, r => r.res*r.res)) : null };
+}
+function npmPredict(M, g){
+  if (!M || !M.ok || !g) return null; const S = NPM_SPORT[M.sport];
+  const T0H = M.T[String(g.home.id)], T0A = M.T[String(g.away.id)]; if (!T0H || !T0A) return null;
+  const t = Date.parse(g.date) || Date.now(), clone = st => ({ ...st, hist:st.hist, times:st.times });
+  const H = clone(T0H), A = clone(T0A); npmFresh(H, t, S); npmFresh(A, t, S);
+  const v = g.venue || {}, gm = { t, n:g.neutral ? 1 : 0, tz:npmTz({ city:v.city, state:v.state, country:v.country }) };
+  const F = npmFeatures(H, A, gm, S, M.sport, String(g.home.id), String(g.away.id));
+  const contrib = NPM_FEATS.map(([key, label], j) => ({ key, label, pts:M.keep[j] ? M.beta[j]*F.x[j] : 0, x:F.x[j], on:!!M.keep[j] }));
+  const mu = contrib.reduce((s, c) => s + c.pts, 0), ET = M.avgT + H.o + A.o + H.d + A.d, Tm = Math.max(0.5, ET + M.betaT[0] + M.betaT[1]*F.tf);
+  const p = S.soccer ? npmSoccer3(mu, Tm) : (() => { const ph = npmPhi(mu/Math.max(M.sigma, 0.5)); return { home:ph, away:1 - ph }; })();
+  const hrs = st => st.last ? (t - st.last.t)/36e5 : null;
+  const facts = { home:npmTeamFacts(H, t, M, String(g.home.id)), away:npmTeamFacts(A, t, M, String(g.away.id)) };
+  facts.home.restH = hrs(H); facts.away.restH = hrs(A);
+  facts.home.tzShift = H.last && H.last.tz != null && gm.tz != null ? gm.tz - H.last.tz : null; facts.away.tzShift = A.last && A.last.tz != null && gm.tz != null ? gm.tz - A.last.tz : null;
+  facts.away.tripGame = A.road + 1; facts.home.g7 = H.times.filter(x => x > t - 7*864e5).length; facts.away.g7 = A.times.filter(x => x > t - 7*864e5).length;
+  facts.h2h = F.h2h.map(r => ({ t:r.t, home:r.home, pf:r.pf, pa:r.pa, res:r.res })); facts.slot = F.slot;
+  const split = (st, f) => { const l = st.hist.filter(f).slice(-20); return { n:l.length, v:npmShr(l.map(r => r.res), 6) }; };
+  facts.home.venue = split(H, r => r.home); facts.away.venue = split(A, r => !r.home && !r.n);
+  facts.home.slotSplit = split(H, r => r.slot === F.slot); facts.away.slotSplit = split(A, r => r.slot === F.slot);
+  const score = { home:(Tm + mu)/2, away:(Tm - mu)/2 };
+  return { version:M.version, sport:M.sport, mu, total:Tm, p, score, sigma:M.sigma, contrib, facts, unit:S.unit, neutral:!!gm.n, venueTz:gm.tz };
+}
+
+/* ---------- NP model loader (browser): history comes in small date chunks, cached server-side (D1) and here ----------
+   Closed chunks (games that are all final) never change, so they are fetched once and kept. Only the current chunk is
+   refreshed, and only when someone is using NP. Loading starts the first time a sport's games are researched. */
+const NPM = {
+  M:{}, P:{}, prog:{}, listeners:[],
+  key(sport, lg){ return sport === 'soccer' ? 'soccer:' + (lg || '') : sport; },
+  supported(sport, lg){ return !!NPM_SPORT[sport] && (sport !== 'soccer' || /^[a-z0-9._-]{2,24}$/.test(lg || '')); },
+  get(sport, lg){ const m = this.M[this.key(sport, lg)]; return m && m.ok ? m : null; },
+  info(sport, lg){ return this.M[this.key(sport, lg)] || null; },
+  chunks(sport){
+    const S = NPM_SPORT[sport], len = S.chunk, today = Math.floor(Date.now()/864e5), start = today - S.back, out = [];
+    const ymdU = d => new Date(d*864e5).toISOString().slice(0, 10).replace(/-/g, '');
+    for (let a = Math.floor(start/len)*len; a <= today; a += len){ const b = Math.min(a + len - 1, today);
+      if (S.months){ let on = false; for (let d = a; d <= b; d++) if (S.months.includes(new Date(d*864e5).getUTCMonth() + 1)){ on = true; break; } if (!on) continue; }
+      out.push({ from:ymdU(a), to:ymdU(b), closed:b < today - 2 }); }
+    return out;
+  },
+  async chunk(sport, lg, c){
+    if (NPB.on){ const r = await fetch(`/api/hist?sport=${sport}${lg ? '&league=' + encodeURIComponent(lg) : ''}&from=${c.from}&to=${c.to}`); const j = await r.json().catch(() => null);
+      if (!r.ok || !j || !Array.isArray(j.games)) throw new Error((j && j.error) || 'history unavailable'); return j.games; }
+    const path = sport === 'soccer' ? `soccer/${lg}` : SPORT[sport].site;
+    return npmCompact(await fetchJSON(`${ESPN_SITE}${path}/scoreboard?dates=${c.from}-${c.to}&limit=1000`, { ttl:c.closed ? 864e5 : 3*3600e3, retries:1 }));
+  },
+  ensure(sport, lg){
+    if (!this.supported(sport, lg)) return Promise.resolve(null);
+    const k = this.key(sport, lg), have = this.M[k];
+    if (have && Date.now() - (have.builtAt || have.at || 0) < 3*3600e3) return Promise.resolve(have.ok ? have : null);
+    if (this.P[k]) return this.P[k];
+    return (this.P[k] = (async () => {
+      const sk = 'np_h:' + k, saved = store.get(sk, null), cache = saved && saved.v === NPM_VERSION ? saved.c : {};
+      const list = this.chunks(sport), need = list.filter(c => { const s = cache[c.from + '-' + c.to]; return !s || (!s.closed && Date.now() - s.at > 3*3600e3); });
+      this.prog[k] = { done:list.length - need.length, total:list.length };
+      let fails = 0;
+      await pool(need, 3, async c => { try { const games = await this.chunk(sport, lg, c); cache[c.from + '-' + c.to] = { at:Date.now(), closed:c.closed, games }; } catch(e){ fails++; } this.prog[k].done++; });
+      const keepKeys = new Set(list.map(c => c.from + '-' + c.to)); for (const kk of Object.keys(cache)) if (!keepKeys.has(kk)) delete cache[kk];
+      const games = Object.values(cache).flatMap(x => x.games || []);
+      try { const s = JSON.stringify({ v:NPM_VERSION, c:cache }); if (s.length < 2.6e6) store.set(sk, { v:NPM_VERSION, c:cache }); } catch(e){}
+      let M; try { M = npmBuild(games, sport); } catch(e){ M = { ok:false, why:'model error: ' + e.message }; }
+      M.at = Date.now(); M.fails = fails; M.chunks = list.length; M.league = lg || null; this.M[k] = M;
+      if (M.ok) for (const f of this.listeners) try { f(sport, lg, M); } catch(e){}
+      return M.ok ? M : null;
+    })().finally(() => { delete this.P[k]; }));
+  },
+  predict(g){ const M = this.get(g.sport, g.league); return M ? npmPredict(M, g) : null; },
+};
+/* key absences (from ESPN's injury report). NP never invents an injury's size in points: a major absence lowers how
+   much weight NP's own model gets (the market prices injuries; NP's ratings don't) and shows up as a risk. */
+function npKeyOuts(D, g){
+  const out = { major:[], count:{ home:0, away:0 } }, recent = x => !x.date || (Date.now() - new Date(x.date)) < 28*864e5;
+  for (const side of ['home', 'away']) for (const x of (D && D.injuries && D.injuries[side]) || []){
+    if (!/^(out|doubtful|suspended)/i.test(x.status || '')) continue; out.count[side]++;
+    const pos = String(x.pos || '').toUpperCase(), major = (g.sport === 'nfl' && pos === 'QB') || (g.sport === 'nhl' && pos === 'G') || (g.sport === 'mlb' && pos === 'SP');
+    if (major && recent(x)) out.major.push({ side, pos, name:x.name, status:x.status }); }
+  return out;
+}
+function npmQuality(P, D, g){
+  const M = NPM.get(g.sport, g.league); let q = 1;
+  q *= Math.min(1, 0.35 + Math.min(P.facts.home.seasonN, P.facts.away.seasonN)/8);
+  const ko = npKeyOuts(D, g); if (ko.major.length) q *= 0.55; else if (Math.max(ko.count.home, ko.count.away) >= 3) q *= 0.85;
+  if (M && M.skill != null && M.skill <= 0) q *= 0.5;
+  P.totOk = !!(M && M.backtest && M.backtest.totals && M.backtest.totals.mae < M.backtest.totals.maeNaive);
+  return Math.max(0.15, Math.min(1, q));
+}
+
 const RESEARCH_NOTES = {
   '401872964': { at:'Oct 1, 2026, 2:45 PM ET', items:[
     'Line movement at several books: Pittsburgh opened -3 and is now -2.5; the total opened 37.5 and has risen to 38.5 (TheSpread, updated 2:09 PM ET).',
@@ -3315,7 +3758,8 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   let soccer = null;
   if (sport === 'soccer'){ onStep('Researching form, corners, cards and the table…'); try { soccer = await soccerContext(g, D); } catch(e){ dq.push({ lvl:'warn', t:'Recent soccer match stats could not be loaded.' }); } }
   onStep('Running the models and checking context…');
-  const gm = gameModel(g, D, book, { weather, soccer });
+  let npf = null; try { NPM.ensure(sport, g.league); npf = NPM.predict(g); if (npf) npf.q = npmQuality(npf, D, g); } catch(e){ npf = null; }
+  const gm = gameModel(g, D, book, { weather, soccer, npf });
   const R = { g, D, gm, book, idx, logs, pm:new Map(), tdInfo:{}, soccer, lineup, weather, sources, at:Date.now() };
   R.cands = buildCandidates(R); R.cands.forEach(c => c.gid = g.id);
   if (!live) applyCalibration(R);
@@ -3329,6 +3773,7 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   if (live) applyLive(R); else if (g.state === 'pre' && isPlayable(g)) try { savePreSnap(R); } catch(e){}
   if (isFinal(g)) try { settleGame(R); } catch(e){}
   R.wp = winProbs(R); R.wpMkt = marketWinProbs(R); R.model = MODEL_VERSION;
+  try { R.np = npPrediction(R); } catch(e){ R.np = null; console.warn('np prediction', e); }
   // recommendation protection: compare with the last run
   const prev = PREV[g.id]; R.changes = [];
   if (prev){ for (const c of prev.best){ const now = R.cands.find(x => x.id === c.id); if (!now) R.changes.push(`${c.label} is no longer offered, so it was removed.`); else if (now.priced && c.priced && Math.abs(now.dec - c.dec) > 0.05) R.changes.push(`${c.label} moved from ${decToAm(c.dec)} to ${decToAm(now.dec)}.`); }
@@ -3780,7 +4225,8 @@ function gameRow(g, opts = {}){
   return `<div class="gr slab${isLive(g) ? ' is-live' : ''}" style="${tcVars(g)}"><div class="gr-l"><div class="gr-tm">${opts.sport ? `<span class="spk sp-${g.sport}">${esc(SPORT[g.sport].label)}</span>` : ''}${teamLogo(g.away,'sm')}<span>${esc(g.away.short)}</span>${sc('away')}<span class="muted">@</span>${teamLogo(g.home,'sm')}<span>${esc(g.home.short)}</span>${sc('home')}</div>
     <div class="gr-m">${statusCell(g)}${g.sport==='soccer' && g.leagueName ? ` · ${esc(g.leagueName)}` : ''}${!showScore && isPlayable(g) && g.status !== 'suspended' && (spTxt || tot != null) ? ` · <span class="mono">${esc([spTxt, tot != null ? 'O/U ' + tot : ''].filter(Boolean).join(' · '))}</span>` : ''}${g.verified ? ` · <span class="note" title="Status and score cross-checked with ${esc(g.verified)}">✓ ${esc(g.verified)}</span>` : ''}</div>
     ${R?.wp && !showScore && isPlayable(g) ? wpBar(R, { sm:true, label:false }) : ''}
-    ${pick ? `<div class="gr-pick"><span class="lbl">${esc(topTag(pick, 'Top pick'))}</span> ${esc(pick.label)} <span class="note">${pct(pick.p,0)} · ${esc(priceStr(pick))}</span></div>` : ''}</div>
+    ${R?.np && !showScore && isPlayable(g) ? npLine(R) : ''}
+    ${pick && !R?.np ? `<div class="gr-pick"><span class="lbl">${esc(topTag(pick, 'Top pick'))}</span> ${esc(pick.label)} <span class="note">${pct(pick.p,0)} · ${esc(priceStr(pick))}</span></div>` : ''}</div>
     ${btn}</div>`;
 }
 function gamesBySport(list, ctx, opts = {}){
@@ -3813,11 +4259,11 @@ function renderToday(){
     : `<div class="panel note">${res.length ? (nF ? 'Nothing matches the advanced filters.' : 'No pick clears our checks for today\'s remaining games. We don\'t force picks.') : '<span class="loading"><span class="spin"></span>Researching today\'s games…</span>'}</div>`;
   paint(`${dayBar("Today's board", `${fmtDayLong(Date.now())} · New York time`, [[v.games.length, 'games'], [v.live.length, 'live', v.live.length ? 'on' : ''], [v.finals.length, 'final'], [v.off.length || null, 'not played']])}
     <div class="home">
-    <section class="sec col-main" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top"><span class="kick">Pregame</span>Top bets today</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.open.filter(g=>CACHE[g.id]).length} of ${v.open.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Games not yet started · ranked on 8 checks'}</span></div>
+    <div class="col-main">${npBoard(res)}<section class="sec" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top"><span class="kick">Pregame</span>Top bets today</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.open.filter(g=>CACHE[g.id]).length} of ${v.open.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Games not yet started · ranked on 8 checks'}</span></div>
       ${betsBody}${liveStrip()}
       <a class="slatecta" href="#playbook"><span class="bi">📋</span><span><b>Open today's Playbook</b><small>Every game in one place: the likeliest TD scorers, the top props in every category and one-tap builds for your Builder.</small></span><i>›</i></a>
       <div class="panel small linkcard">Same-game and multi-game parlays live on the <a href="#parlays">Parlays</a> tab.</div>
-    </section>
+    </section></div>
     <aside class="col-side">
       <section class="sec" aria-labelledby="h-games"><div class="sechead"><h2 id="h-games"><span class="kick">Schedule</span>Today's games</h2><span class="note">By sport, by start time (ET)</span></div>${gamesBySport(v.games, 'home') || empty}</section>
     </aside></div>`);
@@ -3999,7 +4445,7 @@ function gameOverview(R, ctx){
   const outs = s => (R.D.injuries?.[s] || []).filter(x => OUT_STATUSES.test(x.status) || /doubtful/i.test(x.status)).slice(0, 4);
   const injLine = s => outs(s).length ? `<div class="ov-inj">${teamLogo(g[s],'sm')}${outs(s).map(x => `<span class="chip-s"><b>${esc(x.pos || '')}</b> ${esc(x.name)} <i>${esc(x.status)}</i></span>`).join('')}</div>` : '';
   const proj = gm?.ttMean && gm.inputs?.market ? `<div class="ov-score" style="${tcVars(g)}"><div class="os a">${teamLogo(g.away,'')}<b>${fmt1(gm.ttMean.away)}</b><span>${esc(g.away.short)}</span></div><div class="os-m"><small>Projected score</small><span>${g.sport === 'soccer' ? 'expected goals' : 'from the posted lines'}</span></div><div class="os h"><b>${fmt1(gm.ttMean.home)}</b>${teamLogo(g.home,'')}<span>${esc(g.home.short)}</span></div></div>` : '';
-  return `<div class="ov">
+  return `<div class="ov">${R.np ? `<section class="sec npsec"><div class="sechead"><h2><span class="kick">What NP thinks happens</span>The call</h2></div>${npCard(R)}</section>` : ''}
     <div class="ov-grid"><div class="ov-main">${proj}${lineCompare(R)}<div class="outlook">${esc(R.outlook || '')}</div></div>
       <div class="ov-side">${taleOfTape(R, { max:10 })}</div></div>
     ${top.length ? `<section class="sec"><div class="sechead"><h2><span class="kick">Our picks</span>Best bets in this game</h2><a class="linkbtn" data-tabjump="g-${g.id}:bets" href="javascript:void 0">All ${R.ranked.length} ranked bets</a></div><div class="bets two">${top.map((c, i) => betCard(c, R, ctx + 'ov', { top:i === 0, tag:i === 0 ? topTag(c) : i === 1 ? 'Next best' : 'Also good' })).join('')}</div></section>` : '<div class="panel note">No lines are posted for this game yet. Picks fill in as books post markets.</div>'}
@@ -4438,6 +4884,7 @@ async function fillBackendPanels(){
 function renderMethod(){
   paint(`<a href="#" class="back">← Today</a>${dayBar('Methodology', 'How NP turns data into picks', [])}
     ${tabsHtml('method', [
+    ['lab','Model lab', npLab()],
     ['how','How it works', `<div class="stack small method">
       <p><b>Pipeline.</b> Ingest (ESPN + league feeds) → validate (bad records rejected and logged) → features (market lines, last-5 form, ESPN predictor, injuries, weather, player logs) → probability (score and stat distributions) → calibration (adjusted by this device's graded results) → qualification (8 checks) → edge (only with real prices) → evaluation (Brier, log loss, calibration, ROI on priced picks).</p>
       <p><b>Game model.</b> The point-margin and total distributions are fit to the de-vigged market lines when they exist (power de-vig). Recent form and the ESPN predictor each get 12% weight. With no market line, the weights are renormalised over form and predictor. With none of the three, the game shows <i>insufficient data</i> instead of a probability. Soccer uses a Dixon-Coles goals model (home / draw / away, summing to 100%).</p>
@@ -5172,6 +5619,7 @@ function openSlip(){
   openDrawer(`<div class="slip"><div class="slip-h"><h2>Builder</h2><span class="note">${plural(l.length, 'leg')} · ${plural(new Set(l.map(x => x.gid)).size, 'game')}</span></div>
     <div class="slip-hero"><div class="sh-ring">${donut(s.joint, '')}</div><div><b>${pct(s.joint, s.joint < 0.05 ? 1 : 0)} chance every leg hits</b><span>Fair odds <em>${decToAm(1/Math.max(s.joint, 1e-4))}</em>${s.priced ? ` · est. book price <em>${decToAm(s.estDec)}</em>` : ''}</span>
       ${s.boost && Math.abs(s.boost - 1) > 0.03 ? `<span class="${s.boost > 1 ? 'good' : 'bad'}">${s.boost > 1 ? `▲ Legs help each other: ${fmt1(s.boost)}× as likely as unrelated bets` : `▼ Legs work against each other: ${fmt1(1/s.boost)}× less likely than unrelated bets`}</span>` : ''}</div></div>
+    ${npTicketTake(l, s)}
     <label class="slip-odds"><span>Your book's price for this parlay</span><input id="slipOdds" inputmode="text" placeholder="e.g. +450" autocomplete="off"><em id="slipEdge">Type the odds to see if it's worth it</em></label>
     <div class="slip-legs">${l.map((x, i) => { const g = gameOf(x.gid) || CACHE[x.gid]?.g, R = CACHE[x.gid], side = R?.idx?.[x.playerId]?.side || x.team, tc = g && side && g[side] ? teamColor(g[side]) : '#4C6BFF';
       const im = l.length >= 2 ? impact[i] : null;
@@ -5488,6 +5936,8 @@ document.addEventListener('click', e => {
   const pl = e.target.closest('[data-player]'); if (pl){ location.hash = plHref(pl.dataset.game, pl.dataset.player); return; }
   const tj = e.target.closest('[data-tabjump]'); if (tj){ const [key, tab] = tj.dataset.tabjump.split(':'); const b = document.querySelector(`[data-tabs="${key}"] [data-tab="${tab}"]`); if (b){ b.click(); b.scrollIntoView({ block:'nearest' }); } return; }
   const lt = e.target.closest('[data-lgtab]'); if (lt){ state.soccerTab = lt.dataset.lgtab; store.set('np_soctab', state.soccerTab); headerSync(); route(true); reload(false); if (isWeekish() || location.hash === '#players') loadWeek(false); return; }
+  const nl = e.target.closest('[data-npload]'); if (nl){ const [sp, lg] = nl.dataset.npload.split('|'); NPM.ensure(sp, lg || null).finally(() => { if (location.hash === '#method') renderMethod(); });
+    const tick = setInterval(() => { if (location.hash !== '#method' || !NPM.P[NPM.key(sp, lg || null)]){ clearInterval(tick); return; } const st = state.tabs?.method; renderMethod(); }, 1500); renderMethod(); return; }
   const bd = e.target.closest('[data-build]'); if (bd){ const legs = BUILDS[bd.dataset.build] || []; slipAddMany(legs); openSlip(); return; }
   const pg2 = e.target.closest('[data-pbgame]'); if (pg2){ state.pb.game = pg2.dataset.pbgame; store.set('np_pb', state.pb); renderPlaybook(); return; }
   const pv = e.target.closest('[data-pbview]'); if (pv){ state.pb.view = pv.dataset.pbview; store.set('np_pb', state.pb); renderPlaybook(); return; }
@@ -5509,6 +5959,216 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && SC
 CONFIG.sgpPerTier = store.get('np_sgpN', CONFIG.sgpPerTier);
 setInterval(maintenance, 30*60000); setTimeout(maintenance, 20000);
 headerSync(); NPB.init().finally(() => { route(); reload(false); });
+
+/* ============================ NP PREDICTIONS · the canonical prediction object and the cards that explain it ============================
+   NP's read (who wins, by how much, why) comes from NP's own models: the multi-factor history model plus ESPN's
+   predictor when it exists. The market is kept separate: it is only used to judge whether the PRICE is worth it. */
+const NP_PRED_VERSION = 'np-pred-1.0';
+const ESPN_PRED_NAME = { nfl:'ESPN FPI', nba:'ESPN BPI' };
+const NP_TAG = { hfa:'home field', rating:'the stronger team', form:'in better form', rest:'more rest', b2b:'opponent on a back-to-back', travel:'opponent traveling',
+  load:'lighter schedule', h2h:'owns the recent meetings', venue:'venue splits', slot:'time-slot edge', trip:'opponent deep into a road trip' };
+const NP_MOVE = store.get('np_mv', {});
+const npRec = r => `${r.w}-${r.l}${r.d ? '-' + r.d : ''}`;
+const npSgn = (v, d = 1) => v == null ? '' : `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(d)}`;
+const npScoreFmt = (sport, v) => sport === 'nfl' || sport === 'nba' ? String(Math.round(v)) : v.toFixed(1);
+function npFactorText(c, R, P, toward){
+  const g = R.g, F = P.facts, H = F.home, A = F.away, nm = s => g[s].short, u = P.unit, f1 = v => fmt1(Math.abs(v)), unitW = v => `${f1(v)} ${u}`;
+  const days = h => h == null ? 'no recent game' : h >= 24*NPM_SPORT[g.sport].restCap ? 'full rest' : `${Math.max(0, Math.floor(h/24))} day${Math.floor(h/24) === 1 ? '' : 's'}`;
+  switch (c.key){
+    case 'hfa': return `Home field is worth about ${unitW(c.pts)} to ${nm('home')} in this league.`;
+    case 'rating': { const b = c.x >= 0 ? 'home' : 'away', w = sideOpp(b); return `${nm(b)} grade out stronger on NP's opponent-adjusted ratings: #${F[b].rank} of ${F[b].of}, against #${F[w].rank} for ${nm(w)}.`; }
+    case 'form': { const one = s => { const t = F[s]; if (!t.last.length) return ''; return `${nm(s)} are ${npRec(t.L5)} in their last ${t.last.length} (${npSgn(t.L5m)} a game) and ${t.resL5 >= 0 ? 'beat' : 'fell short of'} what NP expected against that schedule by ${unitW(t.resL5 || 0)} a game`; };
+      const first = toward === 'away' ? 'away' : 'home'; return [one(first), one(sideOpp(first))].filter(Boolean).join('. ') + '.'; }
+    case 'rest': { const more = (H.restH ?? 1e9) >= (A.restH ?? 1e9) ? 'home' : 'away', less = sideOpp(more); return `${nm(more)} come in with ${days(F[more].restH)} of rest; ${nm(less)} have ${days(F[less].restH)}.`; }
+    case 'b2b': { const t = c.x > 0 ? 'away' : 'home'; return `${nm(t)} are on the second night of a back-to-back.`; }
+    case 'travel': { const t = Math.abs(A.tzShift || 0) >= Math.abs(H.tzShift || 0) ? 'away' : 'home', z = Math.abs(F[t].tzShift || 0); return `${nm(t)} cross ${z} time zone${z === 1 ? '' : 's'} from their last game${F[sideOpp(t)].tzShift ? `; ${nm(sideOpp(t))} cross ${Math.abs(F[sideOpp(t)].tzShift)}` : ''}.`; }
+    case 'load': return `${nm('away')} play game ${A.g7 + 1} in seven days; ${nm('home')} play game ${H.g7 + 1}.`;
+    case 'h2h': { const l = F.h2h; if (!l.length) return ''; const w = l.filter(r => r.pf > r.pa).length, ls = l.filter(r => r.pf < r.pa).length, m = l.reduce((s, r) => s + r.pf - r.pa, 0)/l.length;
+      return `${nm('home')} are ${w}-${ls}${l.length - w - ls ? '-' + (l.length - w - ls) : ''} in the last ${plural(l.length, 'meeting')} (${npSgn(m)} a game). Older meetings count for less because rosters change.`; }
+    case 'venue': return `${nm('home')} have run ${unitW(H.venue.v)} ${H.venue.v >= 0 ? 'better' : 'worse'} at home than their rating says (${H.venue.n} home games); ${nm('away')} ${unitW(A.venue.v)} ${A.venue.v >= 0 ? 'better' : 'worse'} on the road (${A.venue.n}).`;
+    case 'slot': return `In ${NPM_SLOT_NAME[F.slot] || F.slot} games, ${nm('home')} run ${npSgn(H.slotSplit.v)} and ${nm('away')} ${npSgn(A.slotSplit.v)} ${u} against expectations (${H.slotSplit.n} and ${A.slotSplit.n} games, shrunk for sample size).`;
+    case 'trip': return `${nm('away')} are on game ${A.tripGame} of a road trip.`;
+  }
+  return '';
+}
+function npPrediction(R){
+  const g = R.g, gm = R.gm || {}, P = gm.npf || null, soccer = g.sport === 'soccer', M = NPM.get(g.sport, g.league), info = NPM.info(g.sport, g.league);
+  const wpF = R.wp || winProbs(R), wpM = R.wpMkt || marketWinProbs(R), pr = R.D?.predictor;
+  const models = [];
+  if (P) models.push({ key:'np', label:'NP model', home:P.p.home, away:P.p.away, draw:P.p.draw });
+  if (!soccer && pr && pr.home > 0.02 && pr.home < 0.98) models.push({ key:'fpi', label:ESPN_PRED_NAME[g.sport] || 'ESPN predictor', home:pr.home, away:pr.away ?? 1 - pr.home });
+  if (wpM) models.push({ key:'mkt', label:'Market', home:wpM.home, away:wpM.away, draw:wpM.draw });
+  const own = models.filter(m => m.key !== 'mkt');
+  let read, source;
+  if (own.length){ const w = own.map(m => m.key === 'np' ? (own.length > 1 ? 0.75 : 1) : (own.length > 1 ? 0.25 : 1));
+    read = { home:own.reduce((s, m, i) => s + w[i]*m.home, 0), away:own.reduce((s, m, i) => s + w[i]*m.away, 0) }; if (soccer) read.draw = P.p.draw;
+    source = P ? (own.length > 1 ? 'NP model + ' + own[1].label : 'NP model') : own[0].label; }
+  else if (wpF){ read = { ...wpF }; source = 'market lines'; }
+  else return null;
+  const sides = soccer ? ['home', 'draw', 'away'] : ['home', 'away'], side = sides.reduce((a, b) => (read[b] ?? 0) > (read[a] ?? 0) ? b : a);
+  const prob = read[side], probFinal = wpF ? wpF[side] ?? prob : prob, other = side === 'draw' ? null : sideOpp(side);
+  const sc = P ? P.score : gm.ttMean ? { home:gm.ttMean.home, away:gm.ttMean.away } : null;
+  const margin = sc ? sc.home - sc.away : null;
+  const pickText = side === 'draw' ? 'Draw' : soccer ? `${g[side].short} win` : `${g[side].short}${margin != null && Math.abs(margin) >= 0.5 ? ` by ${g.sport === 'nfl' || g.sport === 'nba' ? Math.max(1, Math.round(Math.abs(margin))) : fmt1(Math.abs(margin))}` : ' (coin flip)'}`;
+  // factors: every contribution, signed toward the pick
+  const thr = (M?.sigma || 10)*0.025, factors = P ? P.contrib.filter(c => c.on && Math.abs(c.pts) >= thr).map(c => {
+    const toward = c.pts >= 0 ? 'home' : 'away', ptsFor = side === 'draw' ? 0 : side === 'home' ? c.pts : -c.pts;
+    return { key:c.key, label:c.label, pts:c.pts, ptsFor, toward, text:npFactorText(c, R, P, toward) }; }).filter(f => f.text).sort((a, b) => Math.abs(b.pts) - Math.abs(a.pts)) : [];
+  const forPick = factors.filter(f => f.ptsFor > 0 && f.key !== 'hfa'), against = factors.filter(f => f.ptsFor < 0);
+  // market + price check (the bet, not the prediction)
+  const gameC = (R.cands || []).filter(c => !c.playerId && c.priced && c.side === side && /^(ml|spread|dnb)$/.test(c.market));
+  const ml = gameC.find(c => c.market === 'ml'), bestWay = [...gameC].sort((a, b) => b.ev - a.ev)[0] || null;
+  const novig = wpM ? wpM[side] : null, edge = novig != null ? probFinal - novig : ml ? probFinal - ml.implied : null;
+  // agreement between independent models
+  const agrees = m => soccer ? sides.reduce((a, b) => (m[b] ?? 0) > (m[a] ?? 0) ? b : a) === side : (m[side] ?? 0) > 0.5;
+  const agreeN = models.filter(agrees).length;
+  // risks: what could break it
+  const risks = [], ko = npKeyOuts(R.D, g);
+  for (const m of ko.major) risks.push(`${g[m.side].short} ${m.pos} ${m.name} is listed ${String(m.status).toLowerCase()}. NP's ratings don't price injuries (the market does), so NP leans on the market more here.`);
+  for (const s of ['home', 'away']) if (ko.count[s] >= 3 && !ko.major.some(m => m.side === s)) risks.push(`${g[s].short} have ${ko.count[s]} players out or doubtful.`);
+  if (P) for (const s of ['home', 'away']){ const t = P.facts[s]; if (t.seasonN < 4) risks.push(`Early season: ${g[s].short} have played ${t.seasonN} game${t.seasonN === 1 ? '' : 's'}, so their rating still leans on last season.`); }
+  if (wpM && side !== 'draw' && !agrees(wpM)) risks.push(`The market sees it the other way: it makes ${g[other].short} the ${pct(wpM[other], 0)} favorite.`);
+  if (P && side !== 'draw'){ const t = P.facts[side]; if (t.sd && t.sd > 1.2*P.sigma) risks.push(`${g[side].short} have been volatile: their last 10 swing well beyond what the ratings expect.`);
+    if (t.trend != null && t.trend < -thr*8) risks.push(`${g[side].short} are trending down: ${fmt1(-t.trend)} ${P.unit} a game worse over the last 5 than their season norm.`); }
+  if (gm.wxAdj && Math.abs(gm.wxAdj) >= 1) risks.push(`Weather: wind or rain is expected to take about ${fmt1(-gm.wxAdj)} ${P?.unit || 'points'} off the total.`);
+  if (prob < 0.55 && !soccer) risks.push('Close to a coin flip: small edges can disappear with one injury update.');
+  // data quality: how much the inputs can be trusted (not how likely it is to win)
+  const dqNotes = []; let dq = 1;
+  if (P){ dqNotes.push(`NP model: ${M.n.toLocaleString()} completed games, ${plural(Math.min(P.facts.home.seasonN, P.facts.away.seasonN), 'game')} this season for the newer side`); dq *= P.q ?? 1; }
+  else { dq *= 0.6; dqNotes.push(info && !info.ok ? `NP model not ready for this league: ${info.why}` : NPM.P[NPM.key(g.sport, g.league)] ? 'NP model is loading this league\'s history' : 'NP model has no history for these teams yet'); }
+  if (models.some(m => m.key === 'fpi')) dqNotes.push(`${ESPN_PRED_NAME[g.sport] || 'ESPN predictor'} included`);
+  if (wpM) dqNotes.push(`Real market prices available. The betting number blends NP's read with the market (market ${Math.round((gm.weights?.market || 0)*100)}%)`); else { dq *= 0.85; dqNotes.push('No market prices posted yet'); }
+  if (M && M.skill != null) dqNotes.push(M.skill > 0 ? `Backtest: beats the home-team baseline (log loss ${fmt3(M.backtest.full.logloss)} vs ${fmt3(M.backtest.home.logloss)})` : 'Backtest: not yet beating the simple baseline in this league');
+  dq = Math.max(0.1, Math.min(1, dq));
+  // prediction score: a high-quality bet, not just a high probability
+  const conviction = Math.min(1, Math.max(0, (prob - (soccer ? 0.36 : 0.5))/0.25)), agreement = models.length >= 2 ? agreeN/models.length : 0.5;
+  const support = Math.min(1, forPick.length/3 - against.length*0.15), value = bestWay ? Math.min(1, Math.max(0, (bestWay.ev + 0.04)/0.1)) : 0.35;
+  const mktAgainst = !!(wpM && side !== 'draw' && !agrees(wpM));
+  const score100 = Math.max(0, Math.round(100*(0.28*conviction + 0.2*agreement + 0.17*Math.max(0, support) + 0.2*value + 0.15*dq)) - (mktAgainst ? 12 : 0));
+  const grade = score100 >= 72 ? 'A' : score100 >= 58 ? 'B' : score100 >= 45 ? 'C' : 'D';
+  // recommendation
+  let rec;
+  if (prob < (soccer ? 0.42 : 0.54)) rec = { code:'pass', label:'Pass', text:'Too close to call. NP doesn\'t force a side.' };
+  else if (!bestWay) rec = { code:'noprice', label:'No price yet', text:`No price is posted yet. NP's fair price: ${fairStr(probFinal)}. Take it only at that or better.` };
+  else if (bestWay.ev >= 0.025 && wpM && side !== 'draw' && !agrees(wpM)) rec = { code:'lean', label:'Value vs the market', text:`NP and the market disagree here. NP's blended number gives ${bestWay.label} at ${decToAm(bestWay.dec)} a ${fmt1(bestWay.ev*100)}% edge, but going against the market is where models are most often wrong. Small stake only.` };
+  else if (bestWay.ev >= 0.025 && dq >= 0.5 && grade <= 'B') rec = { code:'bet', label:'Bet it', text:`${bestWay.label} at ${decToAm(bestWay.dec)} (${bestWay.book || 'best book'}): NP has ${pct(bestWay.p, 0)}, the price needs ${pct(1/bestWay.dec, 0)}.` };
+  else if (bestWay.ev >= 0) rec = { code:'lean', label:'Lean', text:`Small edge on ${bestWay.label} at ${decToAm(bestWay.dec)}. Worth a small stake at most.` };
+  else rec = { code:'price', label:'Right side, wrong price', text:`NP likes ${side === 'draw' ? 'the draw' : g[side].short}, but ${ml ? `${decToAm(ml.dec)} needs ${pct(1/ml.dec, 0)}` : 'the posted prices need more'}; NP has ${pct(probFinal, 0)}. Fair: ${fairStr(probFinal)}.` };
+  // movement since NP first saw this game (on this device)
+  const mv = P ? NP_MOVE[g.id] : null; let move = null;
+  if (mv && mv.side === side && mv.v === P.version && Math.abs(prob - mv.p) >= 0.02) move = { d:prob - mv.p, since:mv.t };
+  if (P && (!mv || mv.side !== side || mv.v !== P.version)){ NP_MOVE[g.id] = { p:prob, side, t:Date.now(), v:P.version }; const ks = Object.keys(NP_MOVE); if (ks.length > 300) delete NP_MOVE[ks[0]]; store.set('np_mv', NP_MOVE); }
+  const head = side === 'draw' ? 'Evenly matched on NP\'s numbers.' : forPick.length ? forPick.slice(0, 3).map(f => f.key === 'venue' ? (f.toward === 'home' ? 'strong at home' : 'good on the road') : NP_TAG[f.key]).join(', ').replace(/^./, c => c.toUpperCase()) + '.' : 'Edge comes mostly from home field and small factors.';
+  return { version:NP_PRED_VERSION, model:P ? P.version : null, gid:g.id, sport:g.sport, league:g.league || null, start:g.date, game:matchup(g), status:g.status,
+    pick:{ side, team:side === 'draw' ? 'Draw' : g[side].name, short:side === 'draw' ? 'Draw' : g[side].short, text:pickText, prob, probFinal, fair:fairStr(probFinal) },
+    score:sc, total:sc ? sc.home + sc.away : null, margin, models, agree:{ n:agreeN, of:models.length }, source,
+    market:ml ? { dec:ml.dec, am:decToAm(ml.dec), book:ml.book, implied:ml.implied, novig } : null, bestWay, edge, ev:bestWay ? bestWay.ev : null,
+    weights:R.gm?.weights || null, rec, strength:agreement, dataQuality:dq, dqNotes, factors, forPick, against, risks, head, score100, grade, move, updated:Date.now() };
+}
+const fmt3 = v => v == null ? '' : v.toFixed(3);
+
+/* ---------- the NP Pick card ---------- */
+function npTug(R, n){
+  const N = R.np, g = R.g; if (!N.factors.length) return '';
+  const mx = Math.max(...N.factors.map(f => Math.abs(f.pts)), 0.01);
+  return `<div class="tug" aria-label="What pushes the prediction each way"><div class="tug-h"><span>${teamLogo(g.away, 'sm')}${esc(g.away.short)}</span><span>${esc(g.home.short)}${teamLogo(g.home, 'sm')}</span></div>
+    ${N.factors.slice(0, n).map(f => { const w = Math.abs(f.pts)/mx*50; return `<div class="tug-r" title="${esc(f.text)}"><span class="tug-l">${esc(f.label)}</span><span class="tug-b"><i class="${f.toward}" style="width:${w.toFixed(1)}%"></i></span><span class="tug-v">${npSgn(f.pts)}</span></div>`; }).join('')}
+    <div class="note">Each bar: how many ${esc(R.gm.npf?.unit || 'points')} that factor moves NP's projected margin, toward the side it points to.</div></div>`;
+}
+function npModels(N){
+  if (!N.models.length) return '';
+  return `<div class="npm-chips">${N.models.map(m => { const p = m[N.pick.side], ok = N.pick.side === 'draw' ? null : p > 0.5;
+    return `<span class="npm-c ${m.key}${ok === false ? ' no' : ''}"><i>${ok === false ? '✕' : '✓'}</i>${esc(m.label)} <b>${p != null ? pct(p, 0) : '–'}</b></span>`; }).join('')}</div>`;
+}
+function npPrice(N){
+  const b = N.bestWay;
+  if (!b) return `<div class="npp"><span>No price posted yet</span><b>Fair ${esc(N.pick.fair)}</b></div>`;
+  const w = N.weights, mix = w && w.market > 0 ? `Betting number ${pct(b.p, 0)}: NP's read (${Math.round((w.np + w.predictor)*100)}%) blended with the market (${Math.round(w.market*100)}%), because prices are sharp and NP's read hasn't been graded against closing lines yet.` : '';
+  return `<div class="npp ${b.ev >= 0 ? 'good' : 'bad'}"><span>${esc(b.label)} <em>${decToAm(b.dec)}</em> ${esc(b.book || '')} · needs ${pct(1/b.dec, 0)}</span><span class="npp-bn" title="${esc(mix)}">Betting number <em>${pct(b.p, 0)}</em> ⓘ</span><b>${b.ev >= 0 ? `Edge +${fmt1(b.ev*100)}%` : `${fmt1(b.ev*100)}%`}</b></div>`;
+}
+function npCard(R, opts = {}){
+  const N = R?.np, g = R?.g; if (!N) return '';
+  const full = opts.mode !== 'compact', side = N.pick.side, tc = side === 'draw' ? '#8FA2FF' : teamColor(g[side]);
+  const scoreLine = N.score ? `<div class="npc-score">${teamLogo(g.away, 'sm')}<b>${esc(g.away.abbr || g.away.short)} ${npScoreFmt(g.sport, N.score.away)}</b><i>–</i><b>${npScoreFmt(g.sport, N.score.home)} ${esc(g.home.abbr || g.home.short)}</b>${teamLogo(g.home, 'sm')}<small>${g.sport === 'soccer' ? 'expected goals' : 'projected score'}</small></div>` : '';
+  const why = (full ? N.forPick.slice(0, 4) : N.forPick.slice(0, 1)).map(f => `<li>${esc(f.text)}</li>`).join('');
+  const dqPct = Math.round(N.dataQuality*100);
+  return `<article class="npc g-${N.grade}${full ? '' : ' compact'}" style="${tcVars(g)};--pc:${tc}">
+    <header class="npc-h"><span class="npc-k">NP pick</span>${g.sport === 'soccer' ? leagueBadge(g.league, g.leagueName, 'sm') : `<span class="spk sp-${g.sport}">${esc(SPORT[g.sport].label)}</span>`}<a href="#g-${g.id}" class="npc-g">${esc(matchup(g))} · ${esc(whenTxt(g))}</a>
+      <span class="npc-rec r-${N.rec.code}">${esc(N.rec.label)}</span><span class="npc-grade" title="Prediction score ${N.score100}/100: conviction, model agreement, supporting factors, price and data quality">${N.grade}<small>${N.score100}</small></span></header>
+    <div class="npc-main">${side === 'draw' ? '<span class="npc-draw">=</span>' : teamLogo(g[side], 'lg')}<div class="npc-t"><b class="npc-pick">${esc(N.pick.text)}</b><span class="npc-sub">${esc(N.head)}</span></div>
+      <div class="npc-prob"><b>${pct(N.pick.prob, 0)}</b><small>NP's read${N.move ? ` <em class="${N.move.d > 0 ? 'up' : 'down'}">${N.move.d > 0 ? '▲' : '▼'}${Math.round(Math.abs(N.move.d)*100)}</em>` : ''}</small></div></div>
+    ${scoreLine}
+    ${why ? `<ul class="npc-why">${why}</ul>` : ''}
+    ${full ? npTug(R, 7) : ''}
+    ${npModels(N)}
+    ${npPrice(N)}
+    <p class="npc-verdict r-${N.rec.code}">${esc(N.rec.text)}</p>
+    ${full && (N.against.length || N.risks.length) ? `<details class="npc-risk"><summary>⚠ What could go wrong (${N.against.length + N.risks.length})</summary><ul>${N.against.map(f => `<li><b>${esc(f.label)}:</b> ${esc(f.text)}</li>`).join('')}${N.risks.map(r => `<li>${esc(r)}</li>`).join('')}</ul></details>` : !full && N.risks.length ? `<div class="npc-r1">⚠ ${esc(N.risks[0])}</div>` : ''}
+    <footer class="npc-f"><span class="dqm" title="${esc(N.dqNotes.join(' · '))}"><i style="width:${dqPct}%"></i></span><span>Data quality ${dqPct >= 75 ? 'high' : dqPct >= 50 ? 'fair' : 'thin'} · source: ${esc(N.source)}</span>${full ? '' : `<a href="#g-${g.id}">Full case ›</a>`}</footer>
+    ${full ? `<details class="npc-dq"><summary>What went into this</summary><ul>${N.dqNotes.map(t => `<li>${esc(t)}</li>`).join('')}</ul></details>` : ''}
+  </article>`;
+}
+function npLine(R){
+  const N = R?.np, g = R?.g; if (!N || !g || g.state !== 'pre') return '';
+  return `<div class="gr-np"><span class="npl-k">NP</span><b>${esc(N.pick.text)}</b><span>${pct(N.pick.prob, 0)}</span><span class="npl-g g-${N.grade}">${N.grade}</span><span class="npl-r r-${N.rec.code}">${esc(N.rec.label)}</span></div>`;
+}
+/* Today: the command center */
+function npBoard(res){
+  const list = res.filter(R => R?.np && R.g.state === 'pre' && isPlayable(R.g)).sort((a, b) => b.np.score100 - a.np.score100);
+  if (!list.length) return '';
+  const top = list.slice(0, 3), rest = list.slice(3);
+  return `<section class="sec npboard"><div class="sechead"><h2><span class="kick">The read</span>What NP likes today</h2><span class="note">Ranked by prediction score: conviction, model agreement, supporting factors, price and data quality</span></div>
+    <div class="npcs">${top.map(R => npCard(R, { mode:'compact' })).join('')}</div>
+    ${rest.length ? `<div class="nprest">${moreList('nprest', rest.map(R => `<a class="nprow" href="#g-${R.g.id}" style="${tcVars(R.g)}">${R.np.pick.side === 'draw' ? '<span class="npc-draw sm">=</span>' : teamLogo(R.g[R.np.pick.side], 'sm')}<b>${esc(R.np.pick.text)}</b><span class="note">${esc(matchup(R.g))} · ${esc(timeOnly(R.g.date))}</span><span>${pct(R.np.pick.prob, 0)}</span><span class="npl-g g-${R.np.grade}">${R.np.grade}</span><span class="npl-r r-${R.np.rec.code}">${esc(R.np.rec.label)}</span></a>`), 5)}</div>` : ''}
+  </section>`;
+}
+
+/* ---------- Model lab: the backtest, out of sample, for every league NP has loaded ---------- */
+function npLab(){
+  const keys = [['nfl', null, 'NFL'], ['nba', null, 'NBA'], ['nhl', null, 'NHL'], ['mlb', null, 'MLB'], ...SOCCER_TABS.filter(t => t[0] !== 'all' && t[0] !== 'intl').map(t => ['soccer', t[0], t[1]])];
+  const rows = keys.map(([sp, lg, name]) => { const k = NPM.key(sp, lg), M = NPM.M[k], busy = !!NPM.P[k], pr = NPM.prog[k];
+    if (!M) return `<div class="lab-c"><div class="lab-h"><b>${esc(name)}</b><button type="button" class="go ghost sm" data-npload="${sp}|${lg || ''}"${busy ? ' disabled' : ''}>${busy ? `Loading ${pr ? `${pr.done}/${pr.total}` : ''}…` : 'Run backtest'}</button></div><div class="note">Loads this league's completed games (cached on the server after the first time) and tests the model on games it never saw.</div></div>`;
+    if (!M.ok) return `<div class="lab-c"><div class="lab-h"><b>${esc(name)}</b></div><div class="note">Not enough data yet: ${esc(M.why || '')}.</div></div>`;
+    const b = M.backtest, f = b.full, base = b.base, h = b.home, t = b.totals;
+    const cell = (o, k, d = 3) => o && o[k] != null ? o[k].toFixed(d) : '–';
+    return `<div class="lab-c"><div class="lab-h"><b>${esc(name)}</b><span class="note">${M.n.toLocaleString()} games · tested on ${f ? f.n.toLocaleString() : 0} it hadn't seen</span></div>
+      <table class="lab-t"><thead><tr><th>Model</th><th>Accuracy</th><th>Brier</th><th>Log loss</th></tr></thead><tbody>
+        <tr class="me"><td>NP full model</td><td>${f ? pct(f.acc, 1) : '–'}</td><td>${cell(f, 'brier')}</td><td>${cell(f, 'logloss')}</td></tr>
+        <tr><td>Ratings + home field only</td><td>${base ? pct(base.acc, 1) : '–'}</td><td>${cell(base, 'brier')}</td><td>${cell(base, 'logloss')}</td></tr>
+        <tr><td>Always pick the home team</td><td>${h ? pct(h.acc, 1) : '–'}</td><td>${cell(h, 'brier')}</td><td>${cell(h, 'logloss')}</td></tr></tbody></table>
+      ${t ? `<div class="note">Totals: off by ${fmt1(t.mae)} on average, against ${fmt1(t.maeNaive)} for the league average. ${t.mae < t.maeNaive ? 'NP\'s total gets a say in the projection.' : 'Not better than the league average yet, so NP\'s total stays out of the projection.'}</div>` : ''}
+      <div class="lab-f">${b.factors.map(x => `<span class="lab-x v-${x.verdict.replace(/\s/g, '')}" title="${x.gain != null ? `Change in out-of-sample log loss when this factor is removed: ${(x.gain*1000).toFixed(2)} thousandths` : ''}">${esc(x.label)} <b>${x.verdict === 'hurts' ? 'switched off' : x.verdict}</b></span>`).join('')}</div>
+      ${b.calibration.length ? `<div class="lab-cal">${b.calibration.map(c => `<div class="lab-cb" title="${c.n} games"><span>${esc(c.bucket)}%</span><i style="height:${Math.round(c.actual*100)}%"></i><em style="bottom:${Math.round(c.predicted*100)}%"></em><small>${pct(c.actual, 0)}</small></div>`).join('')}</div><div class="note">Calibration: bars are how often NP's favorite actually won in each confidence band; the line is what NP predicted. Close together = honest probabilities.</div>` : ''}
+    </div>`; }).join('');
+  return `<div class="stack small method"><p><b>How NP tests itself.</b> Games are replayed in date order. Every prediction uses only games played before it, and the model is refitted once a month on everything earlier. Nothing from the future leaks in. Each factor is then removed one at a time: if a factor makes the out-of-sample predictions worse, it is switched off for that league.</p>
+    <p><b>What the market is for.</b> Sportsbook prices aren't in the free historical data, so NP's own read is tested against simple baselines here, and it gets a fixed share (about 28%) of the final number when a real price exists. Every pregame prediction is logged on the server and graded after the game, so the comparison with the market builds up over time.</p></div>
+    <div class="lab">${rows}</div>`;
+}
+/* when a league's model finishes loading, re-run the games already on screen so they pick it up */
+NPM.listeners.push((sport, lg) => {
+  const list = Object.values(CACHE).filter(R => R?.g && R.g.sport === sport && (sport !== 'soccer' || R.g.league === lg) && R.g.state === 'pre');
+  if (location.hash === '#method') renderMethod();
+  pool(list.slice(0, 40), 2, async R => { try { await analyzeGame(R.g, { force:true }); } catch(e){} }).then(() => { if (/^#g-/.test(location.hash)) route(true); else repaint(); if (isPB()) renderPlaybook(); });
+});
+
+/* ---------- Builder: NP's take on the ticket ---------- */
+function npTicketTake(l, s){
+  if (!l.length) return '';
+  const legQ = x => { const R = CACHE[x.gid], c = R?.cands?.find(c => c.id === x.id) || SLIP_REG[x.key] || x; const ev = c.priced && c.dec ? c.p*c.dec - 1 : null; return { x, p:x.p, ev, q:(c.quality ?? 0.5) + (ev != null ? ev : 0) + (x.p - 0.5)*0.4 }; };
+  const Q = l.map(legQ), strong = [...Q].sort((a, b) => b.q - a.q)[0], weak = [...Q].sort((a, b) => a.q - b.q)[0];
+  const liked = Q.filter(q => q.p >= 0.5 && (q.ev == null || q.ev > -0.03));
+  const notes = [];
+  // redundant legs: same player, overlapping outcomes (anytime TD + 2+ TDs, or the same stat twice)
+  for (let i = 0; i < l.length; i++) for (let j = i + 1; j < l.length; j++){ const a = l[i], b = l[j];
+    if (a.playerId && a.playerId === b.playerId && (isTDLeg(a) && isTDLeg(b) || a.stat === b.stat)) notes.push({ t:'warn', s:`${a.name || a.label} appears twice (${a.label} and ${b.label}). One implies the other, so the second leg adds risk without much extra payout.` }); }
+  for (const [a, b, r] of s.pairs || []) if (r >= 0.35) notes.push({ t:'info', s:`${a.label} and ${b.label} move together (r ≈ ${r.toFixed(2)}). Good for the combined chance, but books price same-game legs with that in mind.` });
+  if (s.boost < 0.9) notes.push({ t:'warn', s:`Some legs work against each other: the ticket is ${fmt1(1/s.boost)}× less likely than if they were unrelated.` });
+  const risk = s.joint >= 0.3 ? ['low', 'Low risk'] : s.joint >= 0.12 ? ['mid', 'Medium risk'] : s.joint >= 0.04 ? ['high', 'High risk'] : ['lotto', 'Lottery ticket'];
+  const verdict = l.length === 1 ? `One leg: NP gives it ${pct(l[0].p, 0)}.` : liked.length === l.length ? `NP likes all ${l.length} legs.` : liked.length ? `NP likes ${liked.length} of these ${l.length} legs. ${weak.x.label} (${pct(weak.p, 0)}${weak.ev != null ? `, ${weak.ev >= 0 ? '+' : ''}${fmt1(weak.ev*100)}% vs price` : ''}) is dragging the ticket down.` : `NP isn't behind any of these legs at their prices. Consider the suggestions below.`;
+  return `<div class="take"><div class="take-h"><span class="take-k">NP's take</span><span class="risk r-${risk[0]}">${risk[1]}</span></div><p class="take-v">${esc(verdict)}</p>
+    ${l.length > 1 ? `<div class="take-sw"><div class="tk good"><small>Strongest leg</small><b>${esc(strong.x.label)}</b><span>${pct(strong.p, 0)}</span></div><div class="tk bad"><small>Weakest leg</small><b>${esc(weak.x.label)}</b><span>${pct(weak.p, 0)}</span></div></div>` : ''}
+    ${notes.length ? `<ul class="take-n">${notes.slice(0, 4).map(n => `<li class="${n.t}">${esc(n.s)}</li>`).join('')}</ul>` : ''}</div>`;
+}
 
 </script>
 </body>

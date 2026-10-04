@@ -4,7 +4,7 @@
    and is shared by everyone who asks for the same thing.
    Services used: Pages Functions + the Cache API (always), and D1 as binding NP_DB (optional, for persistence).
    Secrets (optional): ODDS_API_KEY. Never sent to the browser. */
-const NP_VERSION = 'np-backend-1.0';
+const NP_VERSION = 'np-backend-1.1';
 /* shared with the browser build (extracted from index.html at build time) */
 const NP_TZ = 'America/New_York';
 const getLocalGameDate = t => new Intl.DateTimeFormat('en-CA', { timeZone:NP_TZ, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(t));
@@ -83,6 +83,42 @@ function evalMetrics(L = predLoad()){
   for (let b = 0; b < 10; b++){ const lo = b/10, hi = (b + 1)/10, s = picks.filter(x => x.p >= lo && (x.p < hi || (b === 9 && x.p <= 1))); if (s.length) out.buckets.push({ lo, hi, n:s.length, meanP:avg(s.map(x => x.p)), hit:avg(s.map(x => x.hit)) }); }
   const priced = picks.filter(x => x.dec > 1); out.nPriced = priced.length;
   out.roi = priced.length ? priced.reduce((t, x) => t + (x.hit ? x.dec - 1 : -1), 0)/priced.length : null;
+  return out;
+}
+function npmTzTable(){
+  if (npmTzTable.m) return npmTzTable.m; const m = {}, set = (o, s) => s.split('|').forEach(k => m[k.toLowerCase()] = o);
+  set(-5, 'CT|DE|DC|FL|GA|IN|KY|ME|MD|MA|MI|NH|NJ|NY|NC|OH|PA|RI|SC|VT|VA|WV|ON|QC|NS|NB|PE|NL|Connecticut|Delaware|District of Columbia|Florida|Georgia|Indiana|Kentucky|Maine|Maryland|Massachusetts|Michigan|New Hampshire|New Jersey|New York|North Carolina|Ohio|Pennsylvania|Rhode Island|South Carolina|Vermont|Virginia|West Virginia|Ontario|Quebec|Nova Scotia|New Brunswick|Canada:Toronto|Canada:Montreal|Canada:Ottawa');
+  set(-6, 'AL|AR|IL|IA|KS|LA|MN|MS|MO|NE|ND|OK|SD|TN|TX|WI|MB|SK|Alabama|Arkansas|Illinois|Iowa|Kansas|Louisiana|Minnesota|Mississippi|Missouri|Nebraska|North Dakota|Oklahoma|South Dakota|Tennessee|Texas|Wisconsin|Manitoba|Saskatchewan|Canada:Winnipeg|Mexico');
+  set(-7, 'AZ|CO|ID|MT|NM|UT|WY|AB|Arizona|Colorado|Idaho|Montana|New Mexico|Utah|Wyoming|Alberta|Canada:Calgary|Canada:Edmonton');
+  set(-8, 'CA|NV|OR|WA|BC|California|Nevada|Oregon|Washington|British Columbia|Canada:Vancouver');
+  set(-9, 'AK|Alaska'); set(-10, 'HI|Hawaii');
+  set(0, 'England|Scotland|Wales|Northern Ireland|Ireland|Republic of Ireland|Portugal|United Kingdom|UK|Iceland');
+  set(1, 'Spain|France|Germany|Italy|Netherlands|Belgium|Austria|Switzerland|Czechia|Czech Republic|Denmark|Sweden|Norway|Poland|Croatia|Serbia|Hungary|Slovakia|Slovenia|Bosnia and Herzegovina|Albania|Montenegro|North Macedonia|Kosovo|Luxembourg|Malta|Morocco|Nigeria|Algeria|Tunisia');
+  set(2, 'Greece|Ukraine|Romania|Bulgaria|Finland|Cyprus|Israel|Egypt|South Africa|Estonia|Latvia|Lithuania|Moldova');
+  set(3, 'Turkey|Türkiye|Russia|Saudi Arabia|Qatar'); set(-3, 'Brazil|Argentina|Uruguay');
+  set(-5, 'Colombia|Peru|Ecuador|Panama|Jamaica'); set(-4, 'Venezuela|Bolivia|Chile|Paraguay|Puerto Rico|Dominican Republic'); set(-6, 'Costa Rica|Honduras|El Salvador|Guatemala');
+  set(9, 'Japan|South Korea|Korea Republic'); set(8, 'China|Australia:Perth'); set(10, 'Australia');
+  return (npmTzTable.m = m);
+}
+function npmTz(ad){
+  if (!ad) return null; const T = npmTzTable(), st = String(ad.state || '').trim(), co = String(ad.country || '').trim();
+  if (st && T[st.toLowerCase()] != null && (!co || /^(usa|united states|us|canada)$/i.test(co) || st.length === 2)) return T[st.toLowerCase()];
+  if (/canada/i.test(co) && ad.city && T['canada:' + String(ad.city).toLowerCase()] != null) return T['canada:' + String(ad.city).toLowerCase()];
+  if (co && T[co.toLowerCase()] != null) return T[co.toLowerCase()];
+  if (st && T[st.toLowerCase()] != null) return T[st.toLowerCase()];
+  return null;
+}
+function npmCompact(j){
+  const out = [];
+  for (const ev of (j && j.events) || []){ const c = ev.competitions && ev.competitions[0]; if (!c) continue;
+    const st = ((ev.status || c.status) || {}).type || {}; if (!(st.completed || st.state === 'post')) continue;
+    if (/postpon|cancel|suspend|forfeit|abandon/i.test(st.name || '')) continue;
+    const ty = ev.season && ev.season.type; if (ty === 1) continue;     // preseason
+    const H = (c.competitors || []).find(x => x.homeAway === 'home'), A = (c.competitors || []).find(x => x.homeAway === 'away'); if (!H || !A) continue;
+    const sc = x => { const v = x.score && typeof x.score === 'object' ? x.score.value : x.score; return v === '' || v == null ? NaN : +v; };
+    const hs = sc(H), as = sc(A), t = Date.parse(ev.date); if (!isFinite(hs) || !isFinite(as) || !isFinite(t)) continue;
+    out.push({ id:String(ev.id), t, ty:ty || 2, h:String((H.team && H.team.id) || H.id), a:String((A.team && A.team.id) || A.id), ha:(H.team && H.team.abbreviation) || '', aa:(A.team && A.team.abbreviation) || '', hs, as, n:c.neutralSite ? 1 : 0, tz:npmTz(c.venue && c.venue.address) });
+  }
   return out;
 }
 
@@ -236,7 +272,7 @@ function parseEvents(j, sport, lg, lgName){
     out.push({ id:ev.id, sport, league:lg || null, leagueName:lgName || j.leagues?.[0]?.name || '', leagueLogo:/^https:\/\/a\.espncdn\.com\//.test(logo) ? logo : null, date:ev.date, name:ev.name, short:ev.shortName,
       state:st.type?.state, status:normalizeGameStatus(st.type?.name, st.type?.state), statusName:st.type?.name || '', statusText:st.type?.shortDetail || '', clock:st.displayClock, period:st.period,
       venue:c.venue ? { name:c.venue.fullName, city:c.venue.address?.city, state:c.venue.address?.state, country:c.venue.address?.country, indoor:!!c.venue.indoor } : null,
-      broadcast:(c.broadcasts || []).flatMap(b => b.names || []).join(', '), home, away, espnOdds:parseEspnOdds(c.odds?.[0], home, away) }); }
+      neutral:!!c.neutralSite, broadcast:(c.broadcasts || []).flatMap(b => b.names || []).join(', '), home, away, espnOdds:parseEspnOdds(c.odds?.[0], home, away) }); }
   return out;
 }
 const normN = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[.'’]/g, '').replace(/\s+/g, ' ').trim();
@@ -278,6 +314,21 @@ async function slate(env, ctx, sport, league, days){
       if (!body.games.length && prev?.games?.some(g => g.status !== 'final' && g.localDate >= getLocalGameDate(Date.now()))) return 'empty slate while games were scheduled';
       return null; },
     persist:30*60e3, after:body => storeGames(env, body.games) });
+}
+/* ---------------- history for the NP model: one small date range per request, compacted, kept forever once final ----------------
+   The browser asks for fixed chunks (the same boundaries for everyone), so each chunk is fetched from ESPN once and then served
+   from D1. Nothing runs unless someone is using NP. */
+async function hist(env, ctx, q){
+  const sport = String(q.get('sport') || ''), lg = sport === 'soccer' ? String(q.get('league') || '') : null, from = String(q.get('from') || ''), to = String(q.get('to') || '');
+  if (sport !== 'soccer' && !SPORT_SITE[sport]) throw Object.assign(new Error('unknown sport'), { status:400 });
+  if (sport === 'soccer' && !/^[a-z0-9._-]{2,24}$/.test(lg)) throw Object.assign(new Error('bad league'), { status:400 });
+  if (!/^\d{8}$/.test(from) || !/^\d{8}$/.test(to) || to < from) throw Object.assign(new Error('bad dates'), { status:400 });
+  const d = s => Date.UTC(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8)); if ((d(to) - d(from))/864e5 > 16) throw Object.assign(new Error('range too long'), { status:400 });
+  if (d(from) > Date.now() + 864e5 || d(from) < Date.now() - 900*864e5) throw Object.assign(new Error('range out of bounds'), { status:400 });
+  const closed = d(to) < Date.now() - 2*864e5, ttl = closed ? 3650*864e5 : 3*3600e3;
+  const path = sport === 'soccer' ? `soccer/${lg}` : SPORT_SITE[sport], m = ruleFor(`${SITE}${path}/scoreboard?dates=${from}-${to}&limit=1000`);
+  return getData(env, ctx, `hist:${sport}:${lg || ''}:${from}-${to}`, 'hist', { sport, league:lg, date:from, source:'ESPN' }, () => ttl,
+    async () => { const r = await upstream(env, m.rule, m.url); return { body:{ games:npmCompact(r.body), from, to, closed } }; }, { persist:ttl });
 }
 /* ---------------- persistence: games, teams, predictions (D1) ---------------- */
 const SCHEMA = [
@@ -349,6 +400,7 @@ export async function onRequest(ctx){
         { validate:b => validate(m.rule, b), persist:m.rule.persist, persistIf:m.rule.persistFinal ? (b => summaryTtl(b) >= 864e5) : null });
       return json(r.body, 200, { 'x-np-cache':r.cache, 'x-np-fetched-at':String(r.at), ...(r.cache === 'STALE' ? { 'x-np-stale':'1' } : {}), ...(r.remaining != null ? { 'x-requests-remaining':String(r.remaining) } : {}) });
     }
+    if (req.method === 'GET' && path === 'hist'){ const r = await hist(env, ctx, u.searchParams); return json(r.body, 200, { 'x-np-cache':r.cache, 'cache-control':r.body.closed ? 'public, max-age=86400' : 'no-store' }); }
     if (req.method === 'POST' && path === 'predictions') return json(await savePrediction(env, req));
     if (req.method === 'GET' && path === 'metrics') return json(await metrics(env));
     return json({ error:'not found' }, 404);
