@@ -993,13 +993,54 @@ details.acc>summary::-webkit-details-marker{display:none}
 .chart{width:100%;height:auto}
 .wb-pts li{display:block;padding:10px 14px;border-left:3px solid var(--sun)}
 .wb-pts li>b:first-child{display:block;margin-bottom:3px;font-size:12.5px}
+/* ===================== v11: slate, quick builds, bet slip ===================== */
+.dchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 4px}
+.dchips::-webkit-scrollbar{display:none}
+.dchip{flex:0 0 auto;display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:8px 14px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--panel);color:var(--ink);text-decoration:none}
+.dchip b{font:800 17px var(--f-display);text-transform:uppercase} .dchip span{font-size:12px;color:var(--muted);grid-row:2} .dchip i{grid-row:1/3;grid-column:2;font:800 13px var(--f-body);font-style:normal;background:var(--panel2);border-radius:999px;padding:2px 9px;color:var(--soft)}
+.dchip.on{background:var(--sun);border-color:var(--sun);color:#14172E} .dchip.on span{color:#3A3413} .dchip.on i{background:#14172E;color:var(--sun)}
+.builds{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.build{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;padding:14px;border-radius:var(--r-lg);border:1px solid var(--line);background:linear-gradient(135deg,#1C2552,var(--panel) 70%);color:var(--ink);cursor:pointer;font:inherit;transition:transform .1s ease,border-color .15s ease}
+.build:hover{border-color:var(--sun)} .build:active{transform:scale(.98)}
+.bi{font-size:24px;width:46px;height:46px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,212,59,.12)}
+.bt{display:flex;flex-direction:column;min-width:0} .bt b{font:800 17px/1.1 var(--f-display);text-transform:uppercase} .bt small{font-size:12px;color:var(--muted);margin-top:2px}
+.bp{display:flex;flex-direction:column;align-items:flex-end} .bp b{font:900 26px/1 var(--f-display);color:var(--sun)} .bp small{font-size:11px;color:var(--muted);white-space:nowrap}
+.slatecta{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;margin-top:12px;padding:14px 16px;border-radius:var(--r-lg);border:1px solid color-mix(in srgb,var(--sun) 50%,var(--line));background:linear-gradient(120deg,rgba(255,212,59,.14),var(--panel) 60%);color:var(--ink);text-decoration:none}
+.slatecta b{font:800 20px var(--f-display);text-transform:uppercase;display:block} .slatecta small{font-size:13px;color:var(--soft)} .slatecta>i{font:900 30px var(--f-display);font-style:normal;color:var(--sun)}
+.slrs{border-radius:var(--r-lg);border:1px solid var(--line);background:var(--panel);overflow:hidden}
+.slr{display:grid;grid-template-columns:28px auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid rgba(41,50,106,.6);box-shadow:inset 3px 0 0 var(--tc)} .slr:first-child{border-top:0}
+.slr:hover{background:color-mix(in srgb,var(--tc) 8%,transparent)}
+.slr-k{font:900 18px var(--f-display);color:var(--muted);text-align:center} .slr:nth-child(-n+3) .slr-k{color:var(--sun)}
+.slr .av,.slr .logo{width:42px;height:42px}
+.slr-t{display:flex;flex-direction:column;min-width:0} .slr-t b{font-size:14.5px;font-weight:700} .slr-t small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slr-p{display:flex;flex-direction:column;align-items:flex-end} .slr-p b{font:900 26px/1 var(--f-display)} .slr-p small{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.slipb{width:38px;height:38px;border-radius:50%;border:2px solid var(--sun);background:transparent;color:var(--sun);font:900 20px/1 var(--f-body);cursor:pointer;flex:0 0 auto;transition:transform .1s ease}
+.slipb.on{background:var(--sun);color:#14172E} .slipb:active{transform:scale(.9)}
+.slipbar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;width:min(560px,calc(100% - 24px))}
+.sb-open{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 16px 10px 10px;border-radius:999px;border:1px solid var(--sun);background:rgba(20,26,62,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--ink);cursor:pointer;box-shadow:0 16px 40px rgba(0,0,0,.45);font:inherit;text-align:left}
+.sb-n{width:40px;height:40px;border-radius:50%;background:var(--sun);color:#14172E;font:900 20px var(--f-display);display:flex;align-items:center;justify-content:center}
+.sb-t{display:flex;flex-direction:column} .sb-t b{font:800 17px var(--f-display);text-transform:uppercase} .sb-t small{font-size:12px;color:var(--muted)}
+.sb-p{display:flex;flex-direction:column;align-items:flex-end} .sb-p b{font:900 24px/1 var(--f-display);color:var(--sun)} .sb-p small{font-size:11px;color:var(--muted)}
+body{padding-bottom:84px}
+.slip{display:flex;flex-direction:column;gap:12px} .slip-h{display:flex;align-items:baseline;gap:10px} .slip-h h2{margin:0;font:900 30px var(--f-display);text-transform:uppercase}
+.slip-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px} .slip-sum div{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;display:flex;flex-direction:column} .slip-sum b{font:900 26px/1 var(--f-display)} .slip-sum div:first-child b{color:var(--sun)} .slip-sum span{font-size:11.5px;color:var(--muted)}
+.slip-legs{display:flex;flex-direction:column;gap:6px}
+.sl-l{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 10px;border-radius:var(--r-md);background:var(--panel2);box-shadow:inset 3px 0 0 var(--tc)}
+.sl-l .av,.sl-l .logo{width:38px;height:38px} .sl-l>div{display:flex;flex-direction:column;min-width:0} .sl-l b{font-size:14px} .sl-l small{font-size:11.5px;color:var(--muted)}
+.sl-p{display:flex;flex-direction:column;align-items:flex-end;font:900 20px var(--f-display)} .sl-p small{font:600 11px var(--f-body);color:var(--muted)}
+.go.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.sgc{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-radius:var(--r-lg);border:1px solid var(--line);color:var(--ink);text-decoration:none;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 18%,var(--panel)),var(--panel) 65%)}
+.sgc:hover{border-color:var(--sc)} .sgc>div{display:flex;flex-direction:column;min-width:0} .sgc small{font-size:11.5px;color:var(--muted)} .sgc b{font:800 19px/1.05 var(--f-display);text-transform:uppercase} .sgc span{font-size:12px;color:var(--soft)} .sgc .logo{width:42px;height:42px}
+@media (max-width:640px){ .slr{grid-template-columns:22px auto minmax(0,1fr) auto;row-gap:6px} .slr .slipb{grid-column:4;grid-row:1/3} .slr-p{grid-column:3;grid-row:2;flex-direction:row;gap:8px;align-items:baseline;justify-content:flex-start} .slr-p b{font-size:20px} .slr-t{grid-column:3} .slip-sum b{font-size:20px} .builds{grid-template-columns:1fr} }
+.mainnav a{font-size:19px;padding:0 9px} @media (max-width:1100px){ .mainnav a{font-size:17px;padding:0 7px} }
 </style>
 </head>
 <body>
 <header class="hdr" id="hdr"><div class="hdr-in">
   <div class="hdr-r1">
     <a class="brand" href="#" aria-label="Nati Picks home"><svg class="np-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#FFD43B"/><g fill="#14172E" transform="translate(3.5 0) skewX(-9)"><path d="M12 46V18h6.8l9.6 15.4V18h6v28h-6.6L18 30.4V46z"/><path fill-rule="evenodd" d="M38.5 46V18h10.2c6 0 9.6 3.6 9.6 8.8s-3.6 8.9-9.6 8.9h-4.2V46zM44.5 23.2v7.3h3.9c2.5 0 3.9-1.4 3.9-3.65s-1.4-3.65-3.9-3.65z"/></g></svg><span class="brand-t"><span class="bn">Nati <span class="p">Picks</span></span><span class="tagline">They got our account. We got their playbook.</span></span></a>
-    <nav class="mainnav" aria-label="Main"><a href="#" data-nav="today">Today</a><a href="#live" data-nav="live">Live<span class="lbadge" id="liveBadge" hidden></span></a><a href="#upcoming" data-nav="upcoming">Upcoming</a><a href="#parlays" data-nav="parlays">Parlays</a><a href="#players" data-nav="players">Players</a></nav>
+    <nav class="mainnav" aria-label="Main"><a href="#" data-nav="today">Today</a><a href="#slate" data-nav="slate">Slate</a><a href="#live" data-nav="live">Live<span class="lbadge" id="liveBadge" hidden></span></a><a href="#upcoming" data-nav="upcoming">Upcoming</a><a href="#parlays" data-nav="parlays">Parlays</a><a href="#players" data-nav="players">Players</a></nav>
     <button class="iconbtn" id="openSettings" type="button" aria-label="Settings">⚙</button>
   </div>
   <div class="hdr-r2">
@@ -3594,11 +3635,11 @@ const tiersGrid = (lists, ctx, opts = {}) => `<div class="tiers${opts.stack ? ' 
 
 /* ---------- header ---------- */
 function headerSync(){
-  const h = location.hash, week = isWeekish(), cur = h === '#upcoming' ? 'upcoming' : (h === '#parlays' || h === '#week') ? 'parlays' : h === '#live' ? 'live' : (h === '#players' || h.startsWith('#p-') || h.startsWith('#gp-')) ? 'players' : /^#(g|r)-|^#health|^#method/.test(h) ? '' : 'today';
+  const h = location.hash, week = isWeekish(), cur = h.startsWith('#slate') ? 'slate' : h === '#upcoming' ? 'upcoming' : (h === '#parlays' || h === '#week') ? 'parlays' : h === '#live' ? 'live' : (h === '#players' || h.startsWith('#p-') || h.startsWith('#gp-')) ? 'players' : /^#(g|r)-|^#health|^#method/.test(h) ? '' : 'today';
   const nLive = liveGamesInView().length, lb = $('#liveBadge'); if (lb){ lb.textContent = nLive; lb.hidden = !nLive; }
   const tk = $('#ticker'), allLive = filterLiveGames(state.allGames());
   if (tk){ tk.hidden = !allLive.length; const html = allLive.map(g => `<a class="tkc" href="#g-${g.id}"><span>${esc(SPORT[g.sport].icon)}</span><b>${esc(g.away.abbr)} ${esc(g.away.score ?? 0)}</b><b>${esc(g.home.abbr)} ${esc(g.home.score ?? 0)}</b><span class="note">${esc(g.statusText || '')}</span></a>`).join(''); if (tk.dataset.h !== html){ tk.innerHTML = html; tk.dataset.h = html; } }
-  trkBadge(); const hd = $('#hdr'); if (hd) document.documentElement.style.setProperty('--hdr-h', hd.offsetHeight + 'px');
+  trkBadge(); slipBar(); const hd = $('#hdr'); if (hd) document.documentElement.style.setProperty('--hdr-h', hd.offsetHeight + 'px');
   document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', String(a.dataset.nav === cur)));
   document.querySelectorAll('#sportSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sport === state.sport)));
   const lb2 = $('#lgBar'); if (lb2){ const show = state.sport === 'soccer'; lb2.hidden = !show;
@@ -3693,6 +3734,7 @@ function renderToday(){
     <div class="home">
     <section class="sec col-main" aria-labelledby="h-top"><div class="sechead"><h2 id="h-top"><span class="kick">Pregame</span>Top bets today</h2><span class="note">${researching ? `<span class="spin sm"></span> Researching ${v.open.filter(g=>CACHE[g.id]).length} of ${v.open.length}…` : nF ? `${nF} filter${nF>1?'s':''} on · <button class="linkbtn" data-clearf>clear</button>` : 'Games not yet started · ranked on 8 checks'}</span></div>
       ${betsBody}${liveStrip()}
+      <a class="slatecta" href="#slate"><span class="bi">📋</span><span><b>See the whole slate</b><small>Every game today in one place: the likeliest TD scorers, the top props in every category, one-tap builds and your bet slip.</small></span><i>›</i></a>
       <div class="panel small linkcard">Same-game and multi-game parlays live on the <a href="#parlays">Parlays</a> tab.</div>
     </section>
     <aside class="col-side">
@@ -3709,7 +3751,7 @@ function renderUpcoming(){
   const W = state.week, all = scoped(state.allGames()), games = filterUpcomingGames(all), days = [...new Set(games.map(g => getLocalGameDate(g.date)))];
   const nRes = games.filter(g => CACHE[g.id]).length;
   const body = days.map((d, i) => { const gs = games.filter(g => getLocalGameDate(g.date) === d);
-    return `<section class="sec day"><div class="sechead"><h2><span class="kick">${esc(plural(gs.length, 'game'))}</span>${esc(dayLabel(d))}</h2></div>${gamesBySport(gs, 'up' + d, { pick:true })}</section>`; }).join('');
+    return `<section class="sec day"><div class="sechead"><h2><span class="kick">${esc(plural(gs.length, 'game'))}</span>${esc(dayLabel(d))}</h2><a class="linkbtn" href="#slate-${d}">Open this day's slate</a></div>${gamesBySport(gs, 'up' + d, { pick:true })}</section>`; }).join('');
   paint(`${dayBar('Upcoming', 'After today · New York time', [[games.length, 'games'], [days.length, days.length === 1 ? 'day' : 'days'], [nRes, 'researched']])}
     ${body || `<div class="panel note">${W.busy || !W.loadedAt ? '<span class="loading"><span class="spin"></span>Loading the next 14 days…</span>' : `No ${state.sport === 'all' ? '' : esc(SPORT[state.sport].label) + ' '}games scheduled after today in the next 14 days.`}</div>`}
     ${W.busy ? `<div class="note"><span class="spin sm"></span> Researching games… ${nRes} done</div>` : ''}`);
@@ -4941,6 +4983,147 @@ function playTimeline(R, n = 12){
   return `<div class="tline">${moreList('kp' + g.id, plays.map(p => { const t = team(p); return `<div class="tl-i${p.scoring ? ' sc' : ''}" style="--tc:${t ? teamColor(g[t]) : 'var(--muted)'}"><div class="tl-when"><b>${esc(per(p))}</b><span>${esc(p.clock || '')}</span></div><div class="tl-dot">${t ? teamLogo(g[t],'sm') : ''}</div><div class="tl-txt">${p.scoring ? '<span class="tl-tag">Score</span>' : ''}${esc(p.text)}${p.score ? `<div class="tl-score">${esc(p.score)}</div>` : ''}</div></div>`; }), n)}</div>`;
 }
 
+/* ============================ SLATE: every game on a day in one place + the bet slip builder ============================ */
+/* Pick a day → every game on it, researched on demand: the most likely TD scorers, the most likely props in every
+   category, the best bet in each game, each game's likeliest script. Anything can go on the Slip; the Slip joins the
+   legs with the same correlation model as the parlays (20,000 simulated games) and shows the combined chance. */
+const SLIP_REG = {};
+const slipLoad = () => { try { return store.get('np_slip', []) || []; } catch(e){ return []; } };
+const slipSave = l => { store.set('np_slip', l); slipBar(); };
+const slipHas = k => slipLoad().some(x => x.key === k);
+function slipLeg(c, gid, extra = {}){
+  const key = 'l:' + gid + ':' + (c.id || c.label);
+  return { key, id:c.id || key, gid, label:c.label, p:c.p, priced:!!c.priced, dec:c.priced ? c.dec : null, book:c.priced ? c.book : null, kind:c.kind || (c.playerId ? 'player' : 'game'), market:c.market || c.stat, stat:c.stat || c.market,
+    side:c.side, line:c.line ?? null, playerId:c.playerId || null, team:c.team || null, name:c.player?.name || null, img:c.player?.img || null, period:c.period || 'FG', ...extra };
+}
+const slipBtn = leg => { SLIP_REG[leg.key] = leg; const on = slipHas(leg.key); return `<button type="button" class="slipb${on ? ' on' : ''}" data-slip="${esc(leg.key)}" aria-pressed="${on}" title="${on ? 'Remove from slip' : 'Add to slip'}">${on ? '✓' : '+'}</button>`; };
+function slipToggle(key){ let l = slipLoad(); if (l.some(x => x.key === key)) l = l.filter(x => x.key !== key); else if (SLIP_REG[key]) l.push(SLIP_REG[key]); slipSave(l);
+  document.querySelectorAll(`[data-slip="${CSS.escape(key)}"]`).forEach(b => { const on = l.some(x => x.key === key); b.classList.toggle('on', on); b.textContent = on ? '✓' : '+'; b.setAttribute('aria-pressed', String(on)); }); }
+function slipAddMany(legs){ const l = slipLoad(); for (const g of legs) if (!l.some(x => x.key === g.key)) l.push(g); slipSave(l); repaint(); if (location.hash.startsWith('#slate')) renderSlate(); }
+function slipCombo(legs){
+  if (!legs.length) return null;
+  const L = legs.map(l => ({ ...l, dec:l.priced && l.dec ? l.dec : 1/Math.max(l.p, 0.01), player:l.name ? { name:l.name } : null }));
+  try { if (legs.length >= 2) return finishParlay(L, 3, L.map(l => l.key)); } catch(e){}
+  const joint = L.reduce((t, l) => t*l.p, 1); return { joint, indep:joint, boost:1, priced:L.every(l => l.priced), estDec:L.reduce((t, l) => t*l.dec, 1), legs:L, sig:L.map(l => l.key), weekly:true };
+}
+function slipBar(){
+  let bar = $('#slipBar'); const l = slipLoad();
+  if (!bar){ bar = document.createElement('div'); bar.id = 'slipBar'; bar.className = 'slipbar'; document.body.appendChild(bar); }
+  if (!l.length){ bar.hidden = true; return; }
+  const s = slipCombo(l); bar.hidden = false;
+  bar.innerHTML = `<button type="button" class="sb-open" id="openSlip"><span class="sb-n">${l.length}</span><span class="sb-t"><b>Bet slip</b><small>${plural(l.length, 'leg')} · ${new Set(l.map(x => x.gid)).size > 1 ? plural(new Set(l.map(x => x.gid)).size, 'game') : 'same game'}</small></span><span class="sb-p"><b>${pct(s.joint, s.joint < 0.05 ? 1 : 0)}</b><small>${s.priced ? `est. ${decToAm(s.estDec)}` : `fair ${decToAm(1/Math.max(s.joint, 1e-4))}`}</small></span></button>`;
+}
+function openSlip(){
+  const l = slipLoad(), s = slipCombo(l);
+  if (!l.length){ openDrawer('<h2>Bet slip</h2><div class="panel note">Your slip is empty. Tap + next to any pick on the Slate to add it.</div>', 'Bet slip'); return; }
+  const same = l.length - new Set(l.map(x => x.gid)).size;
+  const tr = trkParlay({ ...s, legs:s.legs, sig:s.sig, tierName:'Slip', weekly:true, estDec:s.estDec }, null);
+  openDrawer(`<div class="slip"><div class="slip-h"><h2>Bet slip</h2><span class="note">${plural(l.length, 'leg')}</span></div>
+    <div class="slip-sum"><div><b>${pct(s.joint, s.joint < 0.05 ? 1 : 0)}</b><span>Chance all hit (model)</span></div><div><b>${decToAm(1/Math.max(s.joint, 1e-4))}</b><span>Fair odds</span></div><div><b>${s.priced ? decToAm(s.estDec) : 'no price'}</b><span>${s.priced ? 'Est. book price' : 'Some legs have no posted price'}</span></div></div>
+    ${s.boost && Math.abs(s.boost - 1) > 0.03 ? `<div class="note">${s.boost > 1 ? `These legs tend to hit together: ${fmt1(s.boost)}× as often as unrelated bets.` : `Some legs work against each other: they hit together ${fmt1(1/s.boost)}× less often than unrelated bets.`}</div>` : ''}
+    ${same ? `<div class="flag">${plural(same + 1, 'leg')} share a game. Same-game legs are joined with our correlation model; your book prices them its own way.</div>` : ''}
+    <div class="slip-legs">${l.map(x => { const g = gameOf(x.gid) || CACHE[x.gid]?.g, R = CACHE[x.gid], side = R?.idx?.[x.playerId]?.side || x.team, tc = g && side && g[side] ? teamColor(g[side]) : '#4C6BFF';
+      return `<div class="sl-l" style="--tc:${tc}">${x.name ? avatar({ name:x.name, img:x.img }, '', tc) : g && side && g[side] ? teamLogo(g[side]) : '<span class="av">•</span>'}<div><b>${esc(x.label)}</b><small>${g ? esc(matchup(g)) + ' · ' + esc(whenTxt(g)) : ''}</small></div><span class="sl-p">${pct(x.p, 0)}<small>${x.priced ? decToAm(x.dec) : 'fair ' + fairStr(x.p)}</small></span><button type="button" class="slipb on" data-slip="${esc(x.key)}" title="Remove">✕</button></div>`; }).join('')}</div>
+    <div class="actions">${trackBtn(tr)}<button type="button" class="go ghost" id="slipClear">Clear slip</button></div>
+    <div class="note">Combined chance uses each leg's model probability and our leg-to-leg correlations (20,000 simulated games). Check your book's price before betting; it's worth it at ${decToAm(1.03/Math.max(s.joint, 1e-4))} or better.</div></div>`, 'Bet slip');
+  $('#slipClear').onclick = () => { slipSave([]); closePlayer(); repaint(); if (location.hash.startsWith('#slate')) renderSlate(); };
+}
+
+/* ---------- the day's data ---------- */
+const slateDayOf = () => { const h = location.hash, m = h.match(/^#slate-(\d{4}-\d{2}-\d{2})$/); return m ? m[1] : state.slateDay || todayLocal(); };
+function slateDays(){
+  const all = scoped(state.allGames()).filter(g => isPlayable(g) || isLive(g)), end = getLocalGameDate(Date.now() + 13*864e5), today = todayLocal();
+  const days = [...new Set(all.map(g => getLocalGameDate(g.date)))].filter(d => d >= today && d <= end).sort();
+  return days.map(d => ({ d, n:all.filter(g => getLocalGameDate(g.date) === d).length }));
+}
+const slateGames = day => scoped(state.allGames()).filter(g => getLocalGameDate(g.date) === day && (isPlayable(g) || isLive(g))).sort(byStart);
+const SLATE = { tok:0, busy:false, day:null };
+async function loadSlateDay(day){
+  const tok = ++SLATE.tok; SLATE.busy = true; SLATE.day = day;
+  if (day !== todayLocal() && !state.week.loadedAt && !state.week.busy) await loadWeek(false);
+  const games = slateGames(day).filter(g => g.state === 'pre' || isLive(g));
+  await pool(games.slice(0, 40), 2, async g => { if (tok !== SLATE.tok) return; try { await analyzeGame(g); } catch(e){} if (location.hash.startsWith('#slate')) renderSlateSoon(); });
+  for (const g of games.filter(g => g.sport === 'nfl')){ if (tok !== SLATE.tok) return; const R = CACHE[g.id]; if (R && !R.tdm) { try { await tdModel(R); } catch(e){} if (location.hash.startsWith('#slate')) renderSlateSoon(); } }
+  if (tok === SLATE.tok){ SLATE.busy = false; if (location.hash.startsWith('#slate')) renderSlate(); }
+}
+let slateT = 0; function renderSlateSoon(){ clearTimeout(slateT); slateT = setTimeout(renderSlate, 500); }
+const topScriptOf = R => ['A','B','C'].sort((a, b) => R.gm.scripts[b] - R.gm.scripts[a])[0];
+/* TD scorers across the day, with the chance in each game's most likely script */
+function slateTD(res){
+  const rows = [];
+  for (const R of res){ if (R.g.sport !== 'nfl' || !R.tdm?.rows) continue; const s = topScriptOf(R);
+    for (const x of R.tdm.rows){ if (x.live?.tds) continue; const ps = 1 - Math.exp(-x.lam*scriptMult(R, x.side, 'tds', s)), c = x.c?.any;
+      rows.push({ R, x, c:{ playerId:x.id, player:x.p, team:x.side, stat:'anytime_td', market:'anytime_td' }, p:x.pr.any, ps, leg:slipLeg({ id:'td|' + x.id, label:`${x.p.name} anytime TD`, p:x.pr.any, priced:!!c, dec:c?.dec, book:c?.book, kind:'player', stat:'anytime_td', market:'anytime_td', side:'yes', playerId:x.id, team:x.side, player:x.p }, R.g.id) }); } }
+  return rows.sort((a, b) => b.p - a.p);
+}
+/* every player prop across the day: posted lines first, stats lines where no book line exists */
+function slateProps(res){
+  const out = [];
+  for (const R of res){ const g = R.g, seen = new Map();
+    const push = (c, synth) => { if (!c.playerId || c.p == null) return; const k = c.playerId + '|' + c.stat; const prev = seen.get(k); if (prev && prev.p >= c.p) return;
+      const it = { R, c, p:c.p, synth, leg:slipLeg(c, g.id) }; if (prev) out.splice(out.indexOf(prev), 1, it); else out.push(it); seen.set(k, it); };
+    for (const c of R.cands) if (c.kind === 'player' && !c.isAlt && c.line != null && !c.noPath && c.ev > -0.08) push(c, false);
+    try { for (const x of statProps(R)) push({ ...x, id:'syn|' + x.playerId + '|' + x.stat + '|' + x.line + '|' + x.side, kind:'player', market:x.stat, priced:false }, true); } catch(e){}
+  }
+  return out;
+}
+const PROP_CATS = {
+  nfl:[['pass','Passing', s => /^pass_(?!rush)|completions|longest_completion/.test(s)], ['rush','Rushing', s => /^rush_(?!reception)|carries|rush_attempts|longest_rush/.test(s)], ['rec','Receiving', s => /^reception|^receptions|targets|longest_reception/.test(s)], ['combo','Combos', s => /rush_reception|pass_rush/.test(s)], ['def','Defense & kicking', s => /sack|tackle|def_|field_goal|kicking|pats/.test(s)]],
+  nba:[['pts','Points', s => s === 'points'], ['reb','Rebounds', s => s === 'rebounds'], ['ast','Assists', s => s === 'assists'], ['3pm','Threes', s => s === 'threes'], ['combo','Combos', s => /_/.test(s)]],
+  mlb:[['hits','Hits & bases', s => /hits|total_bases|runs|rbis|home_runs|walks|stolen/.test(s) && !/allowed|pitcher/.test(s)], ['k','Pitching', s => /pitcher|earned_runs|hits_allowed|outs/.test(s)]],
+  nhl:[['pts','Points & goals', s => /points|goals|assists/.test(s)], ['sog','Shots & saves', s => /shots|saves|blocked/.test(s)]],
+  soccer:[['shots','Shots & goals', s => /shot|goal|assist/.test(s)], ['other','Cards & other', s => /card|tackle|foul/.test(s)]],
+};
+function slRow(it, i){
+  const { R, c, leg } = it, g = R.g, side = c.team || R.idx[c.playerId]?.side, tc = side && g[side] ? teamColor(g[side]) : '#4C6BFF';
+  return `<div class="slr" style="--tc:${tc}"><span class="slr-k">${i + 1}</span>${c.playerId ? `<a class="plink" href="${plHref(g.id, c.playerId)}">${avatar(c.player || { name:leg.name }, '', tc)}</a>` : pickIcon(c, g)}
+    <div class="slr-t"><b>${esc(leg.label)}</b><small>${esc(matchup(g))} · ${esc(whenTxt(g))}${it.synth ? ' · stats line' : ''}${it.ps != null ? ` · ${pct(it.ps, 0)} if "${esc(SCRIPT_TEXT(R.gm, g)[topScriptOf(R)].title)}"` : ''}</small></div>
+    <div class="slr-p"><b>${pct(it.p, 0)}</b><small>${leg.priced ? `${decToAm(leg.dec)} ${esc(leg.book || '')}` : `fair ${fairStr(it.p)}`}</small></div>${slipBtn(leg)}</div>`;
+}
+const slList = (items, key, n = 10) => items.length ? `<div class="slrs">${moreList(key, items.map(slRow), n)}</div>` : '<div class="panel note">Nothing here yet. It fills in as games are researched.</div>';
+function renderSlate(){
+  const day = slateDayOf(), days = slateDays(), games = slateGames(day), res = games.map(g => CACHE[g.id]).filter(R => R && R.cands);
+  state.slateDay = day;
+  if (SLATE.day !== day) loadSlateDay(day);
+  const td = slateTD(res), props = slateProps(res), sports = SPORT_KEYS.filter(k => games.some(g => g.sport === k));
+  const bestPer = res.map(R => R.best[0] ? { R, c:R.best[0], p:R.best[0].p, leg:slipLeg(R.best[0], R.g.id) } : null).filter(Boolean);
+  const all = res.flatMap(R => R.ranked.map(c => ({ R, c, p:c.p, leg:slipLeg(c, R.g.id) })));
+  const grp = (f, sort = (a, b) => b.c.quality - a.c.quality) => { const seen = new Set(); return all.filter(x => f(x.c, x.R)).sort(sort).filter(x => { if (seen.has(x.leg.key)) return false; seen.add(x.leg.key); return true; }); };
+  // quick builds
+  const tdTopEach = res.filter(R => R.tdm?.rows?.length).map(R => td.find(t => t.R === R)).filter(Boolean);
+  const scriptStack = res.map(R => { try { const P = scriptPicks(R, topScriptOf(R)); const x = P.bestProps[0]; return x ? slipLeg({ ...x.c, p:x.p, id:x.c.id || ('syn|' + x.c.playerId + '|' + x.c.stat + '|' + x.c.line + '|' + x.c.side) }, R.g.id) : null; } catch(e){ return null; } }).filter(Boolean);
+  const safest = [...props].sort((a, b) => b.p - a.p).filter((x, i, a) => a.findIndex(y => y.R === x.R) === i).slice(0, 4).map(x => x.leg);
+  const builds = [
+    tdTopEach.length && ['td', '🏈', 'Most likely TD in every game', `${plural(tdTopEach.length, 'leg')} · the top anytime scorer from each NFL game`, tdTopEach.map(t => t.leg)],
+    tdTopEach.length && ['td3', '🔥', 'Top 3 TD scorers of the day', 'The three likeliest scorers on the whole slate', td.slice(0, 3).map(t => t.leg)],
+    scriptStack.length && ['script', '🎬', 'Script stack', 'Best prop in each game\'s most likely script', scriptStack],
+    safest.length && ['safe', '🛡️', 'Safest props, one per game', 'Highest-probability player prop from four different games', safest],
+    bestPer.length && ['best', '⭐', 'Best bet in every game', `${plural(bestPer.length, 'leg')} · our top-ranked pick per game`, bestPer.map(x => x.leg)],
+  ].filter(Boolean);
+  BUILDS = Object.fromEntries(builds.map(b => [b[0], b[4]]));
+  const catTabs = sports.flatMap(sp => (PROP_CATS[sp] || []).map(([k, l, test]) => { const items = props.filter(x => x.R.g.sport === sp && test(x.c.stat || '')).sort((a, b) => b.p - a.p); return items.length ? [sp + k, `${sports.length > 1 ? SPORT[sp].label + ' · ' : ''}${l}`, slList(items, 'slp' + sp + k + day, 12)] : null; })).filter(Boolean);
+  const scriptsBoard = res.length ? `<div class="sgrid">${res.map(R => { const g = R.g, s = topScriptOf(R), sn = SCRIPT_TEXT(R.gm, g)[s], ctl = s === 'A' ? R.gm.favSide : s === 'C' ? R.gm.dogSide : null;
+    return `<a class="sgc" href="#r-${g.id}" data-rtab="matchup" data-hl="" style="${tcVars(g)};--sc:${ctl ? teamColor(g[ctl]) : '#8FA2FF'}">${donut(R.gm.scripts[s], '')}<div><small>${esc(matchup(g))} · ${esc(whenTxt(g))}</small><b>${esc(sn.title)}</b><span>${esc(sn.sub)}</span></div>${ctl ? teamLogo(g[ctl]) : ''}</a>`; }).join('')}</div>` : '';
+  const dayChip = ({ d, n }) => `<a class="dchip${d === day ? ' on' : ''}" href="#slate-${d}"><b>${esc(d === todayLocal() ? 'Today' : new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { weekday:'short', timeZone:'UTC' }))}</b><span>${esc(new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month:'short', day:'numeric', timeZone:'UTC' }))}</span><i>${n}</i></a>`;
+  const loading = SLATE.busy ? `<div class="note"><span class="spin sm"></span> Researching ${res.length} of ${games.length} games…</div>` : '';
+  paint(`${dayBar('Slate', `${dayLabel(day)} · every game in one place`, [[games.length, 'games'], [res.length, 'researched'], [td.length || null, 'TD candidates'], [props.length || null, 'player props']])}
+    <div class="dchips">${days.map(dayChip).join('') || '<span class="note">No games in the next 14 days for this filter.</span>'}</div>${loading}
+    ${builds.length ? `<section class="sec"><div class="sechead"><h2><span class="kick">One tap</span>Quick builds</h2><span class="note">Adds every leg to your slip · tap the slip to see the combined chance</span></div><div class="builds">${builds.map(([k, ic, t, sub, legs]) => { const s = slipCombo(legs); return `<button type="button" class="build" data-build="${k}"><span class="bi">${ic}</span><span class="bt"><b>${esc(t)}</b><small>${esc(sub)}</small></span><span class="bp"><b>${pct(s.joint, s.joint < 0.05 ? 1 : 0)}</b><small>all hit · fair ${decToAm(1/Math.max(s.joint, 1e-4))}</small></span></button>`; }).join('')}</div></section>` : ''}
+    ${!games.length ? '<div class="panel note">No games on this day for this filter. Pick another day above.</div>' : tabsHtml('slate', [
+      ...(td.length || sports.includes('nfl') ? [['td', 'TD scorers', td.length ? `<div class="note">Anytime TD chance from our usage model; the second number is his chance if his game follows its most likely script.</div>${slList(td, 'sltd' + day, 15)}` : '<div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE on the slate…</div>']] : []),
+      ...catTabs,
+      ['bets', 'Best bets', `<h3>Best bet in every game</h3>${slList(bestPer, 'slb' + day, 20)}
+        <h3>Sides & moneylines</h3>${slList(grp(c => !c.playerId && /spread|ml|dnb/.test(c.market)), 'sls' + day, 6)}
+        <h3>Totals</h3>${slList(grp(c => !c.playerId && /total/.test(c.market)), 'slt' + day, 6)}
+        <h3>Upset watch</h3>${slList(grp((c, R) => badgesFor(c, R).includes('upset')), 'slu' + day, 6)}
+        <h3>Value picks (real prices)</h3>${slList(grp((c, R) => badgesFor(c, R).includes('value'), (a, b) => b.c.ev - a.c.ev), 'slv' + day, 6)}
+        <h3>Long shots worth a look</h3>${slList(grp(c => (c.priced ? c.dec : 1/c.p) >= 2.5 && c.p >= 0.2), 'sll' + day, 6)}`],
+      ['scripts', 'Game scripts', scriptsBoard || '<div class="panel note">Scripts appear as games are researched.</div>'],
+    ])}`);
+  headerSync();
+}
+let BUILDS = {};
+
 /* ============================ FLOW: discover → analyze → monitor → repeat ============================ */
 const SCHED = { timer:null, next:0 };
 CONFIG.weekCap = 36; CONFIG.todayCap = 24;
@@ -4948,7 +5131,7 @@ const isHome = () => !location.hash || location.hash === '#';
 const isWeek = () => location.hash === '#week' || location.hash === '#parlays';
 const isWeekish = () => ['#week','#parlays','#upcoming'].includes(location.hash);
 const renderWeekish = () => location.hash === '#upcoming' ? renderUpcoming() : renderParlays();
-let paintT = 0; function repaint(){ const now = Date.now(); if (now - paintT < 700){ clearTimeout(repaint.t); repaint.t = setTimeout(repaint, 720); return; } paintT = now; if (isHome()) renderToday(); else if (isWeekish()) renderWeekish(); else if (location.hash === '#players' && document.activeElement?.id !== 'psearch') renderPlayers(); else headerSync(); }
+let paintT = 0; function repaint(){ const now = Date.now(); if (now - paintT < 700){ clearTimeout(repaint.t); repaint.t = setTimeout(repaint, 720); return; } paintT = now; if (location.hash.startsWith('#slate')) renderSlate(); else if (isHome()) renderToday(); else if (isWeekish()) renderWeekish(); else if (location.hash === '#players' && document.activeElement?.id !== 'psearch') renderPlayers(); else headerSync(); }
 async function discoverSoccer(){
   if (state.soccerLeagues && Date.now() - state.soccerLeagues.at < 30*60000) return state.soccerLeagues.list;
   const today = ymd(Date.now()), found = [];
@@ -5024,6 +5207,7 @@ function route(keepDrawer){
   else if (h.startsWith('#gp-')) renderGamePlayers(h.slice(4));
   else if (h.startsWith('#p-')){ const s = h.slice(3), i = s.indexOf('-'); renderPlayer(s.slice(0, i), decodeURIComponent(s.slice(i + 1))); }
   else if (h === '#method') renderMethod();
+  else if (h === '#slate' || h.startsWith('#slate-')) renderSlate();
   else if (h === '#week' || h === '#parlays' || h === '#upcoming'){ renderWeekish(); if (!state.week.busy && (!state.week.loadedAt || Date.now() - state.week.loadedAt > 20*60000)) loadWeek(false); }
   else renderToday();
   headerSync();
@@ -5052,6 +5236,10 @@ document.addEventListener('click', e => {
   const pl = e.target.closest('[data-player]'); if (pl){ location.hash = plHref(pl.dataset.game, pl.dataset.player); return; }
   const tj = e.target.closest('[data-tabjump]'); if (tj){ const [key, tab] = tj.dataset.tabjump.split(':'); const b = document.querySelector(`[data-tabs="${key}"] [data-tab="${tab}"]`); if (b){ b.click(); b.scrollIntoView({ block:'nearest' }); } return; }
   const lt = e.target.closest('[data-lgtab]'); if (lt){ state.soccerTab = lt.dataset.lgtab; store.set('np_soctab', state.soccerTab); headerSync(); route(true); reload(false); if (isWeekish() || location.hash === '#players') loadWeek(false); return; }
+  const sl = e.target.closest('[data-slip]'); if (sl){ e.preventDefault(); slipToggle(sl.dataset.slip); if (!$('#drawer').hidden && $('#pane').getAttribute('aria-label') === 'Bet slip') openSlip(); return; }
+  const bd = e.target.closest('[data-build]'); if (bd){ const legs = BUILDS[bd.dataset.build] || []; slipAddMany(legs); openSlip(); return; }
+  if (e.target.closest('#openSlip')){ openSlip(); return; }
+  const br = e.target.closest('a.brand'); if (br){ e.preventDefault(); state.sport = 'all'; store.set('np_sport', 'all'); state.soccerTab = 'all'; store.set('np_soctab', 'all'); state.filters = {}; if (location.hash) history.pushState(null, '', location.pathname); route(); reload(false); window.scrollTo({ top:0 }); return; }
   const tb2 = e.target.closest('[data-track]'); if (tb2){ trkToggle(tb2.dataset.track); return; }
   const ut = e.target.closest('[data-untrack]'); if (ut){ trkSave(trkLoad().filter(x => x.key !== ut.dataset.untrack)); trkBadge(); openTracker(true); return; }
   if (e.target.closest('[data-trkclear]')){ trkSave(trkLoad().filter(x => !(x.type === 'parlay' ? x.legs.every(l => ['Hit','Lost'].includes(trkEval(l).status)) : ['Hit','Lost','Push'].includes(trkEval(x).status)))); trkBadge(); openTracker(true); return; }
