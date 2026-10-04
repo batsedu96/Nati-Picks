@@ -1088,6 +1088,33 @@ body{padding-bottom:84px}
 .fd-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap} .fd-tag{font:800 11px var(--f-body);letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:rgba(255,90,110,.18);color:#FF8A99} .fd-top a{font-size:12px;color:var(--muted)}
 .fd-t b{display:block;font-size:15px;margin:4px 0} .fd-t ul{margin:0;padding-left:18px;font-size:13px;color:var(--soft);display:flex;flex-direction:column;gap:2px}
 .fd-p{display:flex;flex-direction:column;align-items:flex-end} .fd-p b{font:900 26px/1 var(--f-display);color:#FF8A99} .fd-p small{font-size:11px;color:var(--muted)}
+/* v13 · TD ladder (anytime → 2+ → 3+) */
+.tdl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;margin:4px 0 14px}
+.tdl-c{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-items:center;padding:12px;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 22%,transparent),transparent 70%),var(--panel,#151A33);border:1px solid color-mix(in srgb,var(--tc) 40%,transparent);overflow:hidden}
+.tdl-c>.av{grid-row:span 2}
+.tdl-c>b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdl-c>small{color:var(--muted,#9AA1CC);font-size:.78rem}
+.tdl-s{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.tdl-s>span{position:relative;display:flex;flex-direction:column;align-items:flex-start;padding:7px 8px 7px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.tdl-s i{font-style:normal;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#9AA1CC)}
+.tdl-s b{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-size:1.05rem}
+.tdl-s small{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--muted,#9AA1CC)}
+.tdl-s .slipb{position:absolute;top:6px;right:6px;width:22px;height:22px;font-size:.8rem}
+.tdl-s>span:nth-child(2){border-color:rgba(255,212,59,.18)}
+.tdl-s>span:nth-child(3){border-color:rgba(255,107,107,.22)}
+/* v13 · bets to avoid: rank, severity, summary */
+.fade{position:relative}
+.fd-k{position:absolute;top:8px;left:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#2A1420;color:#FF8A98;font:600 .72rem/20px 'IBM Plex Mono',monospace;text-align:center;border:1px solid rgba(255,90,110,.35)}
+.fd-lv{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:999px;font-weight:700}
+.lv-hard .fd-lv{background:rgba(255,90,110,.18);color:#FF8A98}
+.lv-strong .fd-lv{background:rgba(255,170,60,.16);color:#FFC36B}
+.lv-soft .fd-lv{background:rgba(154,161,204,.14);color:#C3C8EA}
+.fade.lv-hard{border-color:rgba(255,90,110,.45)}
+.fd-sum{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.fd-sum>div{display:flex;align-items:baseline;gap:6px;padding:7px 12px;border-radius:12px;background:rgba(255,90,110,.07);border:1px solid rgba(255,90,110,.18)}
+.fd-sum b{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-size:1.05rem;color:#FF8A98}
+.fd-sum span{font-size:.78rem;color:var(--muted,#9AA1CC)}
+.pbg-c .fades{padding:6px 8px 8px}
 </style>
 </head>
 <body>
@@ -4676,12 +4703,12 @@ async function tdModel(R){
     const wOf = gid => Math.pow(0.85, recent.indexOf(gid));
     let rushTD = 0, recTD = 0;
     const per = mine.map(id => { const p = R.idx[id].player, inj = injOf(side, id), logs = (R.logs[id] || []).filter(x => recent.includes(x.id));
-      let car = 0, tgt = 0, td = 0, w = 0, gp = 0, tdg = 0;
+      let car = 0, tgt = 0, td = 0, w = 0, gp = 0, tdg = 0, multi = 0;
       for (const x of logs){ const k = wOf(x.id), c = logVal('nfl', x, 'carries') || 0, t = logVal('nfl', x, 'targets') || 0, rt = logVal('nfl', x, 'rush_tds') || 0, et = logVal('nfl', x, 'reception_tds') || 0;
-        car += k*c; tgt += k*t; td += k*(rt + et); w += k; gp++; if (rt + et > 0) tdg++; rushTD += rt; recTD += et; }
+        car += k*c; tgt += k*t; td += k*(rt + et); w += k; gp++; if (rt + et > 0) tdg++; if (rt + et > 1) multi++; rushTD += rt; recTD += et; }
       const wAll = recent.reduce((s, gid) => s + wOf(gid), 0) || 1;
       return { id, p, side, inj, out: !!inj && /^(out|doubtful|injured reserve)/i.test(inj.status), q: !!inj && /^questionable/i.test(inj.status),
-        car: car / wAll, tgt: tgt / wAll, carG: w ? car / w : 0, tgtG: w ? tgt / w : 0, tdRate: w ? td / w : 0, gp, tdg, logs: (R.logs[id] || []).slice(0, 6) }; });
+        car: car / wAll, tgt: tgt / wAll, carG: w ? car / w : 0, tgtG: w ? tgt / w : 0, tdRate: w ? td / w : 0, gp, tdg, multi, logs: (R.logs[id] || []).slice(0, 6) }; });
     // weather and script nudge how the team scores
     const fav = gm.favSide === side, margin = Math.abs(gm.mu || 0), wx = R.weather;
     let fr = (rushTD + 3.4) / (rushTD + recTD + 8);              // shrunk toward the league's ~42% of TDs on the ground
@@ -4716,15 +4743,15 @@ async function tdModel(R){
     LV = { L, ab, rz, firstTD, allRem: allTD*L.LC.rem*L.adj, rzTrips:{ home:(D.drives || []).filter(d => d.team === 'home' && d.rz).length, away:(D.drives || []).filter(d => d.team === 'away' && d.rz).length } }; }
   const mk = (pid, test) => R.cands.filter(c => c.playerId === pid && test(c) && c.dec).sort((a,b) => b.dec - a.dec)[0] || null;
   for (const x of out.rows){
-    let m = { any:1 - Math.exp(-x.lam), first:(x.lam / (allTD || 1)) * (1 - Math.exp(-allTD)), two:1 - Math.exp(-x.lam) * (1 + x.lam) };
+    let m = { any:1 - Math.exp(-x.lam), first:(x.lam / (allTD || 1)) * (1 - Math.exp(-allTD)), two:1 - Math.exp(-x.lam) * (1 + x.lam), three:1 - Math.exp(-x.lam) * (1 + x.lam + x.lam*x.lam/2) };
     if (LV){ const LC = LV.L.LC, tds = liveStat(D, x.id, 'tds', 'nfl') || 0, car = liveStat(D, x.id, 'carries', 'nfl') || 0, tgt = liveStat(D, x.id, 'targets', 'nfl') || 0;
       const exp = (x.carG + x.tgtG)*LC.el, use = clamp(1 + Math.min(0.4, LC.el)*(((car + tgt + 1)/(exp + 1)) - 1), 0.5, 1.6), lr = x.lam*LC.rem*LV.L.adj*use;
       const ft = LV.firstTD ? (LV.firstTD.text.toLowerCase().includes(LV.ab[x.id]) || LV.firstTD.text.includes(x.p.name)) : null;
       x.live = { tds, car, tgt, rz:LV.rz[x.id] || { car:0, tgt:0 }, use, lr };
-      m = { any: tds > 0 ? 1 : 1 - Math.exp(-lr), two: tds >= 2 ? 1 : tds === 1 ? 1 - Math.exp(-lr) : 1 - Math.exp(-lr)*(1 + lr), first: ft == null ? (lr/(LV.allRem || 1))*(1 - Math.exp(-LV.allRem)) : ft ? 1 : 0 }; }
-    x.c = { any:mk(x.id, c => c.stat === 'anytime_td' && c.side === 'yes'), first:mk(x.id, c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'), two:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2) };
+      m = { any: tds > 0 ? 1 : 1 - Math.exp(-lr), two: tds >= 2 ? 1 : tds === 1 ? 1 - Math.exp(-lr) : 1 - Math.exp(-lr)*(1 + lr), three: tdTail(lr, 3 - tds), first: ft == null ? (lr/(LV.allRem || 1))*(1 - Math.exp(-LV.allRem)) : ft ? 1 : 0 }; }
+    x.c = { any:mk(x.id, c => c.stat === 'anytime_td' && c.side === 'yes'), first:mk(x.id, c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'), two:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2), three:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 2.5 && c.line < 3) };
     x.model = m; x.pr = {};
-    for (const k of ['any','first','two']){ const c = x.c[k]; const book = c ? (1 / c.dec) / (k === 'any' ? 1.07 : 1.2) : null;   // strip typical one-sided margin
+    for (const k of ['any','first','two','three']){ const c = x.c[k]; const book = c ? (1 / c.dec) / (k === 'any' ? 1.07 : 1.2) : null;   // strip typical one-sided margin
       x.pr[k] = book != null ? 0.5 * m[k] + 0.5 * book : m[k]; x.pBook = x.pBook || {}; x.pBook[k] = book; }
   }
   out.allTD = allTD; out.live = LV; R.tdm = out; return out;
@@ -4735,13 +4762,14 @@ function tdWhy(x, R, k){
   const oppPA = (R.D.lastFive[oppS] || []).map(e => e.pa).filter(v => v != null), sn = SCRIPT_TEXT(R.gm, g), top = Object.entries(R.gm.scripts).sort((a,b) => b[1]-a[1])[0];
   const mates = T.outs.filter(o => o.p.pos === x.p.pos), oppOut = (R.D.injuries[oppS] || []).filter(i => /^out/i.test(i.status));
   const L = c && c.G?.lines?.get(`${c.line == null ? 'x' : c.line}|${c.side}`), books = (L?.offers || []).filter(o => o.dec).sort((a,b) => b.dec - a.dec).slice(0, 6);
-  const fair = decToAm(1 / Math.max(p, 0.01)), lbl = { any:'score a TD', first:'score the first TD', two:'score 2+ TDs' }[k];
+  const fair = decToAm(1 / Math.max(p, 0.01)), lbl = { any:'score a TD', first:'score the first TD', two:'score 2+ TDs', three:'score 3+ TDs' }[k];
   const fc = []; if (x.q) fc.push('He is questionable and could be limited.'); if (x.rushSh > 0.3) fc.push('Goal-line carries can go to a short-yardage back or the QB.'); if (x.tgtSh > 0.2) fc.push('Red-zone looks can spread to other targets or the run game.');
   fc.push(`The game turns into "${sn[side === R.gm.favSide ? 'C' : 'A'].title}" and ${g[side].short} stall in the red zone.`); fc.push('TDs are rare events: even a 40% pick misses 6 times out of 10.');
   return `<div class="wb"><div class="wb-top"><span class="pill ${p >= 0.4 ? 'strong' : p >= 0.25 ? 'solid' : 'lean'}">${pct(p,0)} to ${lbl}</span>${x.q ? '<span class="pill warn">Questionable</span>' : ''}</div>
     <ul class="wb-pts">
       ${x.live ? li('Live so far', `${x.live.tds ? `<b>Scored ${x.live.tds} TD${x.live.tds > 1 ? 's' : ''}.</b> ` : ''}${x.live.car} carries and ${x.live.tgt} targets, ${x.live.rz.car} carries and ${x.live.rz.tgt} targets inside the 20 (from the play-by-play). Usage is ${x.live.use >= 1.1 ? 'above' : x.live.use <= 0.9 ? 'below' : 'in line with'} what we expected. ${esc(g[side].short)} have ${R.tdm.live.rzTrips[side]} red-zone trip${R.tdm.live.rzTrips[side] === 1 ? '' : 's'}; ${pct(R.tdm.live.L.LC.rem,0)} of the game is left.`) : ''}
       ${li('Our chance', c ? `We give him <b>${pct(p,0)}</b> to ${lbl} (fair price ${fair}). The best price, ${decToAm(c.dec)} at ${esc(c.book)}, implies ${pct(1/c.dec,0)}, so ${p * c.dec >= 1 ? `<b>the payout beats fair by about ${fmt1((p * c.dec - 1) * 100)}%</b>` : `the price is about ${fmt1((1 - p * c.dec) * 100)}% short of fair. Only bet it at ${fair} or better`}.` : `We give him <b>${pct(p,0)}</b> to ${lbl}. Fair price ${fair}. No book price is posted yet, so take it only at ${fair} or better.`)}
+      ${k === 'two' || k === 'three' ? li(k === 'two' ? 'Two or more' : 'Three or more', `He averages ${fmt1(x.lam)} TDs a game, so ${k === 'two' ? 'a second' : 'a third'} score needs ${k === 'two' ? 'a big red-zone day' : 'a career-type day'}. ${x.multi ? `He has had ${x.multi} multi-TD game${x.multi > 1 ? 's' : ''} in his last ${x.gp}.` : x.gp ? `No multi-TD games in his last ${x.gp}.` : ''} Anytime chance ${pct(x.pr.any,0)} → 2+ ${pct(x.pr.two,0)} → 3+ ${pct(x.pr.three,1)}. These pay big because they rarely land: size them like lottery tickets.`) : ''}
       ${li('Usage', `${fmt1(x.carG)} carries and ${fmt1(x.tgtG)} targets a game over his last ${x.gp} games. That's about ${pct(x.rushSh,0)} of the team's carries and ${pct(x.tgtSh,0)} of its targets once weighted for goal-line and red-zone value (TEs and big backs get more weight).${mates.length ? ` With ${mates.map(o => esc(o.p.name)).join(', ')} out, their work is split among the players still available.` : ''}`)}
       ${li('Red zone, goal line & snaps', 'Inside-the-20/10/5 touches and snap share are not in the free data. The weighting above is the stand-in, so treat this as an estimate.')}
       ${li('TD history', x.gp ? `${x.tdg} of his last ${x.gp} games with a TD (${tdList.join(', ')}). Model rate: ${fmt1(x.lam)} TDs a game.` : 'No recent game logs; this leans on his role and the team total.')}
@@ -4758,14 +4786,14 @@ function tdRow(x, R, k, i, ctx){
   const g = R.g, c = x.c[k], p = x.pr[k], id = 'tdw' + hsh('td' + g.id + k + x.id), val = c && p * c.dec >= 1.03;
   return `<div class="br-wrap${state.tdHl === x.id && k === 'any' ? ' hl' : ''}" id="${k === 'any' ? 'td-' + esc(x.id) : ''}"><div class="br"><div class="br-i"><a class="plink" href="${plHref(g.id, x.id)}">${avatar(x.p)}</a></div>
     <div class="br-t"><div class="br-g">${x.live ? `<span style="color:var(--sun)">live: ${x.live.car} car, ${x.live.tgt} tgt, ${x.live.rz.car + x.live.rz.tgt} inside the 20</span> · ` : ''}#${i+1} · ${esc(x.p.pos)} · ${esc(g[x.side].abbr)}${x.q ? ' · <span style="color:var(--warn)">questionable</span>' : ''}</div><div><b><a class="plink" href="${plHref(g.id, x.id)}">${esc(x.p.name)}</a></b></div><div class="br-w">${pct(p,0)} chance${val ? ' <span class="tag">Value</span>' : ''}</div></div>
-    <div class="br-o"><b>${c ? decToAm(c.dec) : decToAm(1 / Math.max(p, 0.01))}</b><span>${c ? esc(c.book) : 'fair price'}</span></div><div class="br-b">${togBtn(id, 'Why?')}${k === 'any' ? slipBtn(tdLeg(x, g.id)) : ''}</div></div>
+    <div class="br-o"><b>${c ? decToAm(c.dec) : decToAm(1 / Math.max(p, 0.01))}</b><span>${c ? esc(c.book) : 'fair price'}</span></div><div class="br-b">${togBtn(id, 'Why?')}${k !== 'first' ? slipBtn(tdLeg(x, g.id, k)) : ''}</div></div>
     <div class="whybox" id="${id}" hidden>${tdWhy(x, R, k)}</div></div>`;
 }
 function tdScorersHtml(R){ return `<div id="tdbox" data-gid="${R.g.id}"><div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE in this game…</div></div>`; }
 function tdListHtml(R, ctx){
   const M = R.tdm; if (!M.rows.length) return '<div class="panel note">No player game logs are available for this game yet.</div>';
-  const kinds = [['any','Anytime TD'], ['first','First TD'], ['two','2+ TDs']];
-  const LV = M.live, done = x => x.live && ((k => k === 'any' ? x.live.tds > 0 : k === 'two' ? x.live.tds >= 2 : !!LV?.firstTD));
+  const kinds = [['any','Anytime TD'], ['two','2+ TDs'], ['three','3+ TDs'], ['first','First TD']];
+  const LV = M.live, done = x => x.live && ((k => k === 'any' ? x.live.tds > 0 : k === 'two' ? x.live.tds >= 2 : k === 'three' ? x.live.tds >= 3 : !!LV?.firstTD));
   const tabs = kinds.map(([k, l]) => { if (LV && k === 'first' && LV.firstTD) return [k, l, `<div class="panel note">First TD already scored: ${esc(LV.firstTD.text)}</div>`];
     const list = [...M.rows].filter(x => !(LV && done(x)(k))).sort((a,b) => b.pr[k] - a.pr[k]), hit = LV ? M.rows.filter(x => done(x)(k)) : [];
     return [k, l, `<div class="rows">${moreList('tdm' + hsh(ctx + k), list.map((x, i) => tdRow(x, R, k, i, ctx)), 6)}</div>${hit.length ? `<div class="note">Already cashed: ${hit.map(x => `${esc(x.p.name)} (${x.live.tds} TD)`).join(', ')}</div>` : ''}`]; });
@@ -5104,7 +5132,9 @@ function slipLeg(c, gid, extra = {}){
   return { key, id:c.id || key, gid, label:c.label, p:c.p, priced:!!c.priced, dec:c.priced ? c.dec : null, book:c.priced ? c.book : null, kind:c.kind || (c.playerId ? 'player' : 'game'), market:c.market || c.stat, stat:c.stat || c.market,
     side:c.side, line:c.line ?? null, playerId:c.playerId || null, team:c.team || null, name:c.player?.name || null, img:c.player?.img || null, period:c.period || 'FG', ...extra };
 }
-const tdLeg = (x, gid) => { const c = x.c?.any; return slipLeg({ id:'td|' + x.id, label:`${x.p.name} anytime TD`, p:x.pr.any, priced:!!c, dec:c?.dec, book:c?.book, kind:'player', stat:'anytime_td', market:'anytime_td', side:'yes', playerId:x.id, team:x.side, player:x.p }, gid); };
+const TDK = { any:{ id:'td', lbl:'anytime TD', stat:'anytime_td', side:'yes', line:null }, two:{ id:'td2', lbl:'2+ TDs', stat:'tds', side:'over', line:1.5 }, three:{ id:'td3', lbl:'3+ TDs', stat:'tds', side:'over', line:2.5 } };
+const tdLeg = (x, gid, k = 'any') => { const K = TDK[k] || TDK.any, c = x.c?.[k]; return slipLeg({ id:K.id + '|' + x.id, label:`${x.p.name} ${K.lbl}`, p:x.pr[k], priced:!!c, dec:c?.dec, book:c?.book, kind:'player', stat:K.stat, market:K.stat, side:K.side, line:K.line, playerId:x.id, team:x.side, player:x.p }, gid); };
+const tdTail = (l, need) => { if (need <= 0) return 1; let t = 0, term = 1; for (let i = 0; i < need; i++){ t += term; term *= l/(i + 1); } return Math.max(0, 1 - Math.exp(-l)*t); };
 const slipBtn = leg => { if (!leg || !(leg.p > 0 && leg.p < 1)) return ''; SLIP_REG[leg.key] = leg; const on = slipHas(leg.key); return `<button type="button" class="slipb${on ? ' on' : ''}" data-slip="${esc(leg.key)}" aria-pressed="${on}" title="${on ? 'Remove from the Builder' : 'Add to the Builder'}">${on ? '✓' : '+'}</button>`; };
 function slipToggle(key){ let l = slipLoad(); const had = l.some(x => x.key === key); if (had) l = l.filter(x => x.key !== key); else if (SLIP_REG[key]) l.push(SLIP_REG[key]); slipSave(l);
   document.querySelectorAll(`[data-slip="${CSS.escape(key)}"]`).forEach(b => { const on = l.some(x => x.key === key); b.classList.toggle('on', on); if (!b.classList.contains('x')) b.textContent = on ? '✓' : '+'; b.setAttribute('aria-pressed', String(on)); });
@@ -5177,11 +5207,11 @@ async function loadSlateDay(day){
 }
 let slateT = 0; function renderSlateSoon(){ clearTimeout(slateT); slateT = setTimeout(renderPlaybook, 500); }
 const topScriptOf = R => ['A','B','C'].sort((a, b) => R.gm.scripts[b] - R.gm.scripts[a])[0];
-function slateTD(res){
-  const rows = [];
+function slateTD(res, k = 'any'){
+  const rows = [], need = { any:1, two:2, three:3 }[k] || 1;
   for (const R of res){ if (R.g.sport !== 'nfl' || !R.tdm?.rows) continue; const s = topScriptOf(R);
-    for (const x of R.tdm.rows){ if (x.live?.tds) continue; const ps = 1 - Math.exp(-x.lam*scriptMult(R, x.side, 'tds', s));
-      rows.push({ R, x, c:{ playerId:x.id, player:x.p, team:x.side, stat:'anytime_td', market:'anytime_td' }, p:x.pr.any, ps, leg:tdLeg(x, R.g.id) }); } }
+    for (const x of R.tdm.rows){ const have = x.live?.tds || 0; if (have >= need || !(x.pr[k] > 0.004)) continue; const ps = tdTail(x.lam*scriptMult(R, x.side, 'tds', s), need);
+      rows.push({ R, x, k, c:{ playerId:x.id, player:x.p, team:x.side, stat:k === 'any' ? 'anytime_td' : 'tds', market:k === 'any' ? 'anytime_td' : 'tds' }, p:x.pr[k], ps, leg:tdLeg(x, R.g.id, k) }); } }
   return rows.sort((a, b) => b.p - a.p);
 }
 function slateProps(res){
@@ -5258,17 +5288,35 @@ function fadesFor(res){
   }
   return out.sort((a, b) => b.sev - a.sev);
 }
-function fadeRow(f){
-  const g = f.R.g, tc = f.side && g[f.side] ? teamColor(g[f.side]) : '#FF5A6E', tag = { td:'TD fade', over:'Over to avoid', chalk:'Overpriced favorite' }[f.kind];
-  return `<div class="fade" style="--tc:${tc}">${f.player ? avatar(f.player, '', tc) : f.side && g[f.side] ? teamLogo(g[f.side]) : ''}<div class="fd-t"><div class="fd-top"><span class="fd-tag">🚫 ${esc(tag)}</span><a href="#g-${g.id}">${esc(matchup(g))}</a></div><b>${esc(f.label)}</b><ul>${f.why.map(w => `<li>${esc(w)}</li>`).join('')}</ul></div><div class="fd-p"><b>${pct(f.p,0)}</b><small>our chance</small></div></div>`;
+const FADE_KINDS = [['td', '🏈', 'TD fades'], ['over', '📉', 'Overs to skip'], ['chalk', '💸', 'Overpriced favorites']];
+const fadeLevel = sev => sev >= 3 ? ['hard', 'Hard fade'] : sev >= 1.8 ? ['strong', 'Strong fade'] : ['soft', 'Caution'];
+function fadeRow(f, i){
+  const g = f.R.g, tc = f.side && g[f.side] ? teamColor(g[f.side]) : '#FF5A6E', tag = { td:'TD fade', over:'Over to avoid', chalk:'Overpriced favorite' }[f.kind], [lv, lvl] = fadeLevel(f.sev);
+  return `<div class="fade lv-${lv}" style="--tc:${tc}">${i != null ? `<span class="fd-k">${i + 1}</span>` : ''}${f.player ? avatar(f.player, '', tc) : f.side && g[f.side] ? teamLogo(g[f.side]) : ''}<div class="fd-t"><div class="fd-top"><span class="fd-tag">🚫 ${esc(tag)}</span><span class="fd-lv">${lvl}</span><a href="#g-${g.id}">${esc(matchup(g))}</a></div><b>${esc(f.label)}</b><ul>${f.why.map(w => `<li>${esc(w)}</li>`).join('')}</ul></div><div class="fd-p"><b>${pct(f.p,0)}</b><small>our chance</small></div></div>`;
 }
 
+/* bets to avoid: by kind (tabs), ranked or grouped by game, filtered by the same game / chance controls as the rest of the board */
+function fadesBoard(all, day){
+  if (!all.length) return '<div class="panel note">No strong fades yet. They show up as games are researched.</div>';
+  const list = (F, key) => {
+    const f = pbFilter(F); if (!f.length) return `<div class="panel note">${F.length ? 'Nothing matches these filters. Try "Any chance" or "All games".' : 'None of these on this day.'}</div>`;
+    if (state.pb.view === 'game' && !state.pb.game){
+      const by = [...new Set(f.map(x => x.R.g.id))].map(id => f.filter(x => x.R.g.id === id)).sort((a, b) => b[0].sev - a[0].sev);
+      return `<div class="pbg">${by.map(L => { const g = L[0].R.g, hard = L.filter(x => x.sev >= 3).length; return `<div class="pbg-c" style="${tcVars(g)}"><a class="pbg-h" href="#g-${g.id}">${teamLogo(g.away,'sm')}<b>${esc(g.away.short)}</b><i>@</i>${teamLogo(g.home,'sm')}<b>${esc(g.home.short)}</b><span>${plural(L.length, 'fade')}${hard ? ` · ${hard} hard` : ''} · ${esc(whenTxt(g))}</span></a><div class="fades">${moreList(key + g.id, L.map((x, i) => fadeRow(x, i)), 3)}</div></div>`; }).join('')}</div>`;
+    }
+    return `<div class="fades">${moreList(key, f.map((x, i) => fadeRow(x, i)), 10)}</div>${f.length > 10 ? `<div class="note">Worst ${Math.min(10, f.length)} of ${f.length} shown first. "Show more" opens the rest, or switch to "By game".</div>` : ''}`;
+  };
+  const counts = FADE_KINDS.map(([k]) => all.filter(f => f.kind === k).length), hard = all.filter(f => f.sev >= 3).length;
+  const sum = `<div class="fd-sum">${[[all.length, 'to avoid'], [hard, 'hard fades'], ...FADE_KINDS.map(([k, ic, l], i) => [counts[i], l.toLowerCase()])].filter(x => x[0]).map(([n, l]) => `<div><b>${n}</b><span>${esc(l)}</span></div>`).join('')}</div>`;
+  const tabs = [['all', `🚫 All · ${all.length}`, list(all, 'fda' + day)], ...FADE_KINDS.map(([k, ic, l], i) => counts[i] ? [k, `${ic} ${l} · ${counts[i]}`, list(all.filter(f => f.kind === k), 'fd' + k + day)] : null).filter(Boolean)];
+  return `<div class="note">Bets that look likely or popular, but the research says stay away: tough defenses, a game script that works against them, prices that are too short. Ranked worst first. "Hard fade" means several red flags at once. Our chance is still shown so you can judge.</div>${sum}${tabsHtml('fdk', tabs)}`;
+}
 let BUILDS = {};
 function renderPlaybook(){
   const day = slateDayOf(), days = slateDays(), games = slateGames(day), res = games.map(g => CACHE[g.id]).filter(R => R && R.cands);
   state.slateDay = day; if (state.pb.game && !games.some(g => g.id === state.pb.game)) state.pb.game = '';
   if (SLATE.day !== day) loadSlateDay(day);
-  const td = slateTD(res), props = slateProps(res), sports = SPORT_KEYS.filter(k => games.some(g => g.sport === k));
+  const td = slateTD(res), td2 = slateTD(res, 'two'), td3 = slateTD(res, 'three'), props = slateProps(res), sports = SPORT_KEYS.filter(k => games.some(g => g.sport === k));
   const bestPer = res.map(R => R.best[0] ? { R, c:R.best[0], p:R.best[0].p, leg:slipLeg(R.best[0], R.g.id) } : null).filter(Boolean);
   const all = res.flatMap(R => R.ranked.map(c => ({ R, c, p:c.p, leg:slipLeg(c, R.g.id) })));
   const grp = (f, sort = (a, b) => b.c.quality - a.c.quality) => { const seen = new Set(); return all.filter(x => f(x.c, x.R)).sort(sort).filter(x => { if (seen.has(x.leg.key)) return false; seen.add(x.leg.key); return true; }); };
@@ -5280,6 +5328,9 @@ function renderPlaybook(){
     tdTopEach.length && ['td', '🏈', 'Anytime TD in every game', `the likeliest scorer from each of ${plural(tdTopEach.length, 'NFL game')}`, tdTopEach.map(t => t.leg)],
     tdScript.length && ['tds', '🎬', 'Script-proof TDs', 'the scorer each game\'s most likely script favors most', tdScript.map(t => t.leg)],
     td.length >= 3 && ['td3', '🔥', 'The day\'s top 3 scorers', 'three likeliest anytime TDs on the whole board', td.slice(0, 3).map(t => t.leg)],
+    td2.length >= 2 && ['td2', '✌️', 'Double trouble', 'the two likeliest 2+ TD scorers on the board', td2.slice(0, 2).map(t => t.leg)],
+    td2.length && ['td2x', '💥', '2+ TD, every game', 'the likeliest multi-TD scorer from each game', res.map(R => td2.find(t => t.R === R)).filter(Boolean).slice(0, 6).map(t => t.leg)],
+    td3.length && ['td3x', '🚀', 'Hat-trick moonshot', 'the single likeliest 3+ TD game on the board', td3.slice(0, 1).map(t => t.leg)],
     scriptStack.length && ['script', '📜', 'Script stack', 'best prop for each game\'s most likely script', scriptStack],
     safest.length && ['safe', '🛡️', 'Bankers', 'highest-probability prop from four different games', safest],
     bestPer.length && ['best', '⭐', 'Best bet, every game', 'our top-ranked pick in each matchup', bestPer.map(x => x.leg)],
@@ -5300,7 +5351,7 @@ function renderPlaybook(){
     ${gamesStrip ? `<section class="sec"><div class="sechead"><h2><span class="kick">Tap to focus · › to open</span>The games</h2></div>${gamesStrip}</section>` : ''}
     ${builds.length ? `<section class="sec"><div class="sechead"><h2><span class="kick">One tap</span>Quick builds</h2><span class="note">Each adds its legs to your Builder</span></div><div class="builds">${builds.map(([k, ic, t, sub, legs]) => { const s = slipCombo(legs); return `<button type="button" class="build" data-build="${k}"><span class="bi">${ic}</span><span class="bt"><b>${esc(t)}</b><small>${plural(legs.length, 'leg')} · ${esc(sub)}</small></span><span class="bp"><b>${pct(s.joint, s.joint < 0.05 ? 1 : 0)}</b><small>all hit · fair ${decToAm(1/Math.max(s.joint, 1e-4))}</small></span></button>`; }).join('')}</div></section>` : ''}
     ${!games.length ? '<div class="panel note">No games on this day for this filter. Pick another day above.</div>' : `<section class="sec"><div class="sechead"><h2><span class="kick">Everything, sorted</span>The board</h2></div>${controls}${tabsHtml('slate', [
-      ...(td.length || sports.includes('nfl') ? [['td', '🏈 TD scorers', td.length ? `<div class="note">Anytime TD chance from our usage model. The second number is his chance if his game follows its most likely script.</div>${pbList(td, 'sltd' + day, 15)}` : '<div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE on the board…</div>']] : []),
+      ...(td.length || sports.includes('nfl') ? [['td', '🏈 TD scorers', td.length ? tdLadderHtml(td, td2, td3, day) : '<div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE on the board…</div>']] : []),
       ...catTabs,
       ['bets', '⭐ Best bets', `<h3>Best bet in every game</h3>${pbList(bestPer, 'slb' + day, 20)}
         <h3>Sides & moneylines</h3>${pbList(grp(c => !c.playerId && /spread|ml|dnb/.test(c.market)), 'sls' + day, 6)}
@@ -5308,12 +5359,20 @@ function renderPlaybook(){
         <h3>Upset watch</h3>${pbList(grp((c, R) => badgesFor(c, R).includes('upset')), 'slu' + day, 6)}
         <h3>Value picks (real prices)</h3>${pbList(grp((c, R) => badgesFor(c, R).includes('value'), (a, b) => b.c.ev - a.c.ev), 'slv' + day, 6)}
         <h3>Long shots worth a look</h3>${pbList(grp(c => (c.priced ? c.dec : 1/c.p) >= 2.5 && c.p >= 0.2), 'sll' + day, 6)}`],
-      ['fades', '🚫 Bets to avoid', (() => { const F = fadesFor(res).filter(f => !state.pb.game || f.R.g.id === state.pb.game); return F.length ? `<div class="note">Bets that look likely or popular, but the research says stay away: tough defenses, a game script that works against them, prices that are too short. Our chance is still shown so you can judge.</div><div class="fades">${moreList('fd' + day, F.map(fadeRow), 10)}</div>` : '<div class="panel note">No strong fades yet. They show up as games are researched.</div>'; })()],
+      ['fades', '🚫 Bets to avoid', (() => { try { return fadesBoard(fadesFor(res), day); } catch(e){ return `<div class="panel note">Couldn't build the fades list (${esc(e.message)}).</div>`; } })()],
       ['scripts', '🎬 Game scripts', scriptsBoard || '<div class="panel note">Scripts appear as games are researched.</div>'],
     ])}</section>`}`);
   headerSync();
 }
 const renderSlate = renderPlaybook;
+/* anytime → 2+ → 3+: same scorers, three price points */
+function tdLadderHtml(td, td2, td3, day){
+  const kinds = [['any', 'Anytime', '🏈', td, 'Anytime TD chance from our usage model. The second number is his chance if his game follows its most likely script.'],
+    ['two', '2+ TDs', '✌️', td2, 'Two or more TDs. Built from the same scoring rate: a back with a 50% anytime chance usually sits near 15% here. Fair odds tend to land around +400 to +900, so a couple of these change a parlay fast.'],
+    ['three', '3+ TDs', '🚀', td3, 'Three or more TDs: the moonshots. Even the best goal-line backs land this a few times a season. Fair prices are usually +1500 or longer; keep stakes tiny.']];
+  const head = td.slice(0, 3).map(t => { const x = t.x, g = t.R.g, tc = teamColor(g[x.side]); return `<div class="tdl-c" style="--tc:${tc}">${avatar(x.p, '', tc)}<b>${esc(x.p.name)}</b><small>${esc(g[x.side].short)} · ${esc(x.p.pos || '')}</small><div class="tdl-s">${[['any','1+'],['two','2+'],['three','3+']].map(([k, l]) => `<span><i>${l}</i><b>${pct(x.pr[k], x.pr[k] < 0.1 ? 1 : 0)}</b><small>${fairStr(x.pr[k])}</small>${slipBtn(tdLeg(x, g.id, k))}</span>`).join('')}</div></div>`; }).join('');
+  return `${head ? `<div class="tdl">${head}</div>` : ''}${tabsHtml('pbtd', kinds.map(([k, l, ic, list, note]) => [k, `${ic} ${l}`, `<div class="note">${note}</div>${pbList(list, 'sltd' + k + day, 15)}`]))}`;
+}
 
 
 /* ============================ FLOW: discover → analyze → monitor → repeat ============================ */
