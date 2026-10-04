@@ -4,7 +4,7 @@
    and is shared by everyone who asks for the same thing.
    Services used: Pages Functions + the Cache API (always), and D1 as binding NP_DB (optional, for persistence).
    Secrets (optional): ODDS_API_KEY. Never sent to the browser. */
-const NP_VERSION = 'np-backend-1.1';
+const NP_VERSION = 'np-backend-1.2';
 /* shared with the browser build (extracted from index.html at build time) */
 const NP_TZ = 'America/New_York';
 const getLocalGameDate = t => new Intl.DateTimeFormat('en-CA', { timeZone:NP_TZ, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(t));
@@ -172,11 +172,11 @@ function validate(rule, body){
 }
 
 /* ---------------- per-provider protection: backoff, retry limits, daily caps ---------------- */
-const MEM = { inflight:new Map(), cool:{}, calls:{} };
+const MEM = { inflight:new Map(), cool:{}, calls:{}, fails:{} };
 const CAPS = { 'odds-api':50 };   // per UTC day, protects the paid/credit provider; free providers rely on caching
 const day = () => new Date().toISOString().slice(0, 10);
 function cooling(p){ const c = MEM.cool[p]; return c && c.until > Date.now() ? c : null; }
-function coolDown(p, retryAfterSec){ const c = MEM.cool[p] || { n:0 }; c.n = Math.min(c.n + 1, 6); const ms = retryAfterSec ? retryAfterSec*1000 : 15e3 * 2 ** (c.n - 1); c.until = Date.now() + Math.min(ms, 15*60e3); MEM.cool[p] = c; return c; }
+function coolDown(p, retryAfterSec){ const c = MEM.cool[p] || { n:0 }; c.n = Math.min(c.n + 1, 6); const ms = retryAfterSec ? retryAfterSec*1000 : 15e3 * 2 ** (c.n - 1); c.until = Date.now() + Math.min(ms, /^espn/.test(p) ? 60e3 : 15*60e3); MEM.cool[p] = c; return c; }
 async function countCall(env, p, ok){
   const k = p + '|' + day(); MEM.calls[k] = (MEM.calls[k] || 0) + 1;
   if (env.NP_DB) try { await env.NP_DB.prepare(`INSERT INTO provider_stats (provider, day, calls, errors) VALUES (?1, ?2, 1, ?3) ON CONFLICT(provider, day) DO UPDATE SET calls = calls + 1, errors = errors + ?3`).bind(p, day(), ok ? 0 : 1).run(); } catch(e){}
@@ -186,7 +186,8 @@ async function callsToday(env, p){
   return MEM.calls[p + '|' + day()] || 0;
 }
 async function upstream(env, rule, url){
-  const p = rule.provider, c = cooling(p);
+  // cooldowns are per lane: background history requests can never block live scores and game pages
+  const p = rule.provider, ck = rule.coolKey || p, c = cooling(ck);
   if (c) throw Object.assign(new Error(`${p} is cooling down after errors`), { status:503, retryAt:c.until });
   if (CAPS[p] && await callsToday(env, p) >= (+env.ODDS_DAILY_CAP || CAPS[p])) throw Object.assign(new Error(`${p} daily request cap reached`), { status:429 });
   let target = url;
@@ -195,15 +196,17 @@ async function upstream(env, rule, url){
   for (let a = 0; a < 2; a++){
     try {
       const r = await fetch(target, { headers:{ 'accept':'application/json', 'user-agent':'NP/1.0' }, cf:{ cacheTtl:0 } });
-      if (r.status === 429){ const ra = +r.headers.get('retry-after') || 0; coolDown(p, ra); await countCall(env, p, false); throw Object.assign(new Error('rate limited by ' + p), { status:429 }); }
-      if (r.status >= 500){ last = Object.assign(new Error(`${p} HTTP ${r.status}`), { status:502 }); await countCall(env, p, false); if (a === 0){ await new Promise(s => setTimeout(s, 400)); continue; } coolDown(p); throw last; }
+      if (r.status === 429){ const ra = +r.headers.get('retry-after') || 0; coolDown(ck, ra); await countCall(env, p, false); throw Object.assign(new Error('rate limited by ' + p), { status:429 }); }
+      if (r.status >= 500){ last = Object.assign(new Error(`${p} HTTP ${r.status}`), { status:502 }); await countCall(env, p, false); if (a === 0){ await new Promise(s => setTimeout(s, 400)); continue; } coolDown(ck); throw last; }
       if (!r.ok){ await countCall(env, p, false); throw Object.assign(new Error(`${p} HTTP ${r.status}`), { status:r.status === 404 ? 404 : 502 }); }
-      const body = await r.json(); await countCall(env, p, true); if (MEM.cool[p]) MEM.cool[p].n = 0;
+      const body = await r.json(); await countCall(env, p, true); if (MEM.cool[ck]) MEM.cool[ck].n = 0; MEM.fails[ck] = 0;
       return { body, remaining:r.headers.get('x-requests-remaining') };
     } catch(e){ last = e; if (e.status) throw e; if (a === 0) continue; }
   }
-  coolDown(p); throw Object.assign(last || new Error('upstream failed'), { status:502 });
+  strike(ck); throw Object.assign(last || new Error('upstream failed'), { status:502 });
 }
+/* one bad response is not a reason to stop asking: only three failures in a row start a (short) cooldown */
+function strike(ck){ MEM.fails[ck] = (MEM.fails[ck] || 0) + 1; if (MEM.fails[ck] >= 3){ MEM.fails[ck] = 0; coolDown(ck); } }
 
 /* ---------------- cache: Cache API (edge, all visitors) + D1 last-good copy ---------------- */
 /* Three cache layers, fastest first: this server instance's memory → Cloudflare's edge cache (custom domains only;
@@ -328,7 +331,7 @@ async function hist(env, ctx, q){
   const closed = d(to) < Date.now() - 2*864e5, ttl = closed ? 3650*864e5 : 3*3600e3;
   const path = sport === 'soccer' ? `soccer/${lg}` : SPORT_SITE[sport], m = ruleFor(`${SITE}${path}/scoreboard?dates=${from}-${to}&limit=1000`);
   return getData(env, ctx, `hist:${sport}:${lg || ''}:${from}-${to}`, 'hist', { sport, league:lg, date:from, source:'ESPN' }, () => ttl,
-    async () => { const r = await upstream(env, m.rule, m.url); return { body:{ games:npmCompact(r.body), from, to, closed } }; }, { persist:ttl });
+    async () => { const r = await upstream(env, { ...m.rule, coolKey:'espn-hist' }, m.url); return { body:{ games:npmCompact(r.body), from, to, closed } }; }, { persist:ttl });
 }
 /* ---------------- persistence: games, teams, predictions (D1) ---------------- */
 const SCHEMA = [

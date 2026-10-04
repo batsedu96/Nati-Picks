@@ -1841,7 +1841,7 @@ async function throttle(host){
   return () => { h.active--; const n = h.queue.shift(); if (n) n(); };
 }
 async function fetchJSON(url, { ttl = 0, persist = false, retries = 1, proxy = true, raw = false } = {}){
-  if (NPB.on && NPB.route(url)) return NPB.fetch(url, { ttl, raw });
+  if (NPB.on && NPB.route(url)){ try { return await NPB.fetch(url, { ttl, raw }); } catch(e){ if (e.fatal || e.status === 429 || /the-odds-api/.test(url) || !NPB.down) throw e; } }   // server down → fall through to the source
   const key = 'np_c_' + url;
   const hit = MEM.get(url); if (ttl && hit && Date.now()-hit.at < ttl) return hit.data;
   if (persist && ttl){ const c = store.get(key, null); if (c && Date.now()-c.at < ttl){ MEM.set(url, c); return c.data; } }
@@ -1922,7 +1922,7 @@ function parseEspnLive(o, home, away){
 const LIVE_BOOKS = {};   // gid → book → { sig, confirmed, changedAt }
 registerProvider('sportsData', { name:'ESPN',
   async slate(sport, league, opts = {}){
-    if (NPB.on) return NPB.slate(sport, league, opts.days || (sport === 'soccer' ? 4 : 1));
+    if (NPB.on && !(NPB.down && Date.now() - NPB.down < 60000)){ try { return await NPB.slate(sport, league, opts.days || (sport === 'soccer' ? 4 : 1)); } catch(e){ NPB.down = Date.now(); console.warn('NP server slate failed, reading ESPN directly:', e.message); } }
     const out = [];
     const add = (j, lg, lgName) => { for (const ev of j.events || []){ const c = ev.competitions?.[0]; if (!c) continue;
       const hc = c.competitors.find(x=>x.homeAway==='home'), ac = c.competitors.find(x=>x.homeAway==='away'); if (!hc || !ac) continue;
@@ -3172,7 +3172,8 @@ const NPB = { on:false, odds:false, storage:false, stale:0, inflight:new Map(), 
       const j = r.ok ? await r.json() : null; if (j?.np){ this.on = true; this.odds = !!j.odds; this.storage = !!j.storage; this.health = j; } } catch(e){}
     return this.on;
   },
-  route(url){ return this.HOSTS.test(url) && (!/the-odds-api/.test(url) || this.odds); },
+  // if NP's server is struggling, the browser goes straight to the free sources for a minute instead of showing nothing
+  route(url){ return this.HOSTS.test(url) && (!/the-odds-api/.test(url) || this.odds) && !(this.down && Date.now() - this.down < 60000 && !/the-odds-api/.test(url)); },
   async fetch(url, { ttl = 0, raw = false } = {}){
     const hit = MEM.get(url); if (ttl && hit && Date.now() - hit.at < ttl) return hit.data;
     if (this.inflight.has(url)) return this.inflight.get(url);
@@ -3180,7 +3181,7 @@ const NPB = { on:false, odds:false, storage:false, stale:0, inflight:new Map(), 
       const clean = url.replace(/([?&])apiKey=[^&]*(&|$)/, (m, a, b) => b ? a : '').replace(/[?&]$/, '');
       NET.calls++;
       const r = await fetch('/api/x?u=' + encodeURIComponent(clean));
-      if (!r.ok){ const b = await r.json().catch(() => ({})); const e = new Error(b.error || 'HTTP ' + r.status); e.status = r.status; if ([401,403,404,422].includes(r.status)) e.fatal = true;
+      if (!r.ok){ const b = await r.json().catch(() => ({})); const e = new Error(b.error || 'HTTP ' + r.status); e.status = r.status; if (r.status >= 500) this.down = Date.now(); if ([401,403,404,422].includes(r.status)) e.fatal = true;
         NET.errors.push(clean.replace(/^https:\/\//, '').slice(0, 100)); throw e; }
       const data = await r.json(); if (r.headers.get('x-np-stale')) this.stale = Date.now();
       const out = raw ? { data, headers:r.headers } : data; if (ttl) MEM.set(url, { at:Date.now(), data:out }); return out;
@@ -3667,31 +3668,53 @@ const NPM = {
       out.push({ from:ymdU(a), to:ymdU(b), closed:b < today - 2 }); }
     return out;
   },
+  // History goes through NP's server on its own lane (its errors can never pause live data); without the server it comes straight from ESPN.
+  // Leagues load one at a time, two small requests at once, and only after the page itself has finished loading.
   async chunk(sport, lg, c){
-    if (NPB.on){ const r = await fetch(`/api/hist?sport=${sport}${lg ? '&league=' + encodeURIComponent(lg) : ''}&from=${c.from}&to=${c.to}`); const j = await r.json().catch(() => null);
+    if (NPB.on){ // through NP's server: each chunk is fetched from ESPN once for everyone and kept in its database
+      const r = await fetch(`/api/hist?sport=${sport}${lg ? '&league=' + encodeURIComponent(lg) : ''}&from=${c.from}&to=${c.to}`); const j = await r.json().catch(() => null);
       if (!r.ok || !j || !Array.isArray(j.games)) throw new Error((j && j.error) || 'history unavailable'); return j.games; }
-    const path = sport === 'soccer' ? `soccer/${lg}` : SPORT[sport].site;
-    return npmCompact(await fetchJSON(`${ESPN_SITE}${path}/scoreboard?dates=${c.from}-${c.to}&limit=1000`, { ttl:c.closed ? 864e5 : 3*3600e3, retries:1 }));
+    const path = sport === 'soccer' ? `soccer/${lg}` : SPORT[sport].site, url = `${ESPN_SITE}${path}/scoreboard?dates=${c.from}-${c.to}&limit=1000`;
+    for (let a = 0; a < 2; a++){ const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000);
+      try { NET.calls++; const r = await fetch(url, { signal:ctl.signal }); if (!r.ok) throw new Error('HTTP ' + r.status); return npmCompact(await r.json()); }
+      catch(e){ if (a) throw e; await new Promise(s => setTimeout(s, 1500)); } finally { clearTimeout(t); } }
   },
+  pack(games){ return games.map(g => [g.id, g.t, g.ty, g.h, g.a, g.ha, g.aa, g.hs, g.as, g.n, g.tz]); },
+  unpack(rows){ return (rows || []).map(r => ({ id:r[0], t:r[1], ty:r[2], h:r[3], a:r[4], ha:r[5], aa:r[6], hs:r[7], as:r[8], n:r[9], tz:r[10] })); },
+  save(k, cache){ try { const s = JSON.stringify({ v:NPM_VERSION, c:cache }); if (s.length > 900000) return;
+      let tot = s.length; for (let i = 0; i < localStorage.length; i++){ const kk = localStorage.key(i); if (kk.startsWith('np_h:') && kk !== 'np_h:' + k) tot += (localStorage.getItem(kk) || '').length; }
+      if (tot < 2.2e6) localStorage.setItem('np_h:' + k, s); } catch(e){} },
+  load(k){ try { const j = JSON.parse(localStorage.getItem('np_h:' + k) || 'null'); return j && j.v === NPM_VERSION ? j.c : {}; } catch(e){ return {}; } },
+  queue:[], running:false, startAt:Date.now() + 8000,
   ensure(sport, lg){
     if (!this.supported(sport, lg)) return Promise.resolve(null);
     const k = this.key(sport, lg), have = this.M[k];
     if (have && Date.now() - (have.builtAt || have.at || 0) < 3*3600e3) return Promise.resolve(have.ok ? have : null);
     if (this.P[k]) return this.P[k];
-    return (this.P[k] = (async () => {
-      const sk = 'np_h:' + k, saved = store.get(sk, null), cache = saved && saved.v === NPM_VERSION ? saved.c : {};
-      const list = this.chunks(sport), need = list.filter(c => { const s = cache[c.from + '-' + c.to]; return !s || (!s.closed && Date.now() - s.at > 3*3600e3); });
-      this.prog[k] = { done:list.length - need.length, total:list.length };
-      let fails = 0;
-      await pool(need, 3, async c => { try { const games = await this.chunk(sport, lg, c); cache[c.from + '-' + c.to] = { at:Date.now(), closed:c.closed, games }; } catch(e){ fails++; } this.prog[k].done++; });
-      const keepKeys = new Set(list.map(c => c.from + '-' + c.to)); for (const kk of Object.keys(cache)) if (!keepKeys.has(kk)) delete cache[kk];
-      const games = Object.values(cache).flatMap(x => x.games || []);
-      try { const s = JSON.stringify({ v:NPM_VERSION, c:cache }); if (s.length < 2.6e6) store.set(sk, { v:NPM_VERSION, c:cache }); } catch(e){}
-      let M; try { M = npmBuild(games, sport); } catch(e){ M = { ok:false, why:'model error: ' + e.message }; }
-      M.at = Date.now(); M.fails = fails; M.chunks = list.length; M.league = lg || null; this.M[k] = M;
-      if (M.ok) for (const f of this.listeners) try { f(sport, lg, M); } catch(e){}
-      return M.ok ? M : null;
-    })().finally(() => { delete this.P[k]; }));
+    let done; this.P[k] = new Promise(r => { done = r; }); this.queue.push({ sport, lg, k, done }); this.pump();
+    return this.P[k];
+  },
+  async pump(){
+    if (this.running) return; this.running = true;
+    try { while (this.queue.length){
+      const wait = this.startAt - Date.now(); if (wait > 0) await new Promise(s => setTimeout(s, wait));
+      if (state.busy) { await new Promise(s => setTimeout(s, 1500)); continue; }       // let the page's own loading finish first
+      const job = this.queue.shift(); let M = null;
+      try { M = await this.build(job.sport, job.lg, job.k); } catch(e){ M = null; }
+      delete this.P[job.k]; job.done(M);
+    } } finally { this.running = false; }
+  },
+  async build(sport, lg, k){
+    const cache = this.load(k), list = this.chunks(sport), need = list.filter(c => { const s = cache[c.from + '-' + c.to]; return !s || (!s.closed && Date.now() - s.at > 3*3600e3); });
+    this.prog[k] = { done:list.length - need.length, total:list.length }; let fails = 0;
+    await pool(need, 2, async c => { try { const games = await this.chunk(sport, lg, c); cache[c.from + '-' + c.to] = { at:Date.now(), closed:c.closed, g:this.pack(games) }; } catch(e){ fails++; } this.prog[k].done++; });
+    const keep = new Set(list.map(c => c.from + '-' + c.to)); for (const kk of Object.keys(cache)) if (!keep.has(kk)) delete cache[kk];
+    this.save(k, cache);
+    const games = Object.values(cache).flatMap(x => this.unpack(x.g));
+    let M; try { M = npmBuild(games, sport); } catch(e){ M = { ok:false, why:'model error: ' + e.message }; }
+    M.at = Date.now(); M.fails = fails; M.chunks = list.length; M.league = lg || null; this.M[k] = M;
+    if (M.ok) for (const f of this.listeners) try { f(sport, lg, M); } catch(e){}
+    return M.ok ? M : null;
   },
   predict(g){ const M = this.get(g.sport, g.league); return M ? npmPredict(M, g) : null; },
 };
@@ -6252,11 +6275,21 @@ function npLab(){
     <div class="lab">${rows}</div>`;
 }
 /* when a league's model finishes loading, re-run the games already on screen so they pick it up */
+const NP_REDO = { keys:new Set(), t:0, busy:false };
 NPM.listeners.push((sport, lg) => {
-  const list = Object.values(CACHE).filter(R => R?.g && R.g.sport === sport && (sport !== 'soccer' || R.g.league === lg) && R.g.state === 'pre');
-  if (location.hash === '#method') renderMethod();
-  pool(list.slice(0, 40), 2, async R => { try { await analyzeGame(R.g, { force:true }); } catch(e){} }).then(() => { if (/^#g-/.test(location.hash)) route(true); else repaint(); if (isPB()) renderPlaybook(); });
+  NP_REDO.keys.add(sport + '|' + (lg || '')); if (location.hash === '#method') renderMethod();
+  clearTimeout(NP_REDO.t); NP_REDO.t = setTimeout(npRedo, 1200);
 });
+// re-run only the games on screen that the new model affects, a couple at a time, never while the page is loading
+async function npRedo(){
+  if (NP_REDO.busy || state.busy){ clearTimeout(NP_REDO.t); NP_REDO.t = setTimeout(npRedo, 2000); return; }
+  NP_REDO.busy = true; const keys = new Set(NP_REDO.keys); NP_REDO.keys.clear();
+  try {
+    const list = Object.values(CACHE).filter(R => R?.g && R.g.state === 'pre' && !R.gm?.npf && keys.has(R.g.sport + '|' + (R.g.sport === 'soccer' ? R.g.league || '' : ''))).slice(0, 16);
+    await pool(list, 2, async R => { try { await analyzeGame(R.g, { force:true }); } catch(e){} });
+    if (list.length){ if (/^#g-/.test(location.hash)) route(true); else repaint(); if (isPB()) renderPlaybook(); }
+  } finally { NP_REDO.busy = false; }
+}
 
 /* ---------- Builder: NP's take on the ticket ----------
    A leg is only called out for a real reason: it's on the Stay Away list, the price is well short of fair, it fights
