@@ -1350,6 +1350,26 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 @keyframes np-chg{0%{color:var(--sun,#FFD43B);text-shadow:0 0 18px rgba(255,212,59,.6)}100%{color:inherit;text-shadow:none}}
 .upd-busy{background:linear-gradient(90deg,var(--muted),#fff,var(--muted));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:np-shim 1.6s linear infinite}
 @media (max-width:560px){ .pb-hero .dstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px} .pb-hero .dstats div{min-width:0;padding:6px 7px} .pb-hero .dstats b{font-size:22px} .pb-hero .dstats span{font-size:10.5px} .pb-hero p{font-size:13px;margin:4px 0 0} }
+/* why this number */
+.trace{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(13,19,48,.55);border:1px solid rgba(255,212,59,.18)}
+.trace>summary{cursor:pointer;font:800 13px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--sun,#FFD43B);list-style:none}
+.trace>summary::-webkit-details-marker{display:none}
+.tr-steps{margin:8px 0 0;padding:0;list-style:none;counter-reset:tr;display:flex;flex-direction:column;gap:6px}
+.tr-steps li{counter-increment:tr;display:grid;grid-template-columns:22px minmax(110px,30%) minmax(0,1fr);column-gap:8px;align-items:baseline;font-size:12.5px}
+.tr-steps li::before{content:counter(tr);font:700 11px 'IBM Plex Mono',monospace;color:var(--muted)}
+.tr-steps li b{color:var(--ink);font-weight:600}
+.tr-steps li span{font-family:'IBM Plex Mono',monospace;color:var(--ink)}
+.tr-steps li small{grid-column:2/-1;color:var(--muted);font-size:11.5px}
+.tr-steps li.tr-out{border-top:1px dashed rgba(255,255,255,.1);padding-top:6px}
+.tr-dist{margin-top:8px}
+.trd-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:4px}
+.trd-bar span{display:flex;flex-direction:column;align-items:center;padding:5px 4px;border-radius:8px;background:rgba(255,255,255,.04)}
+.trd-bar span.on{background:rgba(255,212,59,.12);outline:1px solid rgba(255,212,59,.4)}
+.trd-bar i{font-style:normal;font-size:10px;color:var(--muted)}.trd-bar b{font:700 13px 'IBM Plex Mono',monospace}
+.tr-sum{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12px;color:var(--soft)}
+.tr-sum b{font-family:'IBM Plex Mono',monospace;color:var(--ink)}
+table.audit td{font-size:12.5px}
+@media (max-width:560px){ .tr-steps li{grid-template-columns:18px minmax(0,1fr)} .tr-steps li span{grid-column:2} }
 </style>
 </head>
 <body>
@@ -2439,29 +2459,59 @@ function playerModel(R, pid, stat, G){
     minutes:avgArr(games.slice(0,6).map(x=>logVal(sport,x,'minutes')).filter(v=>v!=null)), passAtt:avgArr(games.slice(0,6).map(x=>logVal(sport,x,'pass_attempts')).filter(v=>v!=null)) };
   const why = [];
   if (meta.fam === 'binary'){ const m = binaryModel(R, pid, stat, G, games, role, side, why); R.pm.set(key, m); return m; }
-  let wsum = 0, vsum = 0; vals.slice(0,10).forEach((v,k) => { const w = Math.pow(0.85,k) * (games[k]?.season==='last season' ? 0.7 : 1); wsum += w; vsum += w*v; });
-  const ctxMean0 = n ? vsum/wsum : null;
-  let mult = 1; const muTeam = gm.mu * (side==='home' ? 1 : -1);
+  // ---- NP prop engine v2 ----------------------------------------------------------------------------------
+  // 1) his own recent games, each one adjusted for how good that opponent's defense was (opponent-adjusted form)
+  // 2) context for THIS game: opponent now, team scoring environment, likely script, teammates out, weather
+  // 3) his own spread of outcomes (not a league-wide default), shrunk toward the league shape when the sample is small
+  // 4) the market line is a separate input; the betting number blends the two, and both are kept for display
+  const NPMm = typeof NPM !== 'undefined' ? NPM.get(sport, g.league) : null, OPP = npOppCtx(R, side, stat, NPMm);
+  const recs = games.map((x, k) => ({ x, v:logVal(sport, x, stat), last:x.season === 'last season' })).filter(r => r.v != null).slice(0, 12)
+    .map((r, k) => { const f = OPP.factorOf(r.x.opp); return { ...r, k, f, va:r.v/f, w:Math.pow(0.86, k)*(r.last ? 0.7 : 1) }; });
+  const W = recs.reduce((t, r) => t + r.w, 0), baseRaw = W ? recs.reduce((t, r) => t + r.w*r.v, 0)/W : null, baseAdj = W ? recs.reduce((t, r) => t + r.w*r.va, 0)/W : null;
+  const ctxMean0 = baseAdj;
+  let mult = 1; const muTeam = gm.mu * (side==='home' ? 1 : -1), parts = [];
   const lf = D.lastFive?.[side], teamAvg = lf && lf.length ? avgArr(lf.map(e=>e.pf)) : null, implied = gm.ttMean?.[side];
-  if (implied != null && teamAvg && sport !== 'soccer') mult *= clamp(1 + 0.45*(implied/teamAvg - 1), 0.9, 1.1);
+  if (implied != null && teamAvg && sport !== 'soccer'){ const f = clamp(1 + 0.45*(implied/teamAvg - 1), 0.9, 1.1); mult *= f; parts.push(['Team scoring environment', f, `${g[side].short} projected ${fmt1(implied)} vs ${fmt1(teamAvg)} lately`]); }
   if (sport === 'nfl'){
-    if (/^pass_(attempts|completions|yds|rush_yds)$/.test(stat)) mult *= clamp(1 - 0.006*muTeam, 0.9, 1.1);
-    if (/^rush_(attempts|yds)$/.test(stat)) mult *= clamp(1 + 0.008*muTeam, 0.9, 1.12);
-    if (/^(receptions|reception_yds)$/.test(stat)) mult *= clamp(1 - 0.003*muTeam, 0.95, 1.05);
+    const sc = f => { mult *= f; if (Math.abs(f - 1) > 0.004) parts.push(['Game script', f, `${g[side].short} expected margin ${muTeam >= 0 ? '+' : ''}${fmt1(muTeam)}`]); };
+    if (/^pass_(attempts|completions|yds|rush_yds)$/.test(stat)) sc(clamp(1 - 0.006*muTeam, 0.9, 1.1));
+    if (/^rush_(attempts|yds)$/.test(stat)) sc(clamp(1 + 0.008*muTeam, 0.9, 1.12));
+    if (/^(receptions|reception_yds)$/.test(stat)) sc(clamp(1 - 0.003*muTeam, 0.95, 1.05));
     const outSame = teammatesOut(D, side, role, pid);
-    if (outSame.length && /^(rush_|receptions|reception_yds|rush_reception)/.test(stat)){ mult *= role==='rb' ? 1.07 : 1.04; why.push(`${outSame.map(x=>x.name).join(' and ')} ${outSame.length>1?'are':'is'} out, which frees up ${role==='rb'?'carries':'targets'}.`); }
-    if (gm.wxAdj < -1 && /^pass_|reception|longest/.test(stat)){ mult *= 0.96; why.push('Wind and rain should cut into passing a little.'); }
+    if (outSame.length && /^(rush_|receptions|reception_yds|rush_reception)/.test(stat)){ const f = role==='rb' ? 1.07 : 1.04; mult *= f; parts.push(['Teammates out', f, outSame.map(x=>x.name).join(', ')]); why.push(`${outSame.map(x=>x.name).join(' and ')} ${outSame.length>1?'are':'is'} out, which frees up ${role==='rb'?'carries':'targets'}.`); }
+    const qbOut = (D.injuries[side]||[]).find(x => OUT_STATUSES.test(x.status) && posRole(x.pos) === 'qb' && x.id !== pid && x.date && (Date.now()-new Date(x.date)) < 21*864e5 && (R.logs[x.id]||[]).length);
+    if (qbOut && /^(receptions|reception_yds|rush_reception_yds)$/.test(stat)){ mult *= 0.94; parts.push(['Starting QB out', 0.94, qbOut.name]); why.push(`${qbOut.name} is out at quarterback.`); }
+    if (gm.wxAdj < -1 && /^pass_|reception|longest/.test(stat)){ mult *= 0.96; parts.push(['Weather', 0.96, 'wind or rain']); why.push('Wind and rain should cut into passing a little.'); }
   }
-  if (sport === 'nba' && Math.abs(gm.mu) >= 10 && side === gm.favSide){ mult *= 0.96; why.push('A lopsided spread raises the chance starters sit late.'); }
+  if (sport === 'nba'){
+    const outs = (D.injuries[side]||[]).filter(x => OUT_STATUSES.test(x.status) && x.id !== pid && x.date && (Date.now()-new Date(x.date)) < 14*864e5);
+    if (outs.length && /^(points|threes|assists|points_)/.test(stat)){ const f = 1 + Math.min(0.08, 0.025*outs.length); mult *= f; parts.push(['Teammates out', f, outs.slice(0, 3).map(x => x.name).join(', ')]); }
+    if (Math.abs(gm.mu) >= 10 && side === gm.favSide){ mult *= 0.96; parts.push(['Blowout risk', 0.96, 'starters may sit late']); why.push('A lopsided spread raises the chance starters sit late.'); }
+  }
+  if (OPP.have && Math.abs(OPP.now - 1) > 0.004) parts.push([`Opponent (${OPP.oppName})`, OPP.now, OPP.desc]);
   // market median from the consensus line across books (de-vigged when both sides are priced)
-  let mktMedian = G && G.consensusLine != null ? G.consensusLine : null;
-  if (G && G.consensusLine != null && G.consensusP != null){ const mu0 = fitMu(meta, G.consensusLine, G.consensusP); mktMedian = distMedian(buildDist(meta, mu0)); }
-  let ctxMedian = null; if (ctxMean0 != null){ ctxMedian = distMedian(buildDist(meta, Math.max(0.3, ctxMean0*mult))); }
-  if (mktMedian == null && ctxMedian == null){ R.pm.set(key, null); return null; }
-  const wc = ctxMedian == null ? 0 : mktMedian == null ? 1 : 0.45*Math.min(1, n/6);
-  const target = (mktMedian ?? ctxMedian)*(1-wc) + (ctxMedian ?? mktMedian)*wc;
-  const dist = buildDist(meta, fitMu(meta, target, 0.5));
-  const m = { kind:'dist', dist, proj:target, ctxMedian, mktMedian, vals, n, usage, last3:avgArr(vals.slice(0,3)), seasonAvg:avgArr(vals), why, role, side, games };
+  let mktMedian = G && G.consensusLine != null ? G.consensusLine : null, mktDist = null;
+  if (G && G.consensusLine != null && G.consensusP != null){ const mu0 = fitMu(meta, G.consensusLine, G.consensusP); mktDist = buildDist(meta, mu0); mktMedian = distMedian(mktDist); }
+  else if (G && G.consensusLine != null){ mktDist = buildDist(meta, fitMu(meta, G.consensusLine, 0.5)); }
+  // the player's own distribution
+  let modelDist = null, pmeta = meta, modelMean = null;
+  const n2 = recs.length;
+  if (n2 >= 3 && ctxMean0 != null){
+    modelMean = Math.max(0.05, ctxMean0*mult*OPP.now);
+    const mv = recs.reduce((t, r) => t + r.va, 0)/n2, vv = recs.reduce((t, r) => t + (r.va - mv)**2, 0)/Math.max(1, n2 - 1), k0 = 6;
+    if (meta.fam === 'lognormal'){ const cvH = mv > 0 ? Math.sqrt(vv)/mv : meta.cv; pmeta = { ...meta, cv:clamp((n2*cvH + k0*meta.cv)/(n2 + k0), 0.25, 1.3) }; }
+    else if (meta.fam === 'nb' || meta.fam === 'poisson'){ const vrH = mv > 0 ? vv/mv : 1, vr0 = meta.fam === 'nb' ? meta.vr : 1, vr = clamp((n2*vrH + k0*vr0)/(n2 + k0), 1, 3.5); pmeta = vr > 1.02 ? { ...meta, fam:'nb', vr } : { ...meta, fam:'poisson' }; }
+    else if (meta.fam === 'normal'){ const sdH = Math.sqrt(vv), sc0 = meta.sd(Math.max(mv, 1)); const ratio = clamp((n2*(sdH/Math.max(sc0, 0.1)) + k0)/(n2 + k0), 0.6, 1.6); pmeta = { ...meta, sd:x => meta.sd(x)*ratio }; }
+    try { modelDist = buildDist(pmeta, fitMuToMean(pmeta, modelMean)); } catch(e){ modelDist = null; }
+  }
+  if (!modelDist && !mktDist){ R.pm.set(key, null); return null; }
+  // betting number: a mixture of NP's distribution and the market's, NP's share growing with his sample
+  const wM = modelDist ? (mktDist ? Math.min(0.6, 0.12 + 0.05*n2) : 1) : 0;
+  const dist = !mktDist ? modelDist : !modelDist ? mktDist : npMixDist(modelDist, mktDist, wM);
+  const ctxMedian = modelDist ? distMedian(modelDist) : null, target = distMedian(dist);
+  const pctl = modelDist ? npPctl(modelDist) : null;
+  const m = { kind:'dist', dist, modelDist, mktDist, wM, proj:modelMean ?? target, ctxMedian, mktMedian, pctl, vals, n, usage, last3:avgArr(vals.slice(0,3)), seasonAvg:avgArr(vals), why, role, side, games,
+    trace:{ n:n2, baseRaw, baseAdj, oppAdjPast:recs.length ? recs.reduce((t, r) => t + r.w*r.f, 0)/W : 1, oppNow:OPP.now, oppHave:OPP.have, oppName:OPP.oppName, parts, mult, mean:modelMean, fam:pmeta.fam, spread:pmeta.cv ?? pmeta.vr ?? null, wM, source:modelDist ? (mktDist ? 'NP model + market line' : 'NP model') : 'market line only' } };
   R.pm.set(key, m); return m;
 }
 function binaryModel(R, pid, stat, G, games, role, side, why){
@@ -2474,7 +2524,13 @@ function binaryModel(R, pid, stat, G, games, role, side, why){
     else if (ys.length) pm = (1/median(ys.map(o=>o.dec))) / (/first|last/.test(stat) ? 1.25 : 1.08); }
   let pc = null, path = true, ctxNote = '';
   const tds = games.map(x=>logVal('nfl',x,'tds')).filter(v=>v!=null);
-  if (sport === 'nfl' && /td/.test(stat) && tds.length){
+  const tdRow = sport === 'nfl' && R.tdm?.rows ? R.tdm.rows.find(x => x.id === pid) : null;
+  if (tdRow && /^(anytime_td|first_td|1st_td)$/.test(stat)){
+    pc = stat === 'anytime_td' ? tdRow.model.any : tdRow.model.first; path = tdRow.lam >= 0.12 || tdRow.tdg >= 2;
+    ctxNote = `${tdRow.tdg} TD game${tdRow.tdg===1?'':'s'} in his last ${tdRow.gp}; ${fmt1(tdRow.carG)} carries and ${fmt1(tdRow.tgtG)} targets a game`;
+    R.tdInfo[pid] = { lam:tdRow.lam, path, withTD:tdRow.tdg, n:tdRow.gp, carG:tdRow.carG, tgG:tdRow.tgtG, role };
+  }
+  else if (sport === 'nfl' && /td/.test(stat) && tds.length){
     const n = tds.length, tot = tds.reduce((a,b)=>a+b,0), withTD = tds.filter(v=>v>0).length;
     const prior = role==='rb' ? 0.4 : role==='wr' ? 0.32 : role==='qb' ? 0.08 : 0.05;
     let lam = (tot + prior*2)/(n+2); const imp = gm.ttMean?.[side]; if (imp) lam *= clamp(imp/22, 0.75, 1.3);
@@ -2525,9 +2581,10 @@ function probFor(R, G, line, side){
   }
   if (G.scope === 'player' && G.playerId){
     const m = playerModel(R, G.playerId, G.market, G); if (!m) return null;
-    if (m.kind === 'binary') return { w: side==='no' ? 1-m.p : m.p, pu:0, model:m };
+    if (m.kind === 'binary') return { w: side==='no' ? 1-m.p : m.p, pu:0, model:m, wModel: m.pc != null ? (side==='no' ? 1-m.pc : m.pc) : null };
     if (G.period !== 'FG') return null;
-    const pr = probs(m.dist, line); return { w: side==='over' ? pr.over : pr.under, pu:pr.eq, model:m };
+    const pr = probs(m.dist, line), pm2 = m.modelDist ? probs(m.modelDist, line) : null;
+    return { w: side==='over' ? pr.over : pr.under, pu:pr.eq, model:m, wModel: pm2 ? (side==='over' ? pm2.over : pm2.under) : null };
   }
   return null;
 }
@@ -2669,7 +2726,7 @@ function buildCandidates(R){
       const kind = G.scope==='player' ? 'player' : G.scope==='team' ? 'tt' : (/^(spread|ml|dnb|double_chance)$/.test(G.market) ? 'margin' : G.market==='total' ? 'total' : G.market);
       const base = { id:`${G.key}|${L.line}|${L.side}`, G, family:G.key, market:G.market, stat:G.market, period:G.period, scope:G.scope, kind, side:L.side, line:L.line,
         team: G.scope==='player' ? (R.idx[G.playerId]?.side || null) : (G.team || (['home','away'].includes(L.side) ? L.side : null)),
-        playerId:G.playerId, player: G.playerId ? R.idx[G.playerId]?.player : null, p:pr.w, push:pr.pu||0, model:pr.model, isAlt: L.offers.some(o=>o.isAlt), books:L.books,
+        playerId:G.playerId, player: G.playerId ? R.idx[G.playerId]?.player : null, p:pr.w, pModel:pr.wModel ?? null, push:pr.pu||0, model:pr.model, pid:`${R.g.id}|${G.key}|${L.line}|${L.side}`, isAlt: L.offers.some(o=>o.isAlt), books:L.books,
         updated:L.updated, type:betType(G, L) };
       base.label = candLabel(R, G, L);
       if (!dec){ unpriced.push({ ...base, fair: base.p > 0 ? 1/base.p : null }); continue; }
@@ -3048,7 +3105,8 @@ function badgesFor(c, R){
 
 /* ============================ CENTRAL TAB FILTERS (the only place tab membership is decided) ============================ */
 const byStart = (a, b) => new Date(a.date) - new Date(b.date);
-function filterTodayGames(list, now = Date.now()){ const d = getLocalGameDate(now); return list.filter(g => getLocalGameDate(g.date) === d).sort(byStart); }
+// today = games on today's New York date, plus any game still in progress (a late game running past midnight stays on Today)
+function filterTodayGames(list, now = Date.now()){ const d = getLocalGameDate(now); return list.filter(g => getLocalGameDate(g.date) === d || (g.state === 'in' && getLocalGameDate(g.date) < d)).sort(byStart); }
 function filterLiveGames(list){ return list.filter(g => isLive(g) && g.home?.score != null && g.away?.score != null && g.home.score !== '' && g.away.score !== '').sort(byStart); }
 function filterUpcomingGames(list, now = Date.now()){ const d = getLocalGameDate(now);
   return list.filter(g => getLocalGameDate(g.date) > d && ['scheduled','delayed'].includes(g.status || (g.state === 'pre' ? 'scheduled' : 'x')) && g.state !== 'in').sort(byStart); }
@@ -3609,7 +3667,8 @@ function npmBuild(raw, sport, opts = {}){
   const F = npmFit(accF, keep, prior, L), FT = npmFit(accTF, [true, true], priorT, LT);
   if (!F) return { ok:false, n:games.length, why:'the model could not be fitted' };
   const skill = bt.full && bt.home ? bt.home.logloss - bt.full.logloss : null;
-  return { ok:true, version:NPM_VERSION, sport, km, n:games.length, rows:rows.length, beta:F.beta, sigma:F.sigma, betaT:FT ? FT.beta : [0, 0], sigmaT:FT ? FT.sigma : null, keep, T:W.T, hfa:W.hfa, avgT:W.avgT,
+  const abbr = {}; for (const gm of games){ if (gm.ha) abbr[gm.ha] = gm.h; if (gm.aa) abbr[gm.aa] = gm.a; }
+  return { ok:true, version:NPM_VERSION, sport, km, abbr, n:games.length, rows:rows.length, beta:F.beta, sigma:F.sigma, betaT:FT ? FT.beta : [0, 0], sigmaT:FT ? FT.sigma : null, keep, T:W.T, hfa:W.hfa, avgT:W.avgT,
     backtest:bt, skill, from:games[0].t, to:games[games.length - 1].t, builtAt:Date.now() };
 }
 
@@ -3736,6 +3795,37 @@ function npmQuality(P, D, g){
   P.totOk = !!(M && M.backtest && M.backtest.totals && M.backtest.totals.mae < M.backtest.totals.maeNaive);
   return Math.max(0.15, Math.min(1, q));
 }
+/* ---------- player props: opponent context from NP's own opponent-adjusted team ratings ----------
+   "def": the stat goes up against defenses that allow more (yards, points, hits, shots);
+   "defLight": the same, weaker (rebounds, assists); "off": more against strong offenses (saves, hits allowed);
+   "offInv": more against weak offenses (pitcher strikeouts, outs). Stats with no clear link get no adjustment. */
+function npStatKind(sp, st){
+  st = String(st || '');
+  if (sp === 'nfl') return /^(pass_|rush_|reception|receptions|rush_reception|tds$|longest_)/.test(st) ? 'def' : /^(kicking|field_goals|pats)/.test(st) ? 'defLight' : null;
+  if (sp === 'nba') return /^(points|threes|points_)/.test(st) ? 'def' : /^(rebounds|assists|rebounds_assists|blocks|steals|blocks_steals)/.test(st) ? 'defLight' : null;
+  if (sp === 'mlb') return /^(hits|total_bases|home_runs|rbis|runs_scored|batter_walks|hits_runs_rbis)$/.test(st) ? 'def' : /^(pitcher_strikeouts|pitcher_outs)$/.test(st) ? 'offInv' : /^(hits_allowed|earned_runs|pitcher_walks)$/.test(st) ? 'off' : null;
+  if (sp === 'nhl') return /^(goals|assists|points|shots_on_goal|power_play_points)$/.test(st) ? 'def' : /^(saves|blocked_shots)$/.test(st) ? 'off' : null;
+  if (sp === 'soccer') return /^(shots|shots_on_target|goals|assists|goal_scorer)/.test(st) ? 'def' : null;
+  return null;
+}
+function npOppCtx(R, side, stat, M){
+  const g = R.g, opp = side === 'home' ? 'away' : 'home', kind = npStatKind(g.sport, stat), none = { now:1, have:false, factorOf:() => 1, oppName:g[opp]?.short, desc:'' };
+  if (!M || !M.T || !kind) return none;
+  const half = Math.max(0.5, M.avgT/2), kap = { def:0.8, defLight:0.45, off:0.6, offInv:0.5 }[kind];
+  const f = st => { if (!st) return 1; const v = kind === 'def' || kind === 'defLight' ? st.d : kind === 'off' ? st.o : -st.o; return Math.max(0.78, Math.min(1.28, 1 + kap*v/half)); };
+  const st = M.T[String(g[opp].id)]; if (!st) return none;
+  const v = kind === 'off' || kind === 'offInv' ? st.o : st.d, word = kind === 'off' || kind === 'offInv' ? 'offense' : 'defense';
+  return { now:f(st), have:true, kind, oppName:g[opp].short, factorOf:ab => { const id = M.abbr && M.abbr[ab]; return f(id ? M.T[id] : null); },
+    desc:`${g[opp].short} ${word} ${v >= 0 ? (word === 'defense' ? 'allows' : 'scores') + ' ' + fmt1(Math.abs(v)) + ' more' : (word === 'defense' ? 'allows' : 'scores') + ' ' + fmt1(Math.abs(v)) + ' fewer'} ${NPM_SPORT[g.sport]?.unit || 'points'} a game than average (opponent-adjusted)` };
+}
+function npMixDist(a, b, w){
+  const lo = Math.min(a.lo, b.lo), hi = Math.max(a.lo + a.pmf.length, b.lo + b.pmf.length), arr = new Array(hi - lo).fill(0);
+  a.pmf.forEach((v, i) => arr[a.lo + i - lo] += w*v); b.pmf.forEach((v, i) => arr[b.lo + i - lo] += (1 - w)*v);
+  return finishPmf(lo, arr);
+}
+function npPctl(d){ const q = [0.1, 0.25, 0.5, 0.75, 0.9], out = {}; let c = 0, j = 0;
+  for (let i = 0; i < d.pmf.length && j < q.length; i++){ c += d.pmf[i]; while (j < q.length && c >= q[j]){ out['p' + Math.round(q[j]*100)] = d.lo + i; j++; } }
+  return out; }
 
 const RESEARCH_NOTES = {
   '401872964': { at:'Oct 1, 2026, 2:45 PM ET', items:[
@@ -3897,7 +3987,9 @@ async function analyzeGame(g, { force = false, useOA = false, onStep = ()=>{} } 
   let npf = null; try { NPM.ensure(sport, g.league); npf = NPM.predict(g); if (npf) npf.q = npmQuality(npf, D, g); } catch(e){ npf = null; }
   const gm = gameModel(g, D, book, { weather, soccer, npf });
   const R = { g, D, gm, book, idx, logs, pm:new Map(), tdInfo:{}, soccer, lineup, weather, sources, at:Date.now() };
+  if (sport === 'nfl' && g.state === 'pre'){ try { await tdModel(R); } catch(e){} }   // the TD model first, so TD props and the TD tab share one number
   R.cands = buildCandidates(R); R.cands.forEach(c => c.gid = g.id);
+  if (R.tdm) try { tdPrice(R); } catch(e){}
   if (!live) applyCalibration(R);
   R.isLive = live;
   if (R.ruledOut.length) dq.push({ lvl:'ok', t:`Removed bets on players ruled out: ${[...new Set(R.ruledOut)].slice(0,6).join(', ')}.` });
@@ -4212,7 +4304,7 @@ function whyBox(c, R){
   return `<div class="wb sr">
     <div class="wb-top">${c.live ? '<span class="pill bad">● Live</span>' : ''}${strengthPill(c.quality)}${riskPill(c.risk)}${badgeHtml(c, R)}${move}<span class="note">${esc(c.type)}</span></div>
     ${c.live && R.live ? liveWhyHtml(c, R) : ''}
-    ${nums}${meter}${ev}
+    ${nums}${meter}${ev}${(() => { try { return npTraceHtml(c, R); } catch(e){ return ''; } })()}
     <div class="sr-cols"><div class="sr-for"><div class="sr-h">Our read</div>${c.live && R.live ? `<p>${esc(liveReason(c, R))}</p>` : `<p>${esc(whyText(R, c))}</p>`}${m?.kind === 'dist' && m.last3 != null && !ev ? `<p>Last 3 games: ${fmt1(m.last3)} a game against a line of ${c.line}.</p>` : ''}</div>
       <div class="sr-against"><div class="sr-h">What kills it</div><ul>${failCase(R, c).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>
     <div class="sr-score"><div class="sr-h">Scorecard <span>${passed} of ${total} checks clear</span></div><div class="chks">${checks.map(([v, t, long]) => { const [k, sy] = ic(v); return `<span class="chk ${k}" title="${esc(long)}"><b>${sy}</b>${esc(t)}</span>`; }).join('')}<span class="chk ${c.flags?.length ? 'mid' : 'ok'}" title="Specific risks for this bet"><b>${c.flags?.length ? '~' : '✓'}</b>Failure case</span></div></div>
@@ -5304,15 +5396,18 @@ async function tdModel(R){
     if (wx && ((wx.gust || 0) >= 20 || (wx.rain || 0) >= 50)) fr += 0.04;
     if (fav && margin >= 3) fr += 0.03; else if (!fav && margin >= 6) fr -= 0.03;
     fr = clamp(fr, 0.25, 0.6);
-    const teamTD = tt * 0.113, avail = per.filter(x => !x.out);
+    const teamTD = tt * 0.105, avail = per.filter(x => !x.out);   // offensive TDs per point scored (field goals and extra points take the rest)
     const carW = avail.reduce((s, x) => s + Math.pow(x.car, 1.15), 0) || 1, tgtW = avail.reduce((s, x) => s + x.tgt * (TD_RZ_TGT[x.p.pos] ?? 1), 0) || 1;
     for (const x of avail){
-      const rushSh = Math.min(0.7, Math.pow(x.car, 1.15) / carW), tgtSh = Math.min(0.4, x.tgt * (TD_RZ_TGT[x.p.pos] ?? 1) / tgtW);   // even a workhorse rarely gets more than ~70% of goal-line work
+      // shares of the team's rushing and receiving TDs, from his weighted usage (goal-line value weighted by position)
+      const rs0 = Math.pow(x.car, 1.15) / carW, ts0 = x.tgt * (TD_RZ_TGT[x.p.pos] ?? 1) / tgtW;
+      const rushSh = rs0/(1 + 0.35*rs0), tgtSh = ts0/(1 + 0.6*ts0);          // smooth: the more of the work he has, the more it gets shared near the line
       const lamU = teamTD * (fr * rushSh + (1 - fr) * tgtSh);
-      const lamH = (x.tdRate * x.gp + lamU * 2) / (x.gp + 2) * clamp(tt / 22, 0.75, 1.3);   // his own TD rate, shrunk to his usage
-      let lam = x.gp >= 3 ? 0.65 * lamU + 0.35 * lamH : 0.85 * lamU + 0.15 * lamH;
-      if (x.q) lam *= 0.85;
-      lam = Math.min(lam, 0.95);
+      const env = clamp(tt / 22, 0.75, 1.3), lamH = (x.tdRate * x.gp + lamU * 4) / (x.gp + 4) * env;   // his own TD rate, shrunk hard to his usage (TDs are noisy)
+      const wH = Math.min(0.4, 0.06 * x.gp), raw = (1 - wH) * lamU + wH * lamH;
+      let lam = raw * (x.q ? 0.85 : 1);
+      if (lam > 0.7) lam = 0.7 + 0.6 * (1 - Math.exp(-(lam - 0.7) / 0.6));   // diminishing returns at the very top, never a flat cap
+      x.trace = { tt, teamTD, fr, carG:x.carG, tgtG:x.tgtG, rs0, ts0, rushSh, tgtSh, lamU, tdRate:x.tdRate, gp:x.gp, lamH, env, wH, raw, q:x.q, lam, outs:per.filter(y => y.out).map(y => y.p.name) };
       Object.assign(x, { lam, rushSh, tgtSh, lamU, lamH });
     }
     out.team[side] = { tt, teamTD, fr, rushTD, recTD, games:recent.length, outs:per.filter(x => x.out) };
@@ -5330,7 +5425,6 @@ async function tdModel(R){
         if (t.includes(' to ' + a)) r.tgt++; else if (t.startsWith(a)) r.car++; } }
     const firstTD = (D.plays || []).find(p => p.scoring && /touchdown|\btd\b|yd run|yd pass/i.test(p.text));
     LV = { L, ab, rz, firstTD, allRem: allTD*L.LC.rem*L.adj, rzTrips:{ home:(D.drives || []).filter(d => d.team === 'home' && d.rz).length, away:(D.drives || []).filter(d => d.team === 'away' && d.rz).length } }; }
-  const mk = (pid, test) => R.cands.filter(c => c.playerId === pid && test(c) && c.dec).sort((a,b) => b.dec - a.dec)[0] || null;
   for (const x of out.rows){
     let m = { any:1 - Math.exp(-x.lam), first:(x.lam / (allTD || 1)) * (1 - Math.exp(-allTD)), two:1 - Math.exp(-x.lam) * (1 + x.lam), three:1 - Math.exp(-x.lam) * (1 + x.lam + x.lam*x.lam/2) };
     if (LV){ const LC = LV.L.LC, tds = liveStat(D, x.id, 'tds', 'nfl') || 0, car = liveStat(D, x.id, 'carries', 'nfl') || 0, tgt = liveStat(D, x.id, 'targets', 'nfl') || 0;
@@ -5338,12 +5432,19 @@ async function tdModel(R){
       const ft = LV.firstTD ? (LV.firstTD.text.toLowerCase().includes(LV.ab[x.id]) || LV.firstTD.text.includes(x.p.name)) : null;
       x.live = { tds, car, tgt, rz:LV.rz[x.id] || { car:0, tgt:0 }, use, lr };
       m = { any: tds > 0 ? 1 : 1 - Math.exp(-lr), two: tds >= 2 ? 1 : tds === 1 ? 1 - Math.exp(-lr) : 1 - Math.exp(-lr)*(1 + lr), three: tdTail(lr, 3 - tds), first: ft == null ? (lr/(LV.allRem || 1))*(1 - Math.exp(-LV.allRem)) : ft ? 1 : 0 }; }
+    x.model = m;
+  }
+  out.allTD = allTD; out.live = LV; R.tdm = out; tdPrice(R, out); return out;
+}
+/* prices, attached once the game's bets are built: the betting number blends NP's model with the book; x.model stays NP's own */
+function tdPrice(R, out = R.tdm){
+  if (!out) return; const mk = (pid, test) => (R.cands || []).filter(c => c.playerId === pid && test(c) && c.dec).sort((a,b) => b.dec - a.dec)[0] || null;
+  for (const x of out.rows){ const m = x.model;
     x.c = { any:mk(x.id, c => c.stat === 'anytime_td' && c.side === 'yes'), first:mk(x.id, c => /^(first_td|1st_td)$/.test(c.stat) && c.side === 'yes'), two:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 1.5 && c.line < 2), three:mk(x.id, c => c.stat === 'tds' && c.side === 'over' && c.line >= 2.5 && c.line < 3) };
-    x.model = m; x.pr = {};
+    x.pr = {};
     for (const k of ['any','first','two','three']){ const c = x.c[k]; const book = c ? (1 / c.dec) / (k === 'any' ? 1.07 : 1.2) : null;   // strip typical one-sided margin
       x.pr[k] = book != null ? 0.5 * m[k] + 0.5 * book : m[k]; x.pBook = x.pBook || {}; x.pBook[k] = book; }
   }
-  out.allTD = allTD; out.live = LV; R.tdm = out; return out;
 }
 function tdWhy(x, R, k){
   const g = R.g, side = x.side, oppS = side === 'home' ? 'away' : 'home', T = R.tdm.team[side], c = x.c?.[k], p = x.pr[k], li = (t, b) => `<li><b>${t}.</b> ${b}</li>`;
@@ -5376,7 +5477,7 @@ function tdRow(x, R, k, i, ctx){
   return `<div class="br-wrap${state.tdHl === x.id && k === 'any' ? ' hl' : ''}" id="${k === 'any' ? 'td-' + esc(x.id) : ''}"><div class="br"><div class="br-i"><a class="plink" href="${plHref(g.id, x.id)}">${avatar(x.p)}</a></div>
     <div class="br-t"><div class="br-g">${x.live ? `<span style="color:var(--sun)">live: ${x.live.car} car, ${x.live.tgt} tgt, ${x.live.rz.car + x.live.rz.tgt} inside the 20</span> · ` : ''}#${i+1} · ${esc(x.p.pos)} · ${esc(g[x.side].abbr)}${x.q ? ' · <span style="color:var(--warn)">questionable</span>' : ''}</div><div><b><a class="plink" href="${plHref(g.id, x.id)}">${esc(x.p.name)}</a></b></div><div class="br-w">${pct(p,0)} chance${val ? ' <span class="tag">Value</span>' : ''}</div></div>
     <div class="br-o"><b>${c ? decToAm(c.dec) : decToAm(1 / Math.max(p, 0.01))}</b><span>${c ? esc(c.book) : 'fair price'}</span></div><div class="br-b">${togBtn(id, 'Why?')}${k !== 'first' ? slipBtn(tdLeg(x, g.id, k)) : ''}</div></div>
-    <div class="whybox" id="${id}" hidden>${tdWhy(x, R, k)}</div></div>`;
+    <div class="whybox" id="${id}" hidden>${tdWhy(x, R, k)}${k !== 'first' || x.trace ? npTdTrace(x, R, k) : ''}</div></div>`;
 }
 function tdScorersHtml(R){ return `<div id="tdbox" data-gid="${R.g.id}"><div class="panel loading"><span class="spin"></span>Ranking every QB, RB, WR and TE in this game…</div></div>`; }
 function tdListHtml(R, ctx){
@@ -5948,7 +6049,7 @@ function tdLadderHtml(td, td2, td3, day){
   const kinds = [['any', 'Anytime', '🏈', td, 'Anytime TD chance from our usage model. The second number is his chance if his game follows its most likely script.'],
     ['two', '2+ TDs', '✌️', td2, 'Two or more TDs. Built from the same scoring rate: a back with a 50% anytime chance usually sits near 15% here. Fair odds tend to land around +400 to +900, so a couple of these change a parlay fast.'],
     ['three', '3+ TDs', '🚀', td3, 'Three or more TDs: the moonshots. Even the best goal-line backs land this a few times a season. Fair prices are usually +1500 or longer; keep stakes tiny.']];
-  const head = td.slice(0, 3).map(t => { const x = t.x, g = t.R.g, tc = teamColor(g[x.side]); return `<div class="tdl-c" style="--tc:${tc}">${avatar(x.p, '', tc)}<b>${esc(x.p.name)}</b><small>${esc(g[x.side].short)} · ${esc(x.p.pos || '')}</small><div class="tdl-s">${[['any','1+'],['two','2+'],['three','3+']].map(([k, l]) => `<span><i>${l}</i><b>${pct(x.pr[k], x.pr[k] < 0.1 ? 1 : 0)}</b><small>${fairStr(x.pr[k])}</small>${slipBtn(tdLeg(x, g.id, k))}</span>`).join('')}</div></div>`; }).join('');
+  const head = td.slice(0, 3).map(t => { const x = t.x, g = t.R.g, tc = teamColor(g[x.side]); return `<div class="tdl-c" style="--tc:${tc}">${avatar(x.p, '', tc)}<b>${esc(x.p.name)}</b><small>${esc(g[x.side].short)} · ${esc(x.p.pos || '')}</small><div class="tdl-s">${[['any','1+'],['two','2+'],['three','3+']].map(([k, l]) => `<span><i>${l}</i><b>${pct1(x.pr[k])}</b><small>${fairStr(x.pr[k])}</small>${slipBtn(tdLeg(x, g.id, k))}</span>`).join('')}</div></div>`; }).join('');
   return `${head ? `<div class="tdl">${head}</div>` : ''}${tabsHtml('pbtd', kinds.map(([k, l, ic, list, note]) => [k, `${ic} ${l}`, `<div class="note">${note}</div>${pbList(list, 'sltd' + k + day, 15)}`]))}`;
 }
 
@@ -6036,6 +6137,7 @@ function route(keepDrawer){
   else if (h.startsWith('#gp-')) renderGamePlayers(h.slice(4));
   else if (h.startsWith('#p-')){ const s = h.slice(3), i = s.indexOf('-'); renderPlayer(s.slice(0, i), decodeURIComponent(s.slice(i + 1))); }
   else if (h === '#method') renderMethod();
+  else if (h === '#audit') renderAudit();
   else if (isPB(h)) renderPlaybook();
   else if (h === '#week' || h === '#parlays' || h === '#upcoming'){ renderWeekish(); if (!state.week.busy && (!state.week.loadedAt || Date.now() - state.week.loadedAt > 20*60000)) loadWeek(false); }
   else renderToday();
@@ -6272,7 +6374,7 @@ function npLab(){
     </div>`; }).join('');
   return `<div class="stack small method"><p><b>How NP tests itself.</b> Games are replayed in date order. Every prediction uses only games played before it, and the model is refitted once a month on everything earlier. Nothing from the future leaks in. Each factor is then removed one at a time: if a factor makes the out-of-sample predictions worse, it is switched off for that league.</p>
     <p><b>What the market is for.</b> Sportsbook prices aren't in the free historical data, so NP's own read is tested against simple baselines here, and it gets a fixed share (about 28%) of the final number when a real price exists. Every pregame prediction is logged on the server and graded after the game, so the comparison with the market builds up over time.</p></div>
-    <div class="lab">${rows}</div>`;
+    <div class="lab">${rows}</div><div class="actions"><a class="go ghost" href="#audit">Open the prediction audit</a></div>`;
 }
 /* when a league's model finishes loading, re-run the games already on screen so they pick it up */
 const NP_REDO = { keys:new Set(), t:0, busy:false };
@@ -6436,6 +6538,66 @@ function npAfterPaint(m, entering){
     const end = +mm[1], dec = (mm[1].split('.')[1] || '').length, t0 = performance.now(), dur = 520;
     const step = now => { const k = Math.min(1, (now - t0)/dur), e = 1 - Math.pow(1 - k, 3); el.textContent = (end*e).toFixed(dec) + mm[2]; if (k < 1) requestAnimationFrame(step); };
     requestAnimationFrame(step); });
+}
+
+/* ============================ WHY THIS NUMBER? the trace behind every player probability ============================ */
+const pct1 = p => p == null ? '–' : (p*100).toFixed(1) + '%';
+function npTraceHtml(c, R){
+  const m = c.model, g = R.g; if (!m) return '';
+  if (m.kind === 'binary' && c.playerId && R.tdm?.rows){ const x = R.tdm.rows.find(r => r.id === c.playerId); if (x?.trace) return npTdTrace(x, R, /first/.test(c.stat) ? 'first' : 'any', c); }
+  if (m.kind !== 'dist' || !m.trace) return '';
+  const t = m.trace, u = statLabel(g.sport, c.stat).toLowerCase(), sideW = c.side === 'over' ? 'over' : 'under';
+  const rows = [];
+  if (t.n) rows.push(['Baseline', `${fmt1(t.baseRaw)} a game over his last ${t.n} (recent games count more)`, t.oppHave || Math.abs(t.oppAdjPast - 1) > 0.005 ? `${fmt1(t.baseAdj)} after adjusting each game for the defense he faced` : '']);
+  for (const [name, f, d] of t.parts) rows.push([name, `×${f.toFixed(3)}`, d || '']);
+  if (!t.oppHave && npStatKind(g.sport, c.stat)) rows.push(['Opponent', 'pending', 'NP\'s team ratings for this league are still loading, so no opponent adjustment yet']);
+  const pc = m.pctl;
+  return `<details class="trace" open><summary>Why this number?</summary>
+    <ol class="tr-steps">${rows.map(([a, b, d]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span>${d ? `<small>${esc(d)}</small>` : ''}</li>`).join('')}
+      ${t.mean != null ? `<li class="tr-out"><b>NP projection</b><span>${fmt1(t.mean)} ${esc(u)}</span><small>His own spread of outcomes${t.fam === 'nb' || t.fam === 'lognormal' ? ` (${t.fam === 'nb' ? 'variance ' + fmt1(t.spread) + '× the mean' : 'swing ±' + Math.round(t.spread*100) + '%'})` : ''}, shrunk toward the league shape because ${t.n} games is ${t.n < 8 ? 'a small' : 'a fair'} sample</small></li>` : ''}</ol>
+    ${pc ? `<div class="tr-dist"><div class="trd-bar">${['p10','p25','p50','p75','p90'].map(k => `<span><i>${k.toUpperCase()}</i><b>${pc[k] ?? '–'}</b></span>`).join('')}</div>${c.line != null ? `<div class="note">Line ${c.line}: NP's own distribution puts the ${sideW} at <b>${pct1(c.pModel)}</b>.</div>` : ''}</div>` : ''}
+    <div class="tr-sum"><span>NP model <b>${pct1(c.pModel)}</b></span>${m.mktDist ? `<span>Market line ${m.mktMedian != null ? fmt1(m.mktMedian) : ''}${c.priced ? ` · price says <b>${pct1(c.implied)}</b>` : ''}</span>` : ''}<span>Betting number <b>${pct1(c.p)}</b>${m.mktDist && m.modelDist ? ` <small>(${Math.round(m.wM*100)}% NP, ${100 - Math.round(m.wM*100)}% market line)</small>` : ''}</span><span>Fair price <b>${c.pModel != null ? fairStr(c.pModel) : fairStr(c.p)}</b></span></div>
+    <div class="note">Source: ${esc(t.source)}.${m.modelDist ? '' : ' NP has too few of his games to build its own number, so this one leans on the posted line.'}</div></details>`;
+}
+function npTdTrace(x, R, k, c){
+  const t = x.trace, g = R.g; if (!t) return '';
+  const lbl = { any:'1+ TD', two:'2+ TDs', three:'3+ TDs', first:'first TD' }[k];
+  const steps = [
+    ['Team scoring', `${fmt1(t.tt)} projected points → ${fmt2(t.teamTD)} offensive TDs`, `${pct(t.fr, 0)} expected on the ground (${g[x.side].short}'s own recent split, shrunk to league norms)`],
+    ['His share', `${pct(t.rushSh, 1)} of rushing TDs · ${pct(t.tgtSh, 1)} of receiving TDs`, `From ${fmt1(t.carG)} carries and ${fmt1(t.tgtG)} targets a game, weighted for goal-line value${t.outs.length ? `; teammates out: ${t.outs.join(', ')}` : ''}`],
+    ['Usage model', `${fmt2(t.lamU)} expected TDs`, ''],
+    ['His TD history', `${fmt2(t.tdRate)} a game over ${t.gp} games`, `Shrunk hard toward the usage model (TDs are noisy); counts for ${Math.round(t.wH*100)}% of the blend`],
+    ...(t.q ? [['Questionable', '×0.850', 'listed questionable']] : []),
+    ['Expected TDs (λ)', fmt3(t.lam), t.raw > 0.7 ? 'Diminishing returns applied at the very top end' : ''],
+  ];
+  const P = x.model;
+  return `<details class="trace" open><summary>Why this number?</summary><ol class="tr-steps">${steps.map(([a, b, d]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span>${d ? `<small>${esc(d)}</small>` : ''}</li>`).join('')}</ol>
+    <div class="tr-dist"><div class="trd-bar">${[['1+', P.any], ['2+', P.two], ['3+', P.three], ['First', P.first]].map(([a, v]) => `<span class="${({ '1+':'any', '2+':'two', '3+':'three', 'First':'first' })[a] === k ? 'on' : ''}"><i>${a}</i><b>${pct1(v)}</b></span>`).join('')}</div>
+    <div class="note">Counts follow a Poisson model from λ, so 2+ and 3+ are their own probabilities (not the anytime number reused).</div></div>
+    <div class="tr-sum"><span>NP model <b>${pct1(P[k])}</b></span>${x.pBook?.[k] != null ? `<span>Book (margin removed) <b>${pct1(x.pBook[k])}</b></span><span>Betting number <b>${pct1(x.pr[k])}</b> <small>(50/50)</small></span>` : '<span>No book price for this market</span>'}<span>Fair <b>${fairStr(P[k])}</b></span></div></details>`;
+}
+const fmt2 = v => v == null ? '–' : v.toFixed(2);
+
+/* ============================ PREDICTION AUDIT: every number on the slate, its inputs, and duplicate checks ============================ */
+function renderAudit(){
+  const res = Object.values(CACHE).filter(R => R?.cands && R.g);
+  const rows = [];
+  for (const R of res){ const g = R.g;
+    for (const c of R.cands){ if (!c.playerId) continue; const t = c.model?.trace;
+      rows.push({ g, c, R, key:`${g.id}|${c.playerId}|${c.stat}|${c.line}|${c.side}`, pm:c.pModel, p:c.p, src:t?.source || (c.model?.kind === 'binary' ? (R.tdm?.rows?.some(x => x.id === c.playerId) ? 'NP TD model' : 'binary model') : '–'),
+        inputs:t ? `n=${t.n} · base ${fmt1(t.baseRaw)}→${fmt1(t.baseAdj)} · opp ×${t.oppNow.toFixed(3)} · ctx ×${t.mult.toFixed(3)} · mean ${t.mean != null ? fmt1(t.mean) : '–'}` : '' }); }
+    if (R.tdm?.rows) for (const x of R.tdm.rows) for (const k of ['any', 'two', 'three']) rows.push({ g, R, key:`${g.id}|${x.id}|td-${k}`, label:`${x.p.name} ${({ any:'anytime TD', two:'2+ TDs', three:'3+ TDs' })[k]}`, pm:x.model[k], p:x.pr[k], src:'NP TD model', inputs:`λ ${fmt3(x.lam)} · tt ${fmt1(x.trace?.tt)} · rush ${pct(x.rushSh, 1)} · rec ${pct(x.tgtSh, 1)} · rate ${fmt2(x.tdRate)}/${x.gp}g` });
+  }
+  // identical model probabilities on different events are a red flag
+  const byVal = new Map(); for (const r of rows){ if (r.pm == null) continue; const k = r.pm.toFixed(5) + '|' + (r.c?.stat || r.key.split('|').pop()); (byVal.get(k) || byVal.set(k, []).get(k)).push(r); }
+  const dup = [...byVal.values()].filter(l => new Set(l.map(r => r.g.id + '|' + (r.c?.playerId || r.key.split('|')[1]))).size > 1);
+  const noModel = rows.filter(r => r.pm == null).length;
+  paint(`<a href="#method" class="back">← Under the Hood</a>${dayBar('Prediction Audit', 'Every player probability on the researched slate, with its inputs', [[rows.length, 'predictions'], [dup.length, 'identical groups', dup.length ? 'on' : ''], [noModel, 'market-only']])}
+    <div class="panel small method">Each row is computed on its own from that player's games, opponent and game context. Identical NP probabilities for different players are listed first so they can be checked. "Market-only" means NP didn't have enough of his games to make its own number, so none is claimed.</div>
+    ${dup.length ? `<section class="sec"><div class="sechead"><h2><span class="kick">Check these</span>Identical numbers</h2></div>${dup.map(l => `<div class="panel small">${l.map(r => `${esc(r.label || r.c.label)} · ${esc(matchup(r.g))} · ${pct1(r.pm)}`).join('<br>')}</div>`).join('')}</section>` : '<div class="panel note">No identical NP probabilities across different players and games.</div>'}
+    <div class="tablewrap"><table class="sortable audit"><thead><tr><th>Bet</th><th>Game</th><th>NP model</th><th>Betting number</th><th>Source</th><th>Inputs</th></tr></thead><tbody>
+    ${rows.sort((a, b) => (b.pm ?? -1) - (a.pm ?? -1)).slice(0, 600).map(r => `<tr><td>${esc(r.label || r.c.label)}</td><td>${esc(r.g.away.abbr)} @ ${esc(r.g.home.abbr)}</td><td class="num">${pct1(r.pm)}</td><td class="num">${pct1(r.p)}</td><td>${esc(r.src)}</td><td class="note">${esc(r.inputs)}</td></tr>`).join('')}</tbody></table></div>`);
+  headerSync();
 }
 
 </script>
